@@ -1,0 +1,249 @@
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #f1dbbd #131313
+}
+body   {
+    background-color: #131313;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: normal;
+    color: #fff;
+    margin: 0;
+}
+
+.nav {
+    background-color: #f1dbbd ;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    color: #000;
+    border-radius: 20px;
+    margin: 20px 50px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+}
+
+.nav a {
+    text-decoration: none;
+    color: #000
+}
+
+.nav a:hover {
+    color: #26252d;
+    text-decoration: none
+}
+
+.main {
+    text-align: left;
+    font-weight: bold;
+    list-style-type: none;
+    font-size: large;
+}
+
+.info {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.info li{
+    display: flex;
+    text-decoration: none;
+    text-align: right;
+    letter-spacing: 1px;
+    margin: 10px
+}
+
+.hello {
+    display: flex;
+    justify-content:space-around;
+    align-items: center;
+    margin-top: 200px;
+    text-decoration: none;
+}
+
+.picture img {
+    float: right;
+}
+
+.name {
+    text-align: center;
+}
+.name h1 {
+    font-size: 100px;
+}
+
+.name h3 {
+    font-size: 40px
+}
+
+.about-me {
+    text-align: justify;
+    margin: 20vw 30px;
+    font-size: 40px;
+}
+
+.pisanina-1 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+.pisanina-1 p {
+    float: right;
+}
+
+.pisanina-1 img {
+    float: left;
+    margin-left: 20px;
+    border-radius: 20px;
+}
+
+.pisanina-2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .pisanina-2 p {
+    float: left;
+}
+
+.pisanina-2 img {
+    float: right;
+    margin-right: 20px;
+    border-radius: 20px;
+}
+
+.more-about-me {
+    text-align: center;
+}
+.more-about-me a {
+    color: #020081;
+    text-decoration: none;
+}
+
+.more-about-me a:hover {
+    color: #0400ff;
+}
+
+.projects {
+    margin: 0 10vw;
+    color:#000;
+    justify-content:space-around;
+    display: flex;
+    text-align: center;
+    font-size: 40px;
+    font-weight: bold;
+}
+
+.projects h4 {
+    font-weight: bold;
+    font-size: 30px;
+}
+
+.projects p {
+    font-size: 18px;
+    font-weight: normal;
+}
+
+.projects a {
+    color: #020081;
+    text-decoration: none;
+}
+
+.projects a:hover {
+    color: #0400ff;
+}
+
+.tg_bot {
+    background-color: #f1dbbd;
+    border-radius: 20px;
+    max-width: 30vw;
+    text-align: center;
+}
+
+.casino_ds {
+    background-color: #f1dbbd;
+    border-radius: 20px;
+    max-width: 30vw;
+    text-align: center;
+}
+
+.contact {
+    display: flex;
+    margin: 10vw;
+    justify-content:space-around;
+    text-align: center;
+    font-weight: bold;
+}
+
+.contact a {
+    color:#fff;
+    text-decoration: none;
+}
+
+.contact a:hover {
+    color:#9c9797
+}
+
+.tg {
+    background-color: #27a7e7;
+    padding: 10px 10px;
+    border-radius: 50px;
+}
+
+.vk {
+    background-color: #0077FF;
+    padding: 10px 10px;
+    border-radius: 50px;
+}
+
+.discord {
+    background-color: #7289DA;
+    padding: 10px 10px;
+    border-radius: 50px;
+}
+
+.github {
+    background-color: #000000;
+    padding: 10px 10px;
+    border-radius: 50px;
+}
+
+.nickname {
+    background-color: #7d9305;
+    padding: 10px 10px;
+    border-radius: 50px;
+}
+
+footer {
+    background-color: #000;
+    padding: 20px;
+    justify-content: space-between;
+    display: flex;
+}
+
+#footer{
+    color: #ccc;
+    text-align: justify
+}
+
+#end {
+    text-align: center;
+    font-weight: bold;
+    color: #fff
+}
+
+footer a {
+    color:#000;
+    text-decoration: none;
+    text-align: end;
+}
+
+footer a:hover {
+    color: #ccc;
+}
