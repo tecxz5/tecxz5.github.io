@@ -11,7 +11,7 @@ body   {
 }
 
 .nav {
-    background-color: #f1dbbd ;
+    background-color: #f1dbbd;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -23,6 +23,7 @@ body   {
     top: 0;
     left: 0;
     right: 0;
+    z-index: 1000;
 }
 
 .nav a {
@@ -33,6 +34,14 @@ body   {
 .nav a:hover {
     color: #26252d;
     text-decoration: none
+}
+
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
 }
 
 .main {
@@ -49,12 +58,12 @@ body   {
     display: flex;
 }
 
-.info li{
+.info li {
     display: flex;
     text-decoration: none;
     text-align: right;
     letter-spacing: 1px;
-    margin: 10px
+    margin: 10px;
 }
 
 .hello {
@@ -235,6 +244,7 @@ footer {
     padding: 20px;
     justify-content: space-between;
     display: flex;
+    flex-wrap: wrap;
 }
 
 #footer{
@@ -260,70 +270,98 @@ footer a:hover {
 
 @media (max-width: 768px) {
 
-    .nav {
-        flex-direction: column;
-        margin: 0;
-        padding: 10px;
+    .menu-toggle {
+        display: block;
     }
+
     .info {
+        display: none;
         flex-direction: column;
-    }
-    .info li {
-        margin: 5px 0;
-    }
-    .hello {
-        flex-direction: column;
+        width: 100%;
         text-align: center;
-        margin-top: 100px;
+        background-color: #f1dbbd;
+        border-radius: 0 0 20px 20px;
+        position: absolute;
+        top: 100%; /* Положение относительно навбара */
+        left: 0;
+        z-index: 999
     }
+
+    .info.active {
+        display: flex;
+    }
+
+    .info li {
+        margin: 10px 0;
+    }
+
+    .main {
+        flex-grow: 1;
+    }
+
     .name h1 {
         font-size: 50px;
     }
+
     .name h3 {
-        font-size: 20px;
+        font-size: 25px;
     }
+
+    .hello {
+        flex-direction: column;
+    }
+
     .about-me {
         font-size: 20px;
         margin: 10px;
     }
+
     .pisanina-1,
     .pisanina-2 {
         flex-direction: column;
         text-align: center;
     }
+
     .pisanina-1 p,
     .pisanina-2 p {
         float: none;
     }
+
     .pisanina-1 img,
     .pisanina-2 img {
         display: none;
     }
+
     .projects {
         flex-direction: column;
         font-size: 20px;
         margin: 10px;
     }
+
     .projects h4 {
         font-size: 25px;
     }
     .projects p {
         font-size: 15px;
     }
+
     .tg_bot,
     .casino_ds {
         max-width: 90%;
         margin: 10px 0;
     }
+
     .contact {
         flex-direction: column;
         margin: 5vw;
     }
+
     .contact div {
         margin: 10px 0;
     }
+
     footer {
-        flex-direction: column;
-        text-align: center;
+        flex-direction: row;
     }
+
 }
