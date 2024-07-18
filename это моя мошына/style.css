@@ -42,6 +42,14 @@ body   {
     font-size: large;
 }
 
+.menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
 .info {
     list-style-type: none;
     margin: 0;
@@ -251,69 +259,100 @@ footer a:hover {
 
 @media (max-width: 768px) {
 
+        .menu-toggle {
+        display: block;
+    }
+
     .nav {
         flex-direction: column;
         margin: 0;
         padding: 10px;
     }
+
     .info {
+        display: none;
         flex-direction: column;
-    }
-    .info li {
-        margin: 5px 0;
-    }
-    .hello {
-        flex-direction: column;
+        width: 100%;
         text-align: center;
-        margin-top: 100px;
+        background-color: #f1dbbd;
+        border-radius: 0 0 20px 20px;
     }
+
+    .info.active {
+        display: flex;
+    }
+
+    .info li {
+        margin: 10px 0;
+    }
+
+    .main {
+        flex-grow: 1;
+    }
+
     .name h1 {
         font-size: 50px;
     }
+
     .name h3 {
-        font-size: 20px;
+        font-size: 25px;
     }
+
+    .hello {
+        flex-direction: column;
+    }
+
     .about-me {
         font-size: 20px;
         margin: 10px;
     }
+
     .pisanina-1,
     .pisanina-2 {
         flex-direction: column;
         text-align: center;
     }
+
     .pisanina-1 p,
     .pisanina-2 p {
         float: none;
     }
+
     .pisanina-1 img,
     .pisanina-2 img {
         display: none;
     }
+
     .projects {
         flex-direction: column;
         font-size: 20px;
         margin: 10px;
     }
+
     .projects h4 {
         font-size: 25px;
     }
     .projects p {
         font-size: 15px;
     }
+
     .tg_bot,
     .casino_ds {
         max-width: 90%;
         margin: 10px 0;
     }
+
     .contact {
         flex-direction: column;
         margin: 5vw;
     }
+
     .contact div {
         margin: 10px 0;
     }
+
     footer {
         flex-direction: row;
     }
+
 }
