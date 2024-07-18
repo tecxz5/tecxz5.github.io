@@ -225,6 +225,7 @@ footer {
     padding: 20px;
     justify-content: space-between;
     display: flex;
+    flex-wrap: wrap;
 }
 
 #footer{
@@ -313,7 +314,6 @@ footer a:hover {
         margin: 10px 0;
     }
     footer {
-        flex-direction: column;
-        text-align: center;
+        flex-direction: row;
     }
 }
