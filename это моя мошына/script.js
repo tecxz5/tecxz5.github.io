@@ -21,3 +21,14 @@ document.querySelector('a[href="#about-me"]').addEventListener('click', function
     var contactElement = document.querySelector('.contact');
     contactElement.scrollIntoView({ behavior: 'smooth' });
   });
+
+  document.addEventListener("DOMContentLoaded", function() {
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+        document.body.classList.add('mobile');
+    }
+});
+
+function toggleMenu() {
+    const menu = document.querySelector('.info');
+    menu.classList.toggle('active');
+}
