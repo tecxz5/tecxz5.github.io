@@ -11,7 +11,7 @@ body   {
 }
 
 .nav {
-    background-color: #f1dbbd ;
+    background-color: #f1dbbd;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -23,6 +23,7 @@ body   {
     top: 0;
     left: 0;
     right: 0;
+    z-index: 1000;
 }
 
 .nav a {
@@ -35,19 +36,19 @@ body   {
     text-decoration: none
 }
 
-.main {
-    text-align: left;
-    font-weight: bold;
-    list-style-type: none;
-    font-size: large;
-}
-
 .menu-toggle {
     display: none;
     background: none;
     border: none;
     font-size: 24px;
     cursor: pointer;
+}
+
+.main {
+    text-align: left;
+    font-weight: bold;
+    list-style-type: none;
+    font-size: large;
 }
 
 .info {
@@ -57,12 +58,12 @@ body   {
     display: flex;
 }
 
-.info li{
+.info li {
     display: flex;
     text-decoration: none;
     text-align: right;
     letter-spacing: 1px;
-    margin: 10px
+    margin: 10px;
 }
 
 .hello {
@@ -263,12 +264,6 @@ footer a:hover {
         display: block;
     }
 
-    .nav {
-        flex-direction: column;
-        margin: 0;
-        padding: 10px;
-    }
-
     .info {
         display: none;
         flex-direction: column;
@@ -276,6 +271,10 @@ footer a:hover {
         text-align: center;
         background-color: #f1dbbd;
         border-radius: 0 0 20px 20px;
+        position: absolute;
+        top: 100%; /* Положение относительно навбара */
+        left: 0;
+        z-index: 999
     }
 
     .info.active {

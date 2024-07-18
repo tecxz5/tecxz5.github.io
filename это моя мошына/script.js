@@ -10,19 +10,19 @@ document.querySelector('a[href="#about-me"]').addEventListener('click', function
     aboutMeElement.scrollIntoView({ behavior: 'smooth' });
   });
 
-  document.querySelector('a[href="#projects"]').addEventListener('click', function(event) {
+document.querySelector('a[href="#projects"]').addEventListener('click', function(event) {
     event.preventDefault();
     var projectsElement = document.querySelector('.projects');
     projectsElement.scrollIntoView({ behavior: 'smooth' });
   });
 
-  document.querySelector('a[href="#contact"]').addEventListener('click', function(event) {
+document.querySelector('a[href="#contact"]').addEventListener('click', function(event) {
     event.preventDefault();
     var contactElement = document.querySelector('.contact');
     contactElement.scrollIntoView({ behavior: 'smooth' });
   });
 
-  document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function() {
     if (/Mobi|Android/i.test(navigator.userAgent)) {
         document.body.classList.add('mobile');
     }
