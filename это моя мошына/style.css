@@ -61,9 +61,18 @@ body   {
     display: flex;
     justify-content:space-around;
     align-items: center;
-    margin-top: 200px;
+    padding-top: 10vw;
+    padding-bottom: 20vw;
     text-decoration: none;
+    background: url('https://media1.tenor.com/m/Jojpr9QgMLoAAAAC/maxwell-maxwell-spin.gif') no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-attachment: scroll;
+    color: #6d6d6d;
 }
+
 
 .picture img {
     float: right;
@@ -71,6 +80,7 @@ body   {
 
 .name {
     text-align: center;
+    filter: blur(1px);
 }
 .name h1 {
     font-size: 100px;
