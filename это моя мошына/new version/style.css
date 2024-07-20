@@ -67,10 +67,20 @@ header a:hover {
     margin-top: 100px;
 }
 
+#wiggle1 {
+    margin-left: 40px;
+    margin-top: 20px;
+}
+
 .string1 {
     display: flex;
-    align-items: center;
     margin: auto 20px;
+}
+
+
+.text1 {
+    display: flex;
+    align-items: center;
 }
 
 #h6 {
@@ -85,11 +95,45 @@ header a:hover {
 }
 
 .string1 p {
-    font-size: 20px;
-    vertical-align: middle;
+    font-size: 25px;
 }
 
 .string1 img {
     border-radius: 15px;
-    margin-right: 30px;
+    margin: 0 30px;
+}
+
+.string2 {
+    display: flex;
+    font-size: 25px;
+    margin: 0 40px;
+}
+
+.string2 img {
+    margin: 0px 30px 0px 60px;
+}
+
+.string3 {
+    display: flex;
+}
+
+#wiggle2 {
+    margin: 0 40px;
+    max-width: 100%;
+    height: auto;
+}
+
+
+.string3 p {
+    font-size: 25px;
+}
+
+.string3 img {
+    margin: 0 40px;
+    border-radius: 15px;
+}
+
+.projects h1 {
+    margin: 200px;
+    font-size: 100px;
 }
