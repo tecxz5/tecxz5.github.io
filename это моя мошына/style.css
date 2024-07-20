@@ -212,6 +212,10 @@ body   {
     color:#9c9797
 }
 
+.clickable {
+    cursor: pointer;
+}
+
 .tg {
     background-color: #27a7e7;
     padding: 10px 10px;

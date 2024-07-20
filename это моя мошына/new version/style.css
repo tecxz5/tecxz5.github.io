@@ -36,13 +36,24 @@ header {
 .main {
     font-family: Thunder;
     font-size: 50px;
-    margin: -40px 10px;
+    margin: 10px;
     text-align: left;
+}
+
+header a {
+    color:#000;
+    text-decoration: none;
+}
+
+header a:hover {
+    color: #26252d;
+    text-decoration: none
 }
 
 .menu {
     display: flex;
     text-align: right;
+    font-size: 20px;
 }
 
 .menu li {
