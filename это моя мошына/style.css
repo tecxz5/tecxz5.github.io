@@ -46,9 +46,12 @@ body   {
 
 .main {
     text-align: left;
-    font-weight: bold;
     list-style-type: none;
     font-size: large;
+}
+
+.main strong {
+    font-weight: bold;
 }
 
 .info {
@@ -272,6 +275,10 @@ footer a:hover {
 
     .menu-toggle {
         display: block;
+    }
+
+    .main i {
+        display: none;
     }
 
     .info {

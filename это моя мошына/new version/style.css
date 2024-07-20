@@ -1,8 +1,32 @@
 @font-face {
-    font-family: Body;
-    src: url(fonts/BodyGrotesque-LargeExtraBold.ttf);
+    font-family: Delta;
+    src: url(fonts/DelaGothicOne-Regular.ttf);
    }
 
+@font-face {
+    font-family: Thunder;
+    src: url(fonts/Thunder-ExtraBoldLC.ttf);
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #f1dbbd #131313
+}
+body   {
+    background-color: #131313;
+    font-family: Delta;
+    font-weight: normal;
+    color: #fff;
+    margin: 0;
+}
+
+header {
+    background-color: #f1dbbd;
+    color: #000;
+    padding: 5px;
+}
+
 .main {
-    font-family: Body;
+    font-family: Thunder;
+    font-size: 40px
 }
