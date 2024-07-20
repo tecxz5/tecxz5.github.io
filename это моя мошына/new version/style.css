@@ -1,0 +1,8 @@
+@font-face {
+    font-family: Body;
+    src: url(fonts/BodyGrotesque-LargeExtraBold.ttf);
+   }
+
+.main {
+    font-family: Body;
+}
