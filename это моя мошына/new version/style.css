@@ -72,6 +72,10 @@ header a:hover {
     margin-top: 20px;
 }
 
+#wiggle1-mobile {
+    display: none;
+}
+
 .string1 {
     display: flex;
     margin: auto 20px;
@@ -155,6 +159,10 @@ header a:hover {
     color: #0400ff;
 }
 
+.clickable {
+    cursor: pointer;
+}
+
 .projects h6 {
     font-size: 25px;
 }
@@ -192,4 +200,22 @@ button {
     margin: 20px;
     font-size: 15px;
     cursor: pointer;
+}
+
+footer {
+    background-color: #000;
+    margin: 0;
+    margin-top: 60px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#copyright {
+    text-align: left;
+}
+
+#made-by {
+    text-align: right;
 }
