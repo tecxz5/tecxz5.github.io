@@ -14,11 +14,20 @@
                 <a href="https://tecxz5.ru">tecxz5</a>
             </div>
             <ul class="menu">
-                <li><a href="#">обо мне</a></li>
-                <li><a href="#">проекты</a></li>
-                <li><a href="#">контакты</a></li>
+                <li><a href="#about-me">обо мне</a></li>
+                <li><a href="#projects">проекты</a></li>
+                <li><a id="fake-lin" onclick="toggleContacts()">контакты</a></li>
             </ul>
         </header>
+        <div class="contact-container">
+            <div class="toggle-button" onclick="toggleContacts()">+</div>
+            <div class="contact-links">
+                <a target="_blank" href="https://github.com/tecxz5" class="contact-link git">GIT</a>
+                <a target="_blank" href="https://vk.com/tecxz5" class="contact-link vk">VK</a>
+                <a target="_blank" href="https://t.me/tecxz5" class="contact-link tg">TG</a>
+                <a target="_blank" href="https://discordapp.com/users/794585041485168670" class="contact-link ds">DS</a>
+            </div>
+        </div>
         <div class="about-me">
             <img id="wiggle1" src="pictures/site/wiggle1.svg" alt="загогулина" width="80%">
             <img id="wiggle1-mobile" src="pictures/site/wiggle1-mobile.svg" alt="загогулина">
