@@ -10,7 +10,7 @@
 
 * {
     scrollbar-width: thin;
-    scrollbar-color: #f1dbbd #131313
+    scrollbar-color: #f1dbbd #232323
 }
 body   {
     background-color: #232323;
@@ -133,7 +133,63 @@ header a:hover {
     border-radius: 15px;
 }
 
-.projects h1 {
-    margin: 200px;
-    font-size: 100px;
+.projects {
+    justify-content: space-around;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    margin-top: 100px;
+}
+
+.projects a {
+    color: #6b69fc;
+    text-decoration: none;
+    background-color: #232323;
+    margin-top:5px;
+    border-radius: 50px;
+    padding: 5px;
+}
+
+.projects a:hover {
+    color: #0400ff;
+}
+
+.projects h6 {
+    font-size: 25px;
+}
+
+#h1 {
+    font-size: 70px;
+}
+
+.toggle-element {
+    margin: 20px;
+    background-color: #f1dbbd;
+    color: #000;
+    width: 400px;
+    height: 350px;
+    padding: 15px;
+    border-radius: 15px;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    opacity: 0;
+    transform: scale(0);
+    display: none;
+}
+
+.toggle-element.show {
+    opacity: 1;
+    transform: scale(1);
+    display: block; /* Show the element when it's active */
+}
+
+button {
+    font-family: Dela;
+    background-color: #f1dbbd;
+    color: #000;
+    border-radius: 50px;
+    max-width: fit-content;
+    margin: 20px;
+    font-size: 15px;
+    cursor: pointer;
 }
