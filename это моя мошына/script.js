@@ -5,7 +5,7 @@ document.querySelectorAll('.clickable').forEach(element => {
     });
   });
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", ()=>{
     if (/Mobi|Android/i.test(navigator.userAgent)) {
         document.body.classList.add('mobile');
     }
