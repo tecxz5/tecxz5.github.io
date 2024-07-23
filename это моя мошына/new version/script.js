@@ -1,15 +1,3 @@
-document.querySelector('a[href="#about-me"]').addEventListener('click', function(event) {
-    event.preventDefault();
-    var aboutMeElement = document.querySelector('.about-me');
-    aboutMeElement.scrollIntoView({ behavior: 'smooth' });
-  });
-
-document.querySelector('a[href="#projects"]').addEventListener('click', function(event) {
-    event.preventDefault();
-    var projectsElement = document.querySelector('.projects');
-    projectsElement.scrollIntoView({ behavior: 'smooth' });
-  });
-
 document.getElementById('toggleProjectsButton').addEventListener('click', function() {
     const tgBotElement = document.querySelector('.tg-bot');
     const dsBotElement = document.querySelector('.ds-bot');
