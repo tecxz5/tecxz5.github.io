@@ -30,7 +30,8 @@ header {
     position: fixed;
     top: 0;
     right: 0;
-    left: 0
+    left: 0;
+    transition: border-radius 0.3s;
 }
 
 .main {
@@ -65,7 +66,15 @@ header a:hover {
     cursor: pointer;
 }
 
-
+.menu-toggle {
+    display: none;
+    font-size: 30px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin: 10px;
+    transition: transform 0.3s;
+}
 
 contact-container {
     position: relative;
@@ -74,7 +83,7 @@ contact-container {
 }
 
 .toggle-button {
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.3);
     color: #1e1e1e;
     border-radius: 50%;
     width: 50px;
@@ -90,6 +99,7 @@ contact-container {
     left: 0;
     margin: 40px;
     transition: transform 0.3s ease;
+    z-index: 10;
 }
 
 .toggle-button.cross {
@@ -103,6 +113,7 @@ contact-container {
     opacity: 0;
     transform: scale(0);
     transition: transform 0.3s ease, opacity 0.3s ease;
+    z-index: 10;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -141,7 +152,7 @@ contact-container {
 }
 
 .ds {
-    background-color: #7289DA;
+    background-color: #5662f6;
 }
 
 .about-me {
@@ -198,11 +209,16 @@ contact-container {
     margin: 0px 30px 0px 60px;
 }
 
-.string3 {
-    display: flex;
+#wiggle2-mobile {
+    display: none;
 }
 
-#wiggle2 {
+.string3 {
+    display: flex;
+    margin-top: 20px;
+}
+
+#wiggle3 {
     margin: 0 40px;
     max-width: 100%;
     height: auto;
@@ -228,7 +244,7 @@ contact-container {
 }
 
 .projects a {
-    color: #6b69fc;
+    color: #1f1cc0;
     text-decoration: none;
     background-color: #232323;
     margin-top:5px;
@@ -289,6 +305,7 @@ footer {
     margin-top: 60px;
     padding: 20px;
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
 }
@@ -299,4 +316,125 @@ footer {
 
 #made-by {
     text-align: right;
+}
+
+@media (max-width: 768px) {
+
+    * {
+        padding-inline-start: 0;
+    }
+
+    body {
+        flex-grow: 1;
+    }
+
+    header {
+        flex-direction: row;
+        font-size: 20px;
+        margin: 20px;
+    }
+
+    .menu {
+        display: none;
+        flex-direction: row;
+        background-color: #f1dbbd;
+        position: absolute;
+        top: 45px; /* adjust according to your header height */
+        right: 0;
+        left: 0;
+        text-align: center;
+        border-radius: 0 0 15px 15px;
+    }
+
+    .menu.show {
+        display: flex;
+    }
+
+    .menu li {
+        margin: 8px;
+        font-size: 17px;
+    }
+
+    .menu-toggle {
+        display: block;
+    }
+
+    header.menu-open {
+        border-radius: 15px 15px 0 0;
+    }
+
+    .main {
+        font-size: 30px;
+    }
+
+    .about-me {
+        margin-top: 50px;
+    }
+
+    #wiggle1, #wiggle2, #wiggle3 {
+        display: none;
+    }
+
+    #maxwell-pat {
+        display: none;
+    }
+        
+
+    #wiggle1-mobile {
+        display: inline;
+        margin: 60px 40px 0 40px;
+    }
+
+    #wiggle2-mobile {
+        display: inline;
+        margin: 20px
+    }
+
+    .string1, .string2, .string3 {
+        flex-direction: column;
+        margin: 10px 30px;
+    }
+
+    .string1 img, .string2 img, .string3 img {
+        margin: 10px auto;
+    }
+
+    .text1 {
+        flex-direction: column;
+    }
+
+    #h6 {
+        font-size: 50px;
+        margin: 40px 20px;
+    }
+
+    .projects {
+        margin-top: 50px;
+        align-items: center;
+    }
+
+    #h1 {
+        font-size: 50px;
+    }
+
+    .projects h6 {
+        font-size: 20px;
+    }
+
+    .projects a {
+        font-size: 14px;
+    }
+
+    .toggle-element {
+        width: 90%;
+        width: 280px;
+        height: 400px;
+        padding: 10px;
+    }
+
+    button {
+        font-size: 12px;
+        margin: 10px;
+    }
+
 }

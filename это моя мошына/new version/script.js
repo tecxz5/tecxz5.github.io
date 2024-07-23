@@ -30,3 +30,12 @@ function toggleContacts() {
     contactLinks.classList.toggle('open');
     toggleButton.classList.toggle('cross');
 }
+
+function toggleMenu() {
+    const menu = document.querySelector('.menu');
+    const menuToggle = document.querySelector('.menu-toggle');
+    const header = document.querySelector('header');
+    menu.classList.toggle('show');
+    menuToggle.classList.toggle('open');
+    header.classList.toggle('menu-open');
+}
