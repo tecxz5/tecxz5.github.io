@@ -277,15 +277,7 @@ contact-container {
     padding: 15px;
     border-radius: 15px;
     transition: opacity 0.5s ease, transform 0.5s ease;
-    opacity: 0;
-    transform: scale(0);
-    display: none;
-}
-
-.toggle-element.show {
-    opacity: 1;
-    transform: scale(1);
-    display: block; /* Show the element when it's active */
+    display: block;
 }
 
 button {
@@ -320,6 +312,16 @@ footer {
 
 html {
     scroll-behavior: smooth;
+}
+
+.toggle-floor{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    min-height: 50vh;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 50px;
 }
 
 @media (max-width: 768px) {

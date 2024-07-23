@@ -7,21 +7,22 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" href="pictures/icon/1213905855511134218.ico" type="image/x-icon">
         <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     </head> 
     <body>
         <header>
             <div class="main">
                 <a href="https://tecxz5.ru">tecxz5</a>
             </div>
-            <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+            <button class="menu-toggle">☰</button>
             <ul class="menu">
                 <li><a href="#about-me">обо мне</a></li>
                 <li><a href="#projects">проекты</a></li>
-                <li><a onclick="toggleContacts()">контакты</a></li>
+                <li><a class="contact-trigger">контакты</a></li>
             </ul>
         </header>
         <div class="contact-container">
-            <div class="toggle-button" onclick="toggleContacts()">+</div>
+            <div class="toggle-button"><span class="material-symbols-outlined">add</span></div>
             <div class="contact-links">
                 <a target="_blank" href="https://github.com/tecxz5" class="contact-link git">GIT</a>
                 <a target="_blank" href="https://vk.com/tecxz5" class="contact-link vk">VK</a>
@@ -49,30 +50,19 @@
                 <div class="pisanina">
                     <p>
                         И еще о своих занятиях:<br>
+                    </p>
                     <ul>
                         <li>Люблю накатывать на "картошки" линукс</li>
                         <li>Иногда могу взять и чутка дописать бота в дискорде (на моем гитхабе есть исходный код)</li>
                         <li>В основном играю в Гарис Мод, Стардью Валлей и какие-нибудь инди-игры, потому что ноут больше не тянет :(</li>
                     </ul>
-                    </p>
                 </div>
             </div>
         </div>
         <div id="projects" class="projects">
             <p id="h1">Проекты</p>
             <div class="toggle-container">
-                <div class="tg-bot toggle-element show">
-                    <h6>Телеграм бот с YaGPT и Speechkit</h6>
-                    <p>Бот выполняет роль собеседника, только ему без разницы что ты отравляешь, текстовые сообщения или голосовые<br>(кружки не принимает)</p>
-                    <a class="clickable" target="_blank" href="https://github.com/tecxz5/tg_plus_gpt/tree/main">Ссылка на код</a>
-                </div>
-                <div class="ds-bot toggle-element">
-                    <h6>Дс бот с казино и переводами</h6>
-                    <p>Бот был написан по просьбе друга за определенную плату и до сих пор развивается, но я забил на развитие кода на гитхабе, а так добавилась улучшенная система переводов и логи</p>
-                    <a class="clickable" target="_blank" href="https://github.com/tecxz5/casino-economy_bot.ds">Ссылка на код</a>
-                </div>
             </div>
-            <button id="toggleProjectsButton">Другой Проект</button>
         </div>
         <footer>
             <p id="copyright">©tecxz5</p>
