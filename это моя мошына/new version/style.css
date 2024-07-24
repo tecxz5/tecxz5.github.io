@@ -146,12 +146,26 @@ contact-container {
     background-color: #0077FF;
 }
 
+.vk svg {
+    height: auto;
+}
+
 .tg {
     background-color: #27a7e7;
 }
 
+.tg svg {
+    width:auto;
+    height: auto;
+}
+
 .ds {
-    background-color: #5662f6;
+    background-color: #5865F2;
+}
+
+.ds svg{
+    width: 35px;
+    height: auto;
 }
 
 .about-me {
