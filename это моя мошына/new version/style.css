@@ -151,7 +151,11 @@ contact-container {
 }
 
 .ds {
-    background-color: #5662f6;
+    background-color: #5865F2;
+}
+
+.ds svg{
+    width: 35px;
 }
 
 .about-me {
