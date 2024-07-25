@@ -142,6 +142,11 @@ contact-container {
     background-color: #000;
 }
 
+.git svg {
+    width:40px;
+    height:auto
+}
+
 .vk {
     background-color: #0077FF;
 }
@@ -164,7 +169,7 @@ contact-container {
 }
 
 .ds svg{
-    width: 35px;
+    width: 37px;
     height: auto;
 }
 
