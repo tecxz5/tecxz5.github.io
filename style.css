@@ -198,21 +198,20 @@ contact-container {
 }
 
 #h6 {
-    font-size: 100px;
-    margin: 80px;
-    margin-left: 40px;
+    margin: 40px;
+    margin-left: 80px;
 }
 
-#h6 a {
-    text-decoration: none;
-    color:#fff
+#h6 img {
+    width: 80%;
+    border-radius: 15px;
 }
 
 .string1 p {
     font-size: 25px;
 }
 
-.string1 img {
+#maxwell-pat {
     border-radius: 15px;
     margin: 0 30px;
 }
@@ -428,8 +427,11 @@ html {
     }
 
     #h6 {
-        font-size: 50px;
-        margin: 40px 20px;
+        margin: 10px;
+    }
+
+    #h6 img {
+        width: 100%;
     }
 
     .projects {
