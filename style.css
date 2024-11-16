@@ -1,7 +1,8 @@
-@font-face {
-    font-family: Dela;
-    src: url(fonts/DelaGothicOne-Regular.ttf);
-   }
+.dela-gothic-one-regular {
+    font-family: "Dela Gothic One", serif;
+    font-weight: 400;
+    font-style: normal;
+  }  
 
 @font-face {
     font-family: Thunder;
@@ -14,7 +15,7 @@
 }
 body   {
     background-color: #232323;
-    font-family: Dela;
+    font-family: Dela Gothic One;
     color: #fff;
     margin: 0;
 }
