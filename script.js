@@ -8,6 +8,11 @@ const projects = {
         name: "Дс бот с казино и переводами",
         description: "Бот был написан по просьбе друга за определенную плату, иногда я вспоминаю про него и добавляю что-нибудь, код на гитхабе",
         url: "https://github.com/tecxz5/casino-economy_bot.ds"
+    },
+    kruzhok: {
+        name: "Конвертер видео в ТГ-Кружок",
+        description: "Бот по сути переписан с другой библиотеки на более мне привычную, и да, я украл код конвертера",
+        url: "https://github.com/tecxz5/circle-video.tg"
     }
 }
 function getProjects(projects){
