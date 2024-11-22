@@ -1,0 +1,63 @@
+.dela-gothic-one-regular {
+    font-family: "Dela Gothic One", serif;
+    font-weight: 400;
+    font-style: normal;
+  }  
+
+@font-face {
+    font-family: Thunder;
+    src: url(fonts/Thunder-ExtraBoldLC.ttf);
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #f1dbbd #232323
+}
+
+body {
+    background: rgba(35, 35, 35, 1);;
+    font-family: Dela Gothic One
+}
+
+.e4 {
+    border-radius: 15px;
+    background-color: #f1dbbd;
+    color: #000;
+    position: relative;
+    margin: 300px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.error {
+    margin: 0 30px;
+    text-align: justify;
+    font-size: 60px;
+}
+
+.text {
+    margin: 10px 30px;
+    text-align: center;
+    flex-direction: column;
+    }
+
+.text a {
+    color: #fff;
+    text-decoration: none;
+    background-color: #232323;
+    margin-top:5px;
+    border-radius: 50px;
+    padding: 5px;
+}
+
+.text a:hover {
+    color: #0400ff;
+}
+
+@media (max-width: 768px) {
+    .e4 {
+        margin: 200px 50px;
+        flex-direction: column;
+    }
+}
