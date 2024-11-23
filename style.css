@@ -363,7 +363,7 @@ html {
         flex-direction: row;
         background-color: #f1dbbd;
         position: absolute;
-        top: 45px; /* adjust according to your header height */
+        top: 18px; /* adjust according to your header height */
         right: 0;
         left: 0;
         text-align: center;
