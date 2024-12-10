@@ -1,12 +1,11 @@
-.dela-gothic-one-regular {
-    font-family: "Dela Gothic One", serif;
-    font-weight: 400;
-    font-style: normal;
-  }  
+@font-face {
+    font-family: Body;
+    src: url(fonts/Involve-Medium.ttf);
+}
 
 @font-face {
-    font-family: Thunder;
-    src: url(fonts/Thunder-ExtraBoldLC.ttf);
+    font-family: Navbar;
+    src: url(fonts/FeatureMono-Medium.ttf);
 }
 
 * {
@@ -15,7 +14,7 @@
 }
 body   {
     background-color: #232323;
-    font-family: Dela Gothic One;
+    font-family: Body;
     color: #fff;
     margin: 0;
 }
@@ -38,9 +37,9 @@ header {
 }
 
 .main {
-    font-family: Thunder;
-    font-size: 50px;
-    margin: 10px;
+    font-family: Navbar;
+    font-size: 35px;
+    margin-left: 15px;
     text-align: left;
 }
 
@@ -50,7 +49,7 @@ header a {
 }
 
 header a:hover {
-    color: #26252d;
+    color: #3d3c42;
     text-decoration: none
 }
 
@@ -309,7 +308,7 @@ contact-container {
 }
 
 button {
-    font-family: Dela Gothic One;
+    font-family: Body;
     background-color: #f1dbbd;
     color: #000;
     border-radius: 50px;
@@ -373,7 +372,7 @@ html {
         flex-direction: row;
         background-color: #f1dbbd;
         position: absolute;
-        top: 18px; /* adjust according to your header height */
+        top: 18px;
         right: 0;
         left: 0;
         text-align: center;
