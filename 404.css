@@ -1,28 +1,23 @@
-.dela-gothic-one-regular {
-    font-family: "Dela Gothic One", serif;
-    font-weight: 400;
-    font-style: normal;
-  }  
-
 @font-face {
-    font-family: Thunder;
-    src: url(fonts/Thunder-ExtraBoldLC.ttf);
+    font-family: Body;
+    src: url(fonts/Involve-Medium.ttf);
 }
 
-* {
-    scrollbar-width: thin;
-    scrollbar-color: #f1dbbd #232323
+@font-face {
+    font-family: Navbar;
+    src: url(fonts/FeatureMono-Medium.ttf);
 }
 
 body {
     background: rgba(35, 35, 35, 1);;
-    font-family: Dela Gothic One
+    font-family: Body
 }
 
 .e4 {
     border-radius: 15px;
     background-color: #f1dbbd;
     color: #000;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
     position: relative;
     margin: 300px;
     display: flex;
@@ -31,9 +26,10 @@ body {
 }
 
 .error {
-    margin: -7px 30px 0px;
+    margin: 10px 30px;
     text-align: justify;
     font-size: 60px;
+    font-family: Navbar;
 }
 
 .text {
@@ -63,5 +59,6 @@ body {
     .e4 {
         margin: 200px 50px;
         flex-direction: column;
+        padding-bottom: 15px;
     }
 }
