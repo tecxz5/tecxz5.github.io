@@ -78,10 +78,6 @@ header a:hover {
     transition: transform 0.3s;
 }
 
-.menu-toggle span {
-    margin-bottom: -2px;
-}
-
 contact-container {
     position: relative;
     display: flex;
