@@ -78,6 +78,10 @@ header a:hover {
     transition: transform 0.3s;
 }
 
+.menu-toggle span {
+    margin-bottom: -2px;
+}
+
 contact-container {
     position: relative;
     display: flex;
@@ -333,14 +337,6 @@ footer {
     align-items: center;
 }
 
-#copyright {
-    text-align: left;
-}
-
-#made-by {
-    text-align: right;
-}
-
 footer a {
     color: #fff;
     text-decoration: none;
@@ -348,6 +344,19 @@ footer a {
 
 footer a:hover {
     color:#0077FF
+}
+
+
+#copyright {
+    text-align: left;
+}
+
+#copyright span {
+    font-family: Navbar;
+}
+
+#made-by {
+    text-align: right;
 }
 
 html {
