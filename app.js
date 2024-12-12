@@ -12,24 +12,27 @@ app.use((req, res, next) => {
     const filePath = path.join(__dirname, 'site', `${req.path}.html`);
 
     if (fs.existsSync(filePath)) {
-        res.sendFile(filePath); // Если файл существует, отправляем его
+        res.sendFile(filePath);
     } else {
-        next(); // Если файл не найден, передаем обработку следующему мидлвару
+        next();
     }
 });
 
-// Стартовый маршрут (например, для главной страницы)
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'site', 'index.html'));
 });
 
-// Обработка 404 - если не нашли страницу
 app.use((req, res) => {
-    res.status(404).send('Page not found');
+  const errorFilePath = path.join(__dirname, 'site', '404', '404.html');
+
+  if (fs.existsSync(errorFilePath)) {
+      res.status(404).sendFile(errorFilePath);
+  } else {
+      res.status(404).send('Page not found');
+  }
 });
 
 
-// Запуск сервера
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
