@@ -267,7 +267,7 @@ contact-container {
     flex-direction: column;
     text-align: center;
     align-items: center;
-    margin-top: 100px;
+    margin-top: 40px;
 }
 
 .projects a {
@@ -280,11 +280,12 @@ contact-container {
     position: absolute;
     bottom: 15px;
     left: 50%;
-    transform: translateX(-50%);    
+    transform: translateX(-50%);
+    transition: box-shadow 0.5s ease;
 }
 
 .projects a:hover {
-    color: #0078d7;
+    box-shadow: 0 0 0 5px #fff;
 }
 
 .clickable {
