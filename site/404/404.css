@@ -1,0 +1,64 @@
+@font-face {
+    font-family: Body;
+    src: url(../fonts/Involve-Medium.ttf);
+}
+
+@font-face {
+    font-family: Navbar;
+    src: url(../fonts/FeatureMono-Medium.ttf);
+}
+
+body {
+    background: rgba(35, 35, 35, 1);;
+    font-family: Body
+}
+
+.e4 {
+    border-radius: 15px;
+    background-color: #f1dbbd;
+    color: #000;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    position: relative;
+    margin: 300px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.error {
+    margin: 10px 30px;
+    text-align: justify;
+    font-size: 60px;
+    font-family: Navbar;
+}
+
+.text {
+    margin: 10px 30px;
+    text-align: center;
+    flex-direction: column;
+    }
+
+.text p {
+    margin-top: -5px;
+}
+
+.text a {
+    color: #fff;
+    text-decoration: none;
+    background-color: #232323;
+    margin-top:5px;
+    border-radius: 50px;
+    padding: 7px;
+}
+
+.text a:hover {
+    color: #0078d7;
+}
+
+@media (max-width: 768px) {
+    .e4 {
+        margin: 200px 50px;
+        flex-direction: column;
+        padding-bottom: 15px;
+    }
+}
