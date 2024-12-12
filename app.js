@@ -7,13 +7,22 @@ const port = 3000;
 
 app.use(express.static(path.join(__dirname, 'site')));
 
-// Мидлвар для динамической загрузки HTML страниц
 app.use((req, res, next) => {
-    const filePath = path.join(__dirname, 'site', `${req.path}.html`);
-
+    // Если путь заканчивается на '/', добавляем 'index.html'
+    let filePath = path.join(__dirname, `${req.path}.html`);
+    
     if (fs.existsSync(filePath)) {
-        res.sendFile(filePath);
+        // Если файл существует, отправляем его
+        return res.sendFile(filePath);
     } else {
+        // Если файл не найден, пробуем добавить 'index.html' по умолчанию
+        filePath = path.join(__dirname, `${req.path}/index.html`);
+        
+        if (fs.existsSync(filePath)) {
+            return res.sendFile(filePath); // Отправляем индексный файл
+        }
+
+        // Если и его нет, передаем обработку следующему мидлвару
         next();
     }
 });
