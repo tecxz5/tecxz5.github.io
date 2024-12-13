@@ -168,13 +168,12 @@ contact-container {
     height: auto;
 }
 
-.ds {
-    background-color: #5865F2;
+.link {
+    background-color: #000000;
 }
 
-.ds svg{
-    width: 37px;
-    height: auto;
+.link span {
+    font-size: 40px;
 }
 
 .about-me {

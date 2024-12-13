@@ -1,0 +1,20 @@
+@font-face {
+    font-family: Body;
+    src: url(../fonts/Involve-Medium.ttf);
+}
+
+@font-face {
+    font-family: Navbar;
+    src: url(../fonts/FeatureMono-Medium.ttf);
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #f1dbbd #232323;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background: rgba(35, 35, 35, 1);;
+    font-family: Body
+}
