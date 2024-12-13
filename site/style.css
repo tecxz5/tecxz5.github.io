@@ -142,6 +142,11 @@ contact-container {
     text-decoration: none;
     color: white;
     cursor: pointer;
+    transition: box-shadow 0.5s ease;
+}
+
+.contact-link:hover {
+    box-shadow: 0 0 0 5px #fff;
 }
 
 .link {
