@@ -180,10 +180,6 @@ footer {
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    left: 0;
 }
 
 footer a {
@@ -255,9 +251,5 @@ footer span {
     
     .tap {
         margin: 25px;
-    }
-
-    footer {
-        position: relative;
     }
 }
