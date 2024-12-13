@@ -201,3 +201,56 @@ footer span {
 #made-by {
     text-align: right;
 }
+
+@media (max-width: 768px) {
+
+    * {
+        padding-inline-start: 0;
+    }
+
+    body {
+        flex-grow: 1;
+    }
+
+    header {
+        flex-direction: row;
+        font-size: 20px;
+        margin: 20px;
+    }
+
+    .main {
+        background-size: 91%;
+    }
+
+    .avatar {
+        margin-left: -55px;
+        margin-top: -35px;
+        margin-bottom: -35px;
+    }
+
+    .text {
+        margin-left: -10px;
+        justify-content: center;
+    }
+
+    .mention {
+        margin-left: 25px
+    }
+
+    .tap-tap {
+        flex-direction: column;
+    }
+
+    .floor {
+        margin: auto;
+        margin-top: -20px;
+    }
+    
+    .tap {
+        margin: 25px;
+    }
+
+    footer {
+        position: relative;
+    }
+}
