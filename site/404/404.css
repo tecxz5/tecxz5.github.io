@@ -8,6 +8,12 @@
     src: url(../fonts/FeatureMono-Medium.ttf);
 }
 
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #f1dbbd #232323;
+    -webkit-tap-highlight-color: transparent;
+}
+
 body {
     background: rgba(35, 35, 35, 1);;
     font-family: Body
@@ -49,10 +55,11 @@ body {
     margin-top:5px;
     border-radius: 50px;
     padding: 7px;
+    transition: box-shadow 0.5s ease;
 }
 
 .text a:hover {
-    color: #0078d7;
+    box-shadow: 0 0 0 5px #fff;
 }
 
 @media (max-width: 768px) {
