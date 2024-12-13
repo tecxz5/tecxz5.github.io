@@ -47,11 +47,12 @@ header {
 
 header a {
     color:#000;
+    transition: color 0.3s ease;
     text-decoration: none;
 }
 
 header a:hover {
-    color: #3d3c42;
+    color: #54545a;
     text-decoration: none
 }
 
@@ -88,6 +89,7 @@ contact-container {
 
 .toggle-button {
     background-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(5px);
     border-radius: 50%;
     width: 50px;
     height: 50px;
@@ -142,6 +144,15 @@ contact-container {
     cursor: pointer;
 }
 
+.link {
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.link span {
+    font-size: 40px;
+}
+
 .git {
     background-color: #000;
 }
@@ -151,14 +162,6 @@ contact-container {
     height:auto
 }
 
-.vk {
-    background-color: #0077FF;
-}
-
-.vk svg {
-    height: auto;
-}
-
 .tg {
     background-color: #27a7e7;
 }
@@ -166,14 +169,6 @@ contact-container {
 .tg svg {
     width:auto;
     height: auto;
-}
-
-.link {
-    background-color: #000000;
-}
-
-.link span {
-    font-size: 40px;
 }
 
 .about-me {
@@ -337,6 +332,7 @@ footer {
 
 footer a {
     color: #fff;
+    transition: color 0.3s ease;
     text-decoration: none;
 }
 

@@ -8,6 +8,10 @@
     src: url(../fonts/FeatureMono-Medium.ttf);
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 * {
     scrollbar-width: thin;
     scrollbar-color: #f1dbbd #232323;
@@ -15,6 +19,185 @@
 }
 
 body {
+    margin: 0;
+    color: #fff;
     background: rgba(35, 35, 35, 1);;
     font-family: Body
+}
+
+header {
+    background-color: #f1dbbd;
+    border-radius: 15px;
+    justify-content: space-between;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    align-items: center;
+    display: flex;
+    color: #000;
+    margin: 20px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    z-index: 10;
+}
+
+header a {
+    color:#000;
+    transition: color 0.3s ease;
+    text-decoration: none;
+}
+
+header a:hover {
+    color: #54545a;
+    text-decoration: none
+}
+
+.home {
+    font-family: Navbar;
+    font-size: 35px;
+    margin-left: 15px;
+    text-align: left;
+}
+
+.main {
+    margin-top: 100px;
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    align-items: center;
+    background-image: url(https://raw.githubusercontent.com/tecxz5/tecxz5/refs/heads/main/0000-0359.gif);
+    background-size: 58%;
+    background-position: center;
+}
+
+.avatar img {
+    margin-left: 60px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    border-radius: 50%;
+    width: 50%;
+}
+
+.text {
+    margin-left: -30px;
+}
+
+.name {
+    font-family: Navbar;
+    font-size: 100px;
+}
+
+.mention {
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: -40px;
+    margin-left: 20px;
+}
+
+.mention span {
+    font-family: Navbar;
+}
+
+.links{
+    margin-top: 40px;
+}
+
+#h1 {
+    font-size: 60px;
+    display: flex;
+    justify-content: center;
+}
+
+.tap-tap {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.floor {
+    flex-direction: column;
+}
+
+.tap {
+    padding: 20px;
+    border-radius: 15px;
+    width: 300px;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 30px;
+    text-decoration: none;
+    color: white;
+    font-family: Navbar;
+    cursor: pointer;
+    margin: 30px;
+}
+
+.git {
+    background-color: #000;
+}
+
+.git svg {
+    height: 60px;
+}
+
+.tg {
+    background-color: #27a7e7;
+}
+
+.tg svg {
+    height: 80px;
+}
+
+.ds {
+    background-color: #5865F2;
+}
+
+.ds svg {
+    height: 50px;
+}
+
+.vk {
+    background-color: #0077FF;
+}
+
+.vk svg {
+    margin-left: -15px;
+}
+
+
+footer {
+    background-color: #000;
+    margin: 0;
+    margin-top: 60px;
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+
+footer a {
+    color: #fff;
+    text-decoration: none;
+}
+
+footer a:hover {
+    color:#0077FF
+}
+
+footer span {
+    font-family: Navbar;
+}
+
+#copyright {
+    text-align: left;
+}
+
+#made-by {
+    text-align: right;
 }
