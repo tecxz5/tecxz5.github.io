@@ -225,6 +225,7 @@ footer span {
     }
 
     .main {
+        justify-content: space-between;
         background-size: 91%;
     }
 
@@ -235,8 +236,7 @@ footer span {
     }
 
     .text {
-        margin-left: -10px;
-        justify-content: center;
+        margin-right: 5px;
     }
 
     .mention {
