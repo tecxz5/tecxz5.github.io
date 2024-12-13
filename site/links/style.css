@@ -131,6 +131,11 @@ header a:hover {
     font-family: Navbar;
     cursor: pointer;
     margin: 30px;
+    transition: box-shadow 0.5s ease;
+}
+
+.tap:hover {
+    box-shadow: 0 0 0 5px #fff;
 }
 
 .git {
@@ -216,6 +221,7 @@ footer span {
         flex-direction: row;
         font-size: 20px;
         margin: 20px;
+        padding: 5px;
     }
 
     .main {
@@ -234,7 +240,7 @@ footer span {
     }
 
     .mention {
-        margin-left: 25px
+        display: none;
     }
 
     .tap-tap {
