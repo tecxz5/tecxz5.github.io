@@ -38,7 +38,7 @@ header {
     z-index: 10;
 }
 
-.main {
+.home {
     font-family: Navbar;
     font-size: 35px;
     margin-left: 15px;
@@ -419,7 +419,7 @@ html {
         border-radius: 15px 15px 0 0;
     }
 
-    .main {
+    .home {
         font-size: 30px;
     }
 
