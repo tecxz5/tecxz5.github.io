@@ -139,7 +139,7 @@ header a:hover {
 }
 
 .git svg {
-    height: 60px;
+    width: 60px;
 }
 
 .tg {
@@ -147,7 +147,7 @@ header a:hover {
 }
 
 .tg svg {
-    height: 80px;
+    width: 60px;
 }
 
 .ds {
@@ -155,7 +155,7 @@ header a:hover {
 }
 
 .ds svg {
-    height: 50px;
+    width: 60px;
 }
 
 .vk {
@@ -163,7 +163,7 @@ header a:hover {
 }
 
 .vk svg {
-    margin-left: -15px;
+    width: 60px;
 }
 
 
