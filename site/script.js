@@ -15,6 +15,7 @@ const projects = {
         url: "https://github.com/tecxz5/circle-video.tg"
     }
 }
+
 function getProjects(projects){
     const array = [];
     const size = 3;
@@ -37,17 +38,8 @@ function openContacts(){
     toggleButton.classList.toggle('cross');
 }
 
-document.querySelector(".contact-trigger").addEventListener('click',  openContacts)
+document.querySelector(".contact-links").addEventListener('click',  openContacts)
 document.querySelector(".toggle-button").addEventListener('click',  openContacts)
-
-document.querySelector(".menu-toggle").addEventListener("click", ()=> {
-    const menu = document.querySelector('.menu');
-    const menuToggle = document.querySelector('.menu-toggle');
-    const header = document.querySelector('header');
-    menu.classList.toggle('show');
-    menuToggle.classList.toggle('open');
-    header.classList.toggle('menu-open');
-})
 
 const projectArray = getProjects(projects)
 projectArray.forEach(array=>{

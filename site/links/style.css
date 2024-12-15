@@ -28,7 +28,7 @@ body {
 header {
     background-color: #f1dbbd;
     border-radius: 15px;
-    justify-content: space-between;
+    justify-content: center;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
     align-items: center;
     display: flex;
@@ -36,9 +36,16 @@ header {
     margin: 20px;
     position: fixed;
     top: 0;
-    right: 0;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 10;
+}
+
+.home {
+    font-family: Navbar;
+    font-size: 35px;
+    margin: 0 15px;
+    text-align: center;
 }
 
 header a {
@@ -50,24 +57,6 @@ header a {
 header a:hover {
     color: #54545a;
     text-decoration: none
-}
-
-.home {
-    font-family: Navbar;
-    font-size: 35px;
-    margin-left: 15px;
-    text-align: left;
-}
-
-header button {
-    display: none;
-    opacity: 0;
-    font-size: 30px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin: 10px;
-    transition: transform 0.3s;
 }
 
 .main {
@@ -210,17 +199,6 @@ footer span {
     text-align: right;
 }
 
-button {
-    font-family: Body;
-    background-color: #f1dbbd;
-    color: #000;
-    border-radius: 50px;
-    max-width: fit-content;
-    margin: 20px;
-    font-size: 15px;
-    cursor: pointer;
-}
-
 @media (max-width: 768px) {
 
     * {
@@ -237,12 +215,8 @@ button {
         margin: 20px;
     }
 
-    header button {
-        display: block;
-    }
-
     .home {
-        font-size: 30px;
+        padding: 10px 0
     }
 
     .avatar {

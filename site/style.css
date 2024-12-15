@@ -24,7 +24,7 @@ body   {
 header {
     background-color: #f1dbbd;
     border-radius: 15px;
-    justify-content: space-between;
+    justify-content: center;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
     align-items: center;
     display: flex;
@@ -32,17 +32,16 @@ header {
     margin: 20px;
     position: fixed;
     top: 0;
-    right: 0;
-    left: 0;
-    transition: border-radius 0.3s;
+    left: 50%;
+    transform: translateX(-50%);
     z-index: 10;
 }
 
 .home {
     font-family: Navbar;
     font-size: 35px;
-    margin-left: 15px;
-    text-align: left;
+    margin: 0 15px;
+    text-align: center;
 }
 
 header a {
@@ -54,31 +53,6 @@ header a {
 header a:hover {
     color: #54545a;
     text-decoration: none
-}
-
-.menu {
-    display: flex;
-    text-align: right;
-    font-size: 20px;
-}
-
-.menu li {
-    list-style-type: none;
-    display: flex;
-    margin: -10px 40px;
-    text-decoration: none;
-    user-select: none;
-    cursor: pointer;
-}
-
-.menu-toggle {
-    display: none;
-    font-size: 30px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    margin: 10px;
-    transition: transform 0.3s;
 }
 
 contact-container {
@@ -313,17 +287,6 @@ contact-container {
     position: relative;
 }
 
-button {
-    font-family: Body;
-    background-color: #f1dbbd;
-    color: #000;
-    border-radius: 50px;
-    max-width: fit-content;
-    margin: 20px;
-    font-size: 15px;
-    cursor: pointer;
-}
-
 footer {
     background-color: #000;
     margin: 0;
@@ -388,39 +351,8 @@ html {
         margin: 20px;
     }
 
-    .menu {
-        display: none;
-        flex-direction: row;
-        background-color: #f1dbbd;
-        position: absolute;
-        top: 18px;
-        right: 0;
-        left: 0;
-        text-align: center;
-        border-radius: 0 0 15px 15px;
-        z-index: -1;
-    }
-
-    .menu.show {
-        display: flex;
-    }
-
-    .menu li {
-        margin: 8px;
-        margin-left: 15px;
-        font-size: 17px;
-    }
-
-    .menu-toggle {
-        display: block;
-    }
-
-    header.menu-open {
-        border-radius: 15px 15px 0 0;
-    }
-
     .home {
-        font-size: 30px;
+        padding: 10px 0
     }
 
     .about-me {
