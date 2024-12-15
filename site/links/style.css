@@ -18,6 +18,11 @@ html {
     -webkit-tap-highlight-color: transparent;
 }
 
+::selection {
+    color: #000;
+    background-color: #f1dbbd;
+}
+
 body {
     margin: 0;
     color: #fff;

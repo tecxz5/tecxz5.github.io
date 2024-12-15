@@ -14,6 +14,11 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+::selection {
+    color: #000;
+    background-color: #f1dbbd;
+}
+
 body   {
     background-color: #232323;
     font-family: Body;
