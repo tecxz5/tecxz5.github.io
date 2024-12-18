@@ -3,6 +3,8 @@
     "cors": "^2.8.5",
     "express": "^4.21.2",
     "http": "^0.0.1-security",
+    "http-server": "^14.1.1",
+    "three": "^0.171.0",
     "three.js": "^0.77.0"
   }
 }
