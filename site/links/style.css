@@ -42,14 +42,14 @@ header {
     position: fixed;
     top: 0;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translate(-60%);
     z-index: 10;
 }
 
 .home {
     font-family: Navbar;
     font-size: 35px;
-    margin: 0 15px;
+    padding: 0 15px;
     text-align: center;
 }
 
@@ -221,7 +221,7 @@ footer span {
     }
 
     .home {
-        padding: 10px 0
+        padding: 10px 5px;
     }
 
     .avatar {
