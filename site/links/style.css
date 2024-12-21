@@ -111,7 +111,6 @@ header a:hover {
     justify-content: center;
     align-items: center;
     font-size: 400px;
-    letter-spacing:-55px;
     text-decoration: none;
     color: #000;
     font-family: Navbar;
@@ -205,6 +204,10 @@ footer span {
         font-size: 20px;
         margin: 20px;
     }
+
+    .home {
+        padding: 10px 5px;
+    }
     
     .info {
         margin-top: 75px;
@@ -226,7 +229,6 @@ footer span {
         height: 130px;
         width: 300px;
         font-size: 150px;
-        letter-spacing: -28px;
         text-align: center;
         align-items: center;
         margin: 25px;
