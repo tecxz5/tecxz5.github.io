@@ -42,7 +42,7 @@ header {
     position: fixed;
     top: 0;
     left: 50%;
-    transform: translate(-65%);
+    transform: translate(-60%);
     z-index: 10;
 }
 
