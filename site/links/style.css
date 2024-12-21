@@ -64,71 +64,56 @@ header a:hover {
     text-decoration: none
 }
 
-.main {
-    margin-top: 100px;
-    display: flex;
-    flex-direction: row;
-    align-content: center;
-    align-items: center;
-    justify-content: center;
-}
-
-.avatar img {
-    border-radius: 50%;
-    width: 80%;
-}
-
-.text {
-    margin-left: -30px;
-}
-
-.name {
-    color: #fff;
-    font-family: Navbar;
-    font-size: 100px;
-}
-
-.mention {
-    color: rgba(255, 255, 255, 0.8);
-    margin-left: 25px;
-    margin-top: -40px;
-}
-
-.mention span {
-    font-family: Navbar;
-}
-
-.links{
-    margin-top: 40px;
-}
-
-#h1 {
-    font-size: 60px;
-    display: flex;
-    justify-content: center;
-}
-
-.tap-tap {
-    display: flex;
-    justify-content: center;
-    flex-direction: row;
+.info {
+    margin: 100px 20px;
 }
 
 .floor {
-    flex-direction: column;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.floor img {
+    border-radius: 15px;
+    margin: 30px;
+}
+
+#h6 {
+    font-family: Navbar;
+    font-size: 300px;
+    margin: -300px 0;
+    margin-right: 10%;
+}
+
+.two img {
+    height: min-content;
+    width:40%;
+}
+
+.three img {
+    width: 25%;
+    margin-right: 10%;
+}
+
+.four img {
+    margin-left: 5%;
 }
 
 .tap {
+    display: none;
     padding: 20px;
     border-radius: 15px;
-    width: 300px;
-    height: 50px;
+    width: 800px;
+    height:400px;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    font-size: 30px;
+    font-size: 400px;
+    letter-spacing:-55px;
     text-decoration: none;
-    color: white;
+    color: #000;
     font-family: Navbar;
     cursor: pointer;
     margin: 30px;
@@ -141,6 +126,7 @@ header a:hover {
 
 .git {
     background-color: #000;
+    color: #fff;
 }
 
 .git svg {
@@ -171,7 +157,6 @@ header a:hover {
     width: 60px;
 }
 
-
 footer {
     background-color: #000;
     margin: 0;
@@ -186,6 +171,7 @@ footer {
 footer a {
     color: #fff;
     text-decoration: none;
+    transition: color 0.3s ease;
 }
 
 footer a:hover {
@@ -219,29 +205,30 @@ footer span {
         font-size: 20px;
         margin: 20px;
     }
-
-    .home {
-        padding: 10px 5px;
-    }
-
-    .avatar {
-        width: 60%;
-    }
-
-    .mention {
-        margin-top: 0;
-    }
-
-    .tap-tap {
-        flex-direction: column;
+    
+    .info {
+        margin-top: 75px;
     }
 
     .floor {
-        margin: auto;
-        margin-top: -20px;
+        justify-content: center;
     }
-    
+
+    .floor img {
+        display: none;
+    }
+
+    #h6 {
+        display: none;
+    }
+
     .tap {
+        height: 130px;
+        width: 300px;
+        font-size: 150px;
+        letter-spacing: -28px;
+        text-align: center;
+        align-items: center;
         margin: 25px;
     }
 }
