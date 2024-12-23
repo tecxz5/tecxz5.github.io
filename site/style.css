@@ -433,6 +433,10 @@ html {
         flex-grow: 1;
     }
 
+    loading {
+        font-size: 2rem;
+    }
+
     header {
         flex-direction: row;
         font-size: 20px;
