@@ -30,6 +30,10 @@ body {
     font-family: Body;
 }
 
+body.no-scroll {
+    overflow: hidden;
+}
+
 loading {
     display: flex;
     justify-content: center;
@@ -43,6 +47,7 @@ loading {
     font-family: Navbar;
     z-index: 1000;
     transition: opacity 1s ease-out;
+    user-select: none;
 }
 
 loading.hidden {

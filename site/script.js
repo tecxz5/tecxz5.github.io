@@ -53,8 +53,12 @@ projectArray.forEach(array=>{
 
 window.addEventListener('load', () => {
     const loadingElement = document.querySelector('loading');
-    loadingElement.style.opacity = '0';
+    document.body.classList.add('no-scroll'); // Блокируем прокрутку
     setTimeout(() => {
         loadingElement.classList.add('hidden');
-    }, 1000);
+        setTimeout(() => {
+            loadingElement.style.display = 'none';
+            document.body.classList.remove('no-scroll');
+        }, 1000);
+    }, 2000);
 });

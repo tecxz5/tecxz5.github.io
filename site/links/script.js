@@ -1,7 +1,11 @@
 window.addEventListener('load', () => {
     const loadingElement = document.querySelector('loading');
-    loadingElement.classList.add('hidden');
+    document.body.classList.add('no-scroll'); // Блокируем прокрутку
     setTimeout(() => {
-        loadingElement.style.display = 'none';
-    }, 1000); // Время должно совпадать с длительностью анимации
+        loadingElement.classList.add('hidden');
+        setTimeout(() => {
+            loadingElement.style.display = 'none';
+            document.body.classList.remove('no-scroll');
+        }, 1000);
+    }, 2000);
 });

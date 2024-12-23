@@ -26,6 +26,10 @@ body   {
     margin: 0;
 }
 
+body.no-scroll {
+    overflow: hidden;
+}
+
 loading {
     display: flex;
     justify-content: center;
@@ -39,6 +43,12 @@ loading {
     font-family: Navbar;
     z-index: 1000;
     transition: opacity 1s ease-out;
+    user-select: none;
+}
+
+loading.hidden {
+    opacity: 0;
+    pointer-events: none;
 }
 
 loading span {
@@ -78,12 +88,6 @@ loading span:nth-child(5) {
 
 loading span:nth-child(6) {
     animation-delay: 0.5s;
-}
-
-.hidden {
-    display: none;
-    opacity: 0;
-    transition: opacity 1s ease-out;
 }
 
 header {
