@@ -26,6 +26,66 @@ body   {
     margin: 0;
 }
 
+loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #f1dbbd;
+    font-family: Navbar;
+    z-index: 1000;
+    transition: opacity 1s ease-out;
+}
+
+loading span {
+    font-size: 6rem;
+    color: #000;
+    animation: loadingAnimation 1s infinite;
+}
+
+@keyframes loadingAnimation {
+    0%, 100% {
+        color: #000;
+    }
+    50% {
+        color: #54545a;
+    }
+}
+
+loading span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+loading span:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+loading span:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+loading span:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+loading span:nth-child(5) {
+    animation-delay: 0.4s;
+}
+
+loading span:nth-child(6) {
+    animation-delay: 0.5s;
+}
+
+.hidden {
+    display: none;
+    opacity: 0;
+    transition: opacity 1s ease-out;
+}
+
 header {
     background-color: #f1dbbd;
     border-radius: 15px;

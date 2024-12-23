@@ -50,3 +50,11 @@ projectArray.forEach(array=>{
     })
     document.querySelector(".toggle-container").appendChild(floor)
 })
+
+window.addEventListener('load', () => {
+    const loadingElement = document.querySelector('loading');
+    loadingElement.style.opacity = '0';
+    setTimeout(() => {
+        loadingElement.classList.add('hidden');
+    }, 1000);
+});
