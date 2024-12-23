@@ -433,7 +433,7 @@ html {
         flex-grow: 1;
     }
 
-    loading {
+    loading span {
         font-size: 2rem;
     }
 
