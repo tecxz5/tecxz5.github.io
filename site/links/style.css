@@ -181,7 +181,7 @@ header a:hover {
     font-family: Navbar;
     cursor: pointer;
     margin: 30px;
-    transition: box-shadow 0.5s ease;
+    transition: box-shadow 0.2s ease;
 }
 
 .tap:hover {
@@ -235,7 +235,7 @@ footer {
 footer a {
     color: #fff;
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: color 0.2s ease;
 }
 
 footer a:hover {

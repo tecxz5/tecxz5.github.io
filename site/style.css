@@ -120,7 +120,7 @@ header ::selection {
 
 header a {
     color:#000;
-    transition: color 0.3s ease;
+    transition: color 0.2s ease;
     text-decoration: none;
 }
 
@@ -190,7 +190,7 @@ contact-container {
     text-decoration: none;
     color: white;
     cursor: pointer;
-    transition: box-shadow 0.5s ease;
+    transition: box-shadow 0.2s ease;
 }
 
 .contact-link:hover {
@@ -331,7 +331,7 @@ contact-container {
     background-color: #000;
 }
 
-.projects a {
+.toggle-element a {
     color: #fff;
     text-decoration: none;
     background-color: #232323;
@@ -342,14 +342,14 @@ contact-container {
     bottom: 15px;
     left: 50%;
     transform: translateX(-50%);
-    transition: box-shadow 0.5s ease;
+    transition: box-shadow 0.2s ease;
 }
 
-.projects a:hover {
+.toggle-element a:hover {
     box-shadow: 0 0 0 5px #fff;
 }
 
-.projects a::selection {
+.toggle-element a::selection {
     color: #000;
     background-color: #f1dbbd;
 }
@@ -358,7 +358,8 @@ contact-container {
     cursor: pointer;
 }
 
-.projects h6 {
+.toggle-element h6 {
+    margin: 1rem;
     font-size: 25px;
 }
 
@@ -375,13 +376,22 @@ contact-container {
     margin: 20px;
     background-color: #f1dbbd;
     color: #000;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
     width: 400px;
-    height: 350px;
+    height: 280px;
     padding: 15px;
     border-radius: 15px;
     transition: opacity 0.5s ease, transform 0.5s ease;
     display: block;
     position: relative;
+}
+
+.other-things {
+    justify-content: space-around;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
 }
 
 footer {
@@ -520,7 +530,7 @@ html {
     .toggle-element {
         width: 90%;
         width: 280px;
-        height: 400px;
+        min-height: 300px;
         padding: 10px;
     }
 
