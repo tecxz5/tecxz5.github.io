@@ -229,6 +229,7 @@ footer a:hover {
 footer img {
     width: 20%;
     margin-bottom: -5px;
+    margin-left: 4px;
 }
 
 #copyright {
