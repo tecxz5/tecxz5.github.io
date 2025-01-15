@@ -415,13 +415,13 @@ footer a:hover {
     color:#0077FF
 }
 
+footer img {
+    width: 20%;
+    margin-bottom: -5px;
+}
 
 #copyright {
     text-align: left;
-}
-
-#copyright span {
-    font-family: Navbar;
 }
 
 #made-by {

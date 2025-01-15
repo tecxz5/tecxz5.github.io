@@ -193,32 +193,16 @@ header a:hover {
     color: #fff;
 }
 
-.git svg {
-    width: 60px;
-}
-
 .tg {
     background-color: #27a7e7;
-}
-
-.tg svg {
-    width: 60px;
 }
 
 .ds {
     background-color: #5865F2;
 }
 
-.ds svg {
-    width: 60px;
-}
-
 .vk {
     background-color: #0077FF;
-}
-
-.vk svg {
-    width: 60px;
 }
 
 footer {
@@ -242,8 +226,9 @@ footer a:hover {
     color:#0077FF
 }
 
-footer span {
-    font-family: Navbar;
+footer img {
+    width: 20%;
+    margin-bottom: -5px;
 }
 
 #copyright {
