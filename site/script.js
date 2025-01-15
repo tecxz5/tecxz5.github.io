@@ -53,7 +53,7 @@ projectArray.forEach(array=>{
 
 window.addEventListener('load', () => {
     const loadingElement = document.querySelector('loading');
-    document.body.classList.add('no-scroll'); // Блокируем прокрутку
+    document.body.classList.add('no-scroll');
     setTimeout(() => {
         loadingElement.classList.add('hidden');
         setTimeout(() => {
@@ -61,4 +61,20 @@ window.addEventListener('load', () => {
             document.body.classList.remove('no-scroll');
         }, 1000);
     }, 2000);
+});
+
+window.addEventListener('scroll', () => {
+    const contactContainer = document.querySelector('.contact-container');
+    const footer = document.querySelector('footer');
+
+    if (contactContainer && footer) {
+        const footerRect = footer.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+
+        if (footerRect.top <= windowHeight) {
+            contactContainer.classList.add('hidden');
+        } else {
+            contactContainer.classList.remove('hidden');
+        }
+    }
 });

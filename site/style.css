@@ -129,10 +129,16 @@ header a:hover {
     text-decoration: none
 }
 
-contact-container {
+.contact-container {
     position: relative;
     display: flex;
     align-items: center;
+    transition: opacity 0.3s ease;
+    opacity: 1;
+}
+
+.contact-container.hidden {
+    opacity: 0;
 }
 
 .toggle-button {
