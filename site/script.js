@@ -38,8 +38,8 @@ function openContacts(){
     toggleButton.classList.toggle('cross');
 }
 
-document.querySelector(".contact-links").addEventListener('click',  openContacts)
-document.querySelector(".toggle-button").addEventListener('click',  openContacts)
+document.querySelector(".contact-links").addEventListener('click', openContacts);
+document.querySelector(".toggle-button").addEventListener('click', openContacts);
 
 const projectArray = getProjects(projects)
 projectArray.forEach(array=>{
@@ -71,7 +71,7 @@ window.addEventListener('scroll', () => {
         const footerRect = footer.getBoundingClientRect();
         const windowHeight = window.innerHeight;
 
-        if (footerRect.top <= windowHeight) {
+        if (footerRect.top <= windowHeight - footerRect.height / 2) {
             contactContainer.classList.add('hidden');
         } else {
             contactContainer.classList.remove('hidden');

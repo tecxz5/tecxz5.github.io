@@ -170,7 +170,7 @@ header a:hover {
     gap: 10px;
     margin-left: 20px;
     opacity: 0;
-    transform: scale(0);
+    transform: scale(0) translate(-50%, -50%);
     transition: transform 0.3s ease, opacity 0.3s ease;
     z-index: 10;
     position: fixed;
@@ -182,7 +182,7 @@ header a:hover {
 
 .contact-links.open {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1) translate(0, 0);
 }
 
 .contact-link {
@@ -471,6 +471,11 @@ html {
 
     .toggle-button {
         margin: 30px;
+    }
+
+    .contact-links {
+        margin: 30px;
+        margin-left: 90px;
     }
 
     .home {
