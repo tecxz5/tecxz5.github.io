@@ -392,14 +392,6 @@ header a:hover {
     position: relative;
 }
 
-.other-things {
-    justify-content: space-around;
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    align-items: center;
-}
-
 footer {
     background-color: #000;
     margin: 0;
