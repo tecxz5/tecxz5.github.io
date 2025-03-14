@@ -16,7 +16,8 @@
 }
 
 body {
-    background-color: #000000;
+    background: linear-gradient(180deg, #000000 0%, #1c144a 100%);
+    background-attachment: fixed;
     font-family: Base;
     font-size: 48px;
     color: #ffffff;
@@ -34,10 +35,12 @@ body a:hover {
 }
 
 .header {
-    background-color: rgda(0, 0, 0, 1);
+    background-color: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(5px);
     display: flex;
     justify-content: space-between;
-    margin: 20px 20px;
+    padding: 20px 20px;
+    clip-path: polygon(0 0, 100% 0, 100% 42%, 0% 100%);
 }
 
 .header p {
@@ -54,16 +57,49 @@ body a:hover {
     margin-top: -25px;
 }
 
-.line-container-2 {
+.line-container-1 {
     position: relative;
     height: 50px;
-    margin-bottom: 100px;
+    margin-bottom: 10px;
 }
-.line-2 {
+.line-1 {
     position: absolute;
-    width: 100%;
+    width: 100.2%;
     height: 0;
     border-top: 3px solid #e1ea8f;
     transform: rotate(-4deg);
     transform-origin: left;
+    z-index: 10;
+    overflow: hidden;
 }
+
+main {
+   
+}
+
+.line-container-2 {
+    position: relative;
+    height: 50px;
+    margin-top: 10px;
+    margin-bottom: -30px;
+}
+.line-2 {
+    position: absolute;
+    width: 100.2%;
+    height: 0;
+    border-top: 3px solid #e1ea8f;
+    transform: rotate(-4deg);
+    transform-origin: left;
+    z-index: 10;
+    overflow: hidden;
+}
+
+.footer {
+
+}
+
+.сopyrights {
+    font-size: 20px;
+}
+
+
