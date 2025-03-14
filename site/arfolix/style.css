@@ -17,7 +17,7 @@
 
 body {
     background: linear-gradient(180deg, #000000 0%, #1c144a 100%);
-    background-attachment: fixed;
+    background-attachment:scroll;
     font-family: Base;
     font-size: 48px;
     color: #ffffff;
@@ -32,6 +32,13 @@ body a {
 body a:hover {
     text-decoration: none;
     color: #e1ea8f;
+}
+
+header {
+    position: fixed; /* Закрепляет хедер */
+    top: 0; /* Располагает хедер вверху экрана */
+    width: 100%; /* Задает ширину хедера */
+    z-index: 1000;
 }
 
 .header {
@@ -59,9 +66,9 @@ body a:hover {
 
 .line-container-1 {
     position: relative;
-    height: 50px;
-    margin-bottom: 10px;
+    height: 10px;
 }
+
 .line-1 {
     position: absolute;
     width: 100.2%;
@@ -73,15 +80,53 @@ body a:hover {
     overflow: hidden;
 }
 
-main {
-   
+.info {
+    margin: 20px;
+    margin-top: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.info-string {
+    margin: 20px;
+    display: flex;
+    flex-direction: row;
+    text-align: right;
+}
+
+#info1 {
+    margin-right: 7%;
+}
+
+#info2 {
+    margin-right: 4%;
+}
+
+#info3 {
+    margin-right: 40%;
+    display: flex;
+    flex-direction: column;
+    transform: rotate(4deg);
+}
+
+#info3 p {
+    margin-bottom: 0;
+}
+
+#info3 img {
+    width: 110%;
+    margin-left: 60%;
+}
+
+.embed {
+    min-width: 40%;
+    max-width: 60%;
 }
 
 .line-container-2 {
     position: relative;
-    height: 50px;
-    margin-top: 10px;
-    margin-bottom: -30px;
+    margin-top: 120px;
 }
 .line-2 {
     position: absolute;
@@ -95,7 +140,10 @@ main {
 }
 
 .footer {
-
+    background-color: #000;
+    clip-path: polygon(0 -100%, 100% 0, 100% 100%, 0% 100%);
+    padding: 20px;
+    text-align: center;
 }
 
 .сopyrights {
