@@ -1,0 +1,55 @@
+@font-face {
+    font-family: Base;
+    src: url(../fonts/arfolix/ST-Nizhegorodsky.ttf);
+}
+
+@font-face {
+    font-family: Head;
+    src: url(../fonts/arfolix/signategrotesk-black.ttf);
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #e1ea8f #000000;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none
+}
+
+body {
+    background-color: #000000;
+    font-family: Base;
+    font-size: 48px;
+    color: #ffffff;
+    margin: 0;
+}
+
+body a {
+    text-decoration: none;
+    color: #fff;
+}
+
+body a:hover {
+    text-decoration: none;
+    color: #e1ea8f;
+}
+
+header {
+    background-color: rgda(0, 0, 0, 1);
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 20px;
+}
+
+header p {
+    font-family: Head;
+    color: #ffffff;
+}
+
+.home a {
+    font-size: 128px;
+}
+
+.home p {
+    font-size: 32px;
+    margin-top: -25px;
+}
