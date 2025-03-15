@@ -135,6 +135,10 @@ header p {
     margin-left: 300px;
 }
 
+#t5:hover {
+    color: #0077FF
+}
+
 .embed {
     width: 60%;
 }
