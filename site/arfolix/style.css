@@ -12,7 +12,12 @@
     scrollbar-width: thin;
     scrollbar-color: #e1ea8f #000000;
     -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
     user-select: none;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
@@ -122,16 +127,20 @@ header p {
 
 #info3 p {
     margin-bottom: 0;
-    margin-right: 150px;
+    margin-right: 300px;
 }
 
 #info3 img {
-    width: 300px;
+    width: 450px;
     margin-left: 300px;
 }
 
 .embed {
     width: 60%;
+}
+
+.about {
+    scroll-margin-top: 200px;
 }
 
 .title {
@@ -151,12 +160,61 @@ header p {
     margin: 60px;
 }
 
+.about-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 40px;
+}
+
+.pisanina {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+    width: 100%;
+}
+
+.about-info img {
+    height: 20vw;
+    margin: 30px;
+    display: flex;
+}
+
+.images {
+    display: grid;
+    place-items: center;
+}
+
+.about-string {
+    font-size: 36px;
+}
+
+.about-string p {
+    width: fit-content; /* Добавляем, чтобы параграф занимал только нужную ширину */
+}
+
+.about1 {
+    display: flex;
+    justify-content:flex-end
+}
+
+.about2 {
+    display: flex;
+    justify-content:center
+}
+
+.about3 {
+    display: flex;
+    flex-direction: column;
+    justify-content:flex-start
+}
+
 footer {
     width: 100%;
     display: flex;
     justify-content: space-between;
-    padding: 20px;
     border-top: #000 solid 0px;
+    padding: 0 10px;
     margin-top: 170px;
     background-color: #000;
     transform: translateZ(0);
@@ -182,12 +240,31 @@ footer::after {
     position: absolute;
     bottom: 100%;
     right: 0;
-    width: 30%;
-    height: 50px;
+    width: 40%;
+    height: 70px;
     background-color: #000;
     z-index: -1;
 }
 
 .сopyrights {
     font-size: 20px;
+    margin: 20px;
+    align-content: center;
+}
+
+.social {
+    align-items: center;
+    margin: 40px;
+}
+
+.social a {
+    margin-left: 30px;
+}
+
+#tg:hover {
+    color: #27a7e7;
+}
+
+#inst:hover {
+    color: #e1306c;
 }
