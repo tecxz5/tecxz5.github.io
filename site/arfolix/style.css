@@ -26,6 +26,7 @@ body {
 
 body a {
     text-decoration: none;
+    transition: color 0.3s ease;
     color: #fff;
 }
 
@@ -39,18 +40,29 @@ header {
     top: 0; /* Располагает хедер вверху экрана */
     width: 100%; /* Задает ширину хедера */
     z-index: 1000;
-}
-
-.header {
-    background-color: rgba(0, 0, 0, 0);
-    backdrop-filter: blur(5px);
     display: flex;
     justify-content: space-between;
-    padding: 20px 20px;
-    clip-path: polygon(0 0, 100% 0, 100% 42%, 0% 100%);
+    padding: 20px;
+    transform: translateZ(0);
 }
 
-.header p {
+header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(5px);
+    transform: rotate(-4deg);
+    transform-origin: bottom center;
+    margin-top: -50px;
+    z-index: -1;
+    border-bottom: #e1ea8f 3px solid;
+}
+
+header p {
     font-family: Head;
     color: #ffffff;
 }
@@ -64,25 +76,14 @@ header {
     margin-top: -25px;
 }
 
-.line-container-1 {
-    position: relative;
-    height: 10px;
-}
-
-.line-1 {
-    position: absolute;
-    width: 100.2%;
-    height: 0;
-    border-top: 3px solid #e1ea8f;
-    transform: rotate(-4deg);
-    transform-origin: left;
-    z-index: 10;
-    overflow: hidden;
+.menu {
+    margin-left: 20px;
+    margin-right: 40px;
 }
 
 .info {
     margin: 20px;
-    margin-top: 120px;
+    margin-top: 150px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -96,32 +97,33 @@ header {
 }
 
 #info1 {
-    margin-right: 7%;
+    margin-right: 20px;
 }
 
 #info2 {
-    margin-right: 4%;
+    margin-right: 30px;
 }
 
 #info3 {
-    margin-right: 40%;
+    margin-right: 300px;
     display: flex;
     flex-direction: column;
     transform: rotate(4deg);
+    justify-content: left;
 }
 
 #info3 p {
     margin-bottom: 0;
+    margin-right: 150px;
 }
 
 #info3 img {
-    width: 110%;
-    margin-left: 60%;
+    width: 300px;
+    margin-left: 300px;
 }
 
 .embed {
-    min-width: 40%;
-    max-width: 60%;
+    width: 60%;
 }
 
 .line-container-2 {
@@ -139,15 +141,25 @@ header {
     overflow: hidden;
 }
 
-.footer {
-    background-color: #000;
-    clip-path: polygon(0 -100%, 100% 0, 100% 100%, 0% 100%);
+footer {
     padding: 20px;
     text-align: center;
+}
+
+footer::before {
+    content: '';
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(5px);
+    transform: rotate(-4deg);
+    transform-origin: bottom center;
+    margin-top: -50px;
+    z-index: -1;
+    border-top: #e1ea8f 3px solid;
 }
 
 .сopyrights {
     font-size: 20px;
 }
-
-
