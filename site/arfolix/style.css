@@ -37,9 +37,9 @@ body a:hover {
 }
 
 header {
-    position: fixed; /* Закрепляет хедер */
-    top: 0; /* Располагает хедер вверху экрана */
-    width: 100%; /* Задает ширину хедера */
+    position: fixed;
+    top: 0;
+    width: 100%;
     z-index: 1000;
     display: flex;
     justify-content: space-between;
@@ -60,7 +60,7 @@ header::before {
     transform-origin: bottom center;
     margin-top: -50px;
     z-index: -1;
-    border-bottom: #e1ea8f 3px solid;
+    border-bottom: #e1ea8f 5px solid;
 }
 
 header p {
@@ -95,15 +95,12 @@ header p {
     display: flex;
     flex-direction: row;
     text-align: right;
-}
-
-#info1 {
-    margin-right: -20px
+    justify-content:center
 }
 
 #typing-text::after {
     content: '|';
-    animation: blink 1s infinite;
+    animation: blink 0.5s infinite;
 }
 
 @keyframes blink {
@@ -137,6 +134,23 @@ header p {
     width: 60%;
 }
 
+.title {
+    width: 100%;
+    height: 130px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.line {
+    height: 5px;
+    background-color: #e1ea8f;
+    flex-grow: 1;
+    margin: 60px;
+}
+
 footer {
     width: 100%;
     display: flex;
@@ -160,7 +174,7 @@ footer::before {
     transform-origin: bottom center;
     margin-top: -75px;
     z-index: -1;
-    border-top: #e1ea8f 3px solid;
+    border-top: #e1ea8f 5px solid;
 }
 
 footer::after {
