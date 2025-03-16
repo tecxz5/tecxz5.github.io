@@ -382,7 +382,7 @@ footer::after {
     }
 
     .about {
-        scroll-margin: 25px;
+        scroll-margin: 75px;
         overflow: hidden;
     }
 
