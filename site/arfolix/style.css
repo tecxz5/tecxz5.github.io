@@ -306,3 +306,141 @@ footer::after {
 #inst:hover {
     color: #e1306c;
 }
+
+@media (max-width: 768px) {
+
+    body {
+        font-size: 26px;
+        overflow-x: hidden;
+        width: 100%;
+        flex-grow: 1;
+    }
+
+    header {
+        padding: 10px;
+    }
+
+    header::before {
+        width: 100%;
+        margin-top: -25px;
+    }
+
+    .home a {
+        font-size: 70px;
+    }
+
+    .home p {
+        font-size: 20px;
+        margin-top: -15px;
+    }
+
+    .menu {
+        margin-left: 10px;
+        margin-right: 20px;
+    }
+
+    .info {
+        overflow: hidden;
+    }
+
+    .info::before {
+        background-size: auto 100%;
+        background-position: center top;
+    }
+
+    .info-string {
+        flex-direction: column;
+        margin: 0px;
+        margin-left: 25px;
+    }
+
+    #info3 {
+        margin-bottom: 20px;
+    }
+
+    #info3 p{
+        margin-right: 0px;
+    }
+
+    #info3 img {
+        margin-left: -5px;
+        width: 250px;
+    }
+
+    .embed {
+        display: none;
+    }
+
+    .about {
+        scroll-margin: 25px;
+        overflow: hidden;
+    }
+
+    .about::before {
+        height: 150%;
+        background-size: cover;
+        background-position: center bottom;
+        background-repeat: no-repeat;
+    }
+
+    .title {
+        font-size: 35px;
+    }
+
+    .line {
+        margin: 30px;
+    }
+
+    .images {
+        display: none;
+    }
+
+    .about-info {
+        flex-direction: column;
+        margin: 20px;
+    }
+
+    .pisanina {
+        margin: 5px;
+    }
+
+    .about-string {
+        font-size: 24px;
+    }
+
+    .about1, .about2, .about3 {
+        justify-content: center;
+        width: 100%;
+    }
+
+    footer {
+        margin-top: 0px;
+        padding: 0;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    footer::before {
+        width: 100%;
+        transform-origin: top right;
+        margin-top: -20px;
+    }
+
+    footer::after {
+        display: none;
+    }
+
+    .сopyrights {
+        font-size: 16px;
+        margin: 10px;
+        text-align: center;
+    }
+
+    .social {
+        margin: 20px;
+    }
+
+    .social a {
+        margin-left: 15px;
+    }
+}
