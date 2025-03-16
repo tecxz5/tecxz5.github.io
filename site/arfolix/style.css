@@ -93,13 +93,29 @@ header p {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    position: relative;
+}
+
+.info::before {
+    content: '';
+    position: absolute;
+    left: -5%;  /* отрицательное значение для выхода за левый край */
+    width: 120%; /* увеличиваем ширину */
+    height: 120%; /* увеличиваем высоту */
+    background-image: url(../pictures/arfloix/ar1.png);
+    background-position: center left;
+    background-repeat: no-repeat;
+    background-size: 60% auto;
+    background-clip: border-box;
+    mix-blend-mode: color-burn; /* можно попробовать: color-burn, hard-light, color */
+    z-index: -1;
 }
 
 .info-string {
     margin: 20px;
     display: flex;
     flex-direction: row;
-    text-align: right;
+    text-align: left;
     justify-content:center
 }
 
@@ -122,7 +138,7 @@ header p {
     display: flex;
     flex-direction: column;
     transform: rotate(4deg);
-    justify-content: left;
+    text-align: right;
 }
 
 #info3 p {
@@ -145,6 +161,23 @@ header p {
 
 .about {
     scroll-margin-top: 200px;
+    position: relative;
+}
+
+.about::before {
+    content: '';
+    position: absolute;
+    top: 0px; /* отрицательное значение позволяет выйти за верхнюю границу */
+    left: -10%;  /* отрицательное значение для выхода за левый край */
+    width: 120%; /* увеличиваем ширину */
+    height: 120%;
+    background-image: url(../pictures/arfloix/ar2.png);
+    background-position: center left;
+    background-repeat: no-repeat;
+    background-size: 100% auto;
+    background-clip: border-box;
+    mix-blend-mode: color-burn; /* можно попробовать: color-burn, hard-light, color */
+    z-index: -1;
 }
 
 .title {
@@ -210,7 +243,8 @@ header p {
 .about3 {
     display: flex;
     flex-direction: column;
-    justify-content:flex-start
+    justify-content:flex-start;
+    width: 60%;
 }
 
 footer {
