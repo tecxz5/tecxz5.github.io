@@ -124,11 +124,6 @@ header a {
     text-decoration: none;
 }
 
-header a:hover {
-    color: #54545a;
-    text-decoration: none
-}
-
 .contact-container {
     position: relative;
     display: flex;
@@ -351,10 +346,6 @@ header a:hover {
     transition: box-shadow 0.2s ease;
 }
 
-.toggle-element a:hover {
-    box-shadow: 0 0 0 5px #fff;
-}
-
 .toggle-element a::selection {
     color: #000;
     background-color: #f1dbbd;
@@ -409,10 +400,6 @@ footer a {
     text-decoration: none;
 }
 
-footer a:hover {
-    color:#e1ea8f
-}
-
 footer img {
     width: 20%;
     margin-bottom: -5px;
@@ -441,7 +428,7 @@ html {
     margin-bottom: 50px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 768px){
 
     * {
         padding-inline-start: 0;
@@ -547,4 +534,37 @@ html {
         margin: 10px;
     }
 
+}
+
+@media (hover:hover) {
+
+    header a:hover {
+        color: #54545a;
+        text-decoration: none
+    }
+
+    .toggle-element a:hover {
+        box-shadow: 0 0 0 5px #fff;
+    }
+
+    footer a:hover {
+        color:#e1ea8f
+    }
+}
+
+@media (hover:none) {
+
+    header a:active {
+        color: #54545a;
+        text-decoration: none
+    }
+
+    .toggle-element a:active {
+        box-shadow: 0 0 0 5px #fff;
+    }
+
+    footer a:active {
+        color:#e1ea8f
+    }
+    
 }
