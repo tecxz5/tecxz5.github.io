@@ -41,11 +41,6 @@ body a {
     color: #fff;
 }
 
-body a:hover {
-    text-decoration: none;
-    color: #e1ea8f;
-}
-
 header {
     position: fixed;
     top: 0;
@@ -321,14 +316,6 @@ footer img {
     margin-left: 30px;
 }
 
-#tg:hover {
-    color: #27a7e7;
-}
-
-#inst:hover {
-    color: #e1306c;
-}
-
 @media (max-width: 768px) {
 
     body {
@@ -477,4 +464,38 @@ footer img {
     .social a {
         margin-left: 15px;
     }
+}
+
+@media (hover:hover) {
+
+    body a:hover {
+        text-decoration: none;
+        color: #e1ea8f;
+    }
+
+    #tg:hover {
+        color: #27a7e7;
+    }
+    
+    #inst:hover {
+        color: #e1306c;
+    }
+
+}
+
+@media (hover:none) {
+
+    body a:active {
+        text-decoration: none;
+        color: #e1ea8f;
+    }
+
+    #tg:active {
+        color: #27a7e7;
+    }
+    
+    #inst:active {
+        color: #e1306c;
+    }
+    
 }
