@@ -134,6 +134,7 @@ header a {
 
 .contact-container.hidden {
     opacity: 0;
+    pointer-events: none;
 }
 
 .toggle-button {
