@@ -123,11 +123,6 @@ header a {
     text-decoration: none;
 }
 
-header a:hover {
-    color: #54545a;
-    text-decoration: none
-}
-
 .info {
     margin: 100px 20px;
 }
@@ -184,10 +179,6 @@ header a:hover {
     transition: box-shadow 0.2s ease;
 }
 
-.tap:hover {
-    box-shadow: 0 0 0 5px #fff;
-}
-
 .git {
     background-color: #000;
     color: #fff;
@@ -220,10 +211,6 @@ footer a {
     color: #fff;
     text-decoration: none;
     transition: color 0.2s ease;
-}
-
-footer a:hover {
-    color:#e1ea8f
 }
 
 footer img {
@@ -288,4 +275,38 @@ footer img {
         align-items: center;
         margin: 25px;
     }
+}
+
+@media (hover:hover) {
+
+    header a:hover {
+        color: #54545a;
+        text-decoration: none
+    }
+
+    .tap:hover {
+        box-shadow: 0 0 0 5px #fff;
+    }
+
+    footer a:hover {
+        color:#e1ea8f
+    }
+
+}
+
+@media (hover:none) {
+
+    header a:active {
+        color: #54545a;
+        text-decoration: none
+    }
+
+    .tap:active {
+        box-shadow: 0 0 0 5px #fff;
+    }
+
+    footer a:active {
+        color:#e1ea8f
+    }
+
 }
