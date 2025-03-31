@@ -1,5 +1,5 @@
 loading {
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
     position: fixed;
@@ -10,8 +10,14 @@ loading {
     background-color: #f1dbbd;
     font-family: Navbar;
     z-index: 1000;
-    transition: opacity 1s ease-out;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
     user-select: none;
+}
+
+loading.visible {
+    display: flex;
+    opacity: 1;
 }
 
 loading.hidden {
