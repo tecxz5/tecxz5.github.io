@@ -37,7 +37,7 @@ header ::selection {
     header {
         flex-direction: row;
         font-size: 20px;
-        margin: 20px;
+        padding: 10px 5px;
     }
 }
 
