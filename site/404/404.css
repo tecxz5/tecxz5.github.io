@@ -40,11 +40,6 @@ body {
     z-index: 2;
 }
 
-.text a::selection {
-    color: #f1dbbd;
-    background-color: #000;
-}
-
 @media (max-width: 768px) {
     
     .error {

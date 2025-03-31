@@ -18,16 +18,12 @@ html {
     scroll-behavior: smooth;
 }
 
-::selection {
-    color: #000;
-    background-color: #f1dbbd;
-}
-
 body   {
     background-color: #232323;
     font-family: Body;
     color: #fff;
     margin: 0;
+    user-select: none;
 }
 
 body.no-scroll {

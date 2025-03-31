@@ -202,11 +202,6 @@
     margin-top: 40px;
 }
 
-.projects ::selection {
-    color: #f1dbbd;
-    background-color: #000;
-}
-
 .toggle-element a {
     color: #fff;
     text-decoration: none;
@@ -221,11 +216,6 @@
     transition: box-shadow 0.2s ease;
 }
 
-.toggle-element a::selection {
-    color: #000;
-    background-color: #f1dbbd;
-}
-
 .clickable {
     cursor: pointer;
 }
@@ -237,11 +227,6 @@
 
 #h1 {
     font-size: 70px;
-}
-
-#h1::selection {
-    color: #000;
-    background-color: #f1dbbd;
 }
 
 .toggle-element {
