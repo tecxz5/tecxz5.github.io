@@ -11,6 +11,7 @@
         <link rel="stylesheet" href="../sources/loading.css">
         <link rel="stylesheet" href="../sources/header.css">
         <link rel="stylesheet" href="../sources/footer.css">
+        <link rel="stylesheet" href="../sources/popups.css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -40,7 +41,7 @@
         </div>
         <div class="floor three">
             <a target="_blank" href="https://discordapp.com/users/794585041485168670" title="ссылка типа рабочая, а типа нет..." class="tap ds">ds</a>
-            <img src="../pictures/site/kitek.webp">
+            <img src="../pictures/site/kitek.webp" onclick="showPopup('kitek-important')">
         </div>
         <div class="floor four">
             <img id="maxwell-pat" src="https://c.tenor.com/M6tVHEg3sL4AAAAd/tenor.gif" alt="Максвелла гладят">
@@ -48,9 +49,10 @@
         </div>
     </div>
     <footer>
-        <p id="copyright">©<img src="https://github.com/tecxz5/tecxz5/blob/main/copyright.gif?raw=true">
+        <p id="copyright">©<img src="https://github.com/tecxz5/tecxz5/blob/main/copyright.gif?raw=true" onclick="showPopup('copyright')"></p>
         <p id="made-by">designed by: <a href="/arfolix"><u>Arfolix</u></a></p>
     </footer>
     <script src="../sources/loading.js"></script>
+    <script src="../sources/popups.js"></script>
 </body>
 </html>

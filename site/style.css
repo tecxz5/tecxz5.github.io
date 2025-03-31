@@ -242,6 +242,7 @@
     display: block;
     position: relative;
 }
+
 .toggle-floor{
     display: flex;
     flex-wrap: wrap;

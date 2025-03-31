@@ -11,6 +11,7 @@
         <link rel="stylesheet" href="sources/loading.css">
         <link rel="stylesheet" href="sources/header.css">
         <link rel="stylesheet" href="sources/footer.css">
+        <link rel="stylesheet" href="sources/popups.css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -53,7 +54,7 @@
                 <img id="wiggle2" src="pictures/site/wiggle2.svg" alt="загогулина" width="80%">            </div>
             <div class="string3">
                 <img id="wiggle3" src="pictures/site/wiggle3.svg" alt="загогулина" width="20%">
-                <img src="pictures/site/kitek.webp" alt="Символ Автора" width="180" height="180">
+                <img src="pictures/site/kitek.webp" alt="Символ Автора" width="180" height="180" onclick="showPopup('kitek-important')">
                 <div class="pisanina">
                     <p>
                         И еще о своих занятиях:<br>
@@ -73,10 +74,11 @@
             </div>
         </div>
         <footer>
-            <p id="copyright">©<img src="https://github.com/tecxz5/tecxz5/blob/main/copyright.gif?raw=true">
+            <p id="copyright">©<img src="https://github.com/tecxz5/tecxz5/blob/main/copyright.gif?raw=true" onclick="showPopup('copyright')">
             <p id="made-by">designed by: <a href="/arfolix"><u>Arfolix</u></a></p>
         </footer>
     </body>
     <script src="script.js"></script>
     <script src="sources/loading.js"></script>
+    <script src="sources/popups.js"></script>
 </html>
