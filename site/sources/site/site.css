@@ -1,0 +1,47 @@
+@font-face {
+    font-family: Body;
+    src: url(../../fonts/Involve-Medium.ttf);
+}
+
+@font-face {
+    font-family: Navbar;
+    src: url(../../fonts/FeatureMono-Medium.ttf);
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #f1dbbd #232323;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+::selection {
+    color: #000;
+    background-color: #f1dbbd;
+}
+
+body   {
+    background-color: #232323;
+    font-family: Body;
+    color: #fff;
+    margin: 0;
+}
+
+body.no-scroll {
+    overflow: hidden;
+}
+
+@media (max-width: 768px){
+    
+    * {
+        padding-inline-start: 0;
+    }
+
+    body {
+        flex-grow: 1;
+    }
+
+}

@@ -51,18 +51,6 @@ projectArray.forEach(array=>{
     document.querySelector(".toggle-container").appendChild(floor)
 })
 
-window.addEventListener('load', () => {
-    const loadingElement = document.querySelector('loading');
-    document.body.classList.add('no-scroll');
-    setTimeout(() => {
-        loadingElement.classList.add('hidden');
-        setTimeout(() => {
-            loadingElement.style.display = 'none';
-            document.body.classList.remove('no-scroll');
-        }, 1000);
-    }, 2000);
-});
-
 window.addEventListener('scroll', () => {
     const contactContainer = document.querySelector('.contact-container');
     const footer = document.querySelector('footer');

@@ -1,0 +1,59 @@
+header {
+    background-color: #f1dbbd;
+    border-radius: 15px;
+    justify-content: center;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    align-items: center;
+    display: flex;
+    color: #000;
+    margin: 20px;
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translate(-60%);
+    z-index: 10;
+}
+
+.home {
+    font-family: Navbar;
+    font-size: 35px;
+    padding: 0 15px;
+    text-align: center;
+}
+
+header a {
+    color:#000;
+    transition: color 0.2s ease;
+    text-decoration: none;
+}
+
+header ::selection {
+    color: #f1dbbd;
+    background-color: #000;
+}
+
+@media (max-width: 768px){
+
+    header {
+        flex-direction: row;
+        font-size: 20px;
+        margin: 20px;
+    }
+}
+
+@media (hover:hover) {
+
+    header a:hover {
+        color: #54545a;
+        text-decoration: none
+    }
+            
+    }
+
+@media (hover:none) {
+
+    header a:active {
+        color: #54545a;
+        text-decoration: none
+    }
+}
