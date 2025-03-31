@@ -1,29 +1,4 @@
-@font-face {
-    font-family: Body;
-    src: url(../fonts/Involve-Medium.ttf);
-}
-
-@font-face {
-    font-family: Navbar;
-    src: url(../fonts/FeatureMono-Medium.ttf);
-}
-
-* {
-    scrollbar-width: thin;
-    scrollbar-color: #f1dbbd #232323;
-    -webkit-tap-highlight-color: transparent;
-}
-
-::selection {
-    color: #000;
-    background-color: #f1dbbd;
-}
-
 body {
-    margin: 0;
-    font-family: Body;
-    background-color: #232323;
-    color: white;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -71,6 +46,7 @@ body {
 }
 
 @media (max-width: 768px) {
+    
     .error {
         font-size: 12rem;
     }
