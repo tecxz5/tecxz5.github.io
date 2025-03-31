@@ -19,17 +19,13 @@ header {
     font-size: 35px;
     padding: 0 15px;
     text-align: center;
+    white-space: nowrap;
 }
 
 header a {
     color:#000;
     transition: color 0.2s ease;
     text-decoration: none;
-}
-
-header ::selection {
-    color: #f1dbbd;
-    background-color: #000;
 }
 
 @media (max-width: 768px){
