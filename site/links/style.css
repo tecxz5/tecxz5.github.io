@@ -139,11 +139,10 @@ header a {
     margin: 30px;
 }
 
-#h6 {
-    font-family: Navbar;
-    font-size: 300px;
-    margin: -300px 0;
-    margin-right: 10%;
+.one img {
+    width: 35%;
+    margin-right: 7vw;
+    align-content: center;
 }
 
 .two img {
