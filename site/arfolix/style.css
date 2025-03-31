@@ -103,7 +103,7 @@ header p {
     left: -5%;  /* отрицательное значение для выхода за левый край */
     width: 120%; /* увеличиваем ширину */
     height: 120%; /* увеличиваем высоту */
-    background-image: url(../pictures/arfloix/ar1.png);
+    background-image: url(../pictures/arfloix/ar1.webp);
     background-position: center left;
     background-repeat: no-repeat;
     background-size: 60% auto;
@@ -172,7 +172,7 @@ header p {
     left: -10%;  /* отрицательное значение для выхода за левый край */
     width: 120%; /* увеличиваем ширину */
     height: 120%;
-    background-image: url(../pictures/arfloix/ar2.png);
+    background-image: url(../pictures/arfloix/ar2.webp);
     background-position: center left;
     background-repeat: no-repeat;
     background-size: 100% auto;
