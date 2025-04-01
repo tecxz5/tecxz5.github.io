@@ -63,7 +63,7 @@ header::before {
     backdrop-filter: blur(5px);
     transform: rotate(-4deg);
     transform-origin: bottom center;
-    margin-top: -50px;
+    margin-top: -70px;
     z-index: -1;
     border-bottom: #e1ea8f 5px solid;
 }
