@@ -1,5 +1,5 @@
 .info {
-    margin: 100px 20px;
+    margin: 100px 1vw;
 }
 
 .floor {
@@ -37,19 +37,19 @@
 
 .tap {
     display: none;
-    padding: 20px;
+    padding: 40px 20px;
     border-radius: 15px;
-    width: 800px;
-    height:400px;
+    width: 50vw;
+    height:20vw;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 400px;
+    font-size: 20vw;
     text-decoration: none;
     color: #000;
     font-family: Navbar;
     cursor: pointer;
-    margin: 30px;
+    margin: 2rem;
     transition: box-shadow 0.2s ease;
 }
 
@@ -71,10 +71,6 @@
 }
 
 @media (max-width: 768px) {
-
-    .home {
-        padding: 10px 5px;
-    }
     
     .info {
         margin-top: 75px;
@@ -93,12 +89,12 @@
     }
 
     .tap {
-        height: 130px;
-        width: 300px;
-        font-size: 150px;
+        height: 25vw;
+        width: 80vw;
+        padding: 3rem 1rem;
+        font-size: 38vw;
         text-align: center;
         align-items: center;
-        margin: 25px;
     }
 }
 
