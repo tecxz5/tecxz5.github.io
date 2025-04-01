@@ -70,7 +70,7 @@
     background-color: #0077FF;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 480px) {
     
     .info {
         margin-top: 75px;

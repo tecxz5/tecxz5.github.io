@@ -249,7 +249,7 @@
     margin-bottom: 50px;
 }
 
-@media (max-width: 768px){
+@media (max-width: 480px){
 
     .toggle-button {
         margin: 30px;
