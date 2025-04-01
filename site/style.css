@@ -102,6 +102,7 @@
 
 .about-me {
     margin-top: 120px;
+    font-size: 25px;
 }
 
 #wiggle1 {
@@ -149,10 +150,6 @@
     color: #5865f2;
 }
 
-.string1 p {
-    font-size: 25px;
-}
-
 #maxwell-pat {
     border-radius: 15px;
     margin: 0 30px;
@@ -160,7 +157,6 @@
 
 .string2 {
     display: flex;
-    font-size: 25px;
     margin: 0 40px;
 }
 
@@ -183,11 +179,6 @@
     height: auto;
 }
 
-
-.string3 p {
-    font-size: 25px;
-}
-
 .string3 img {
     margin: 0 40px;
     border-radius: 15px;
@@ -207,8 +198,9 @@
     text-decoration: none;
     background-color: #232323;
     margin-top:5px;
-    border-radius: 50px;
-    padding: 7px;
+    font-size: 20px;
+    border-radius: 188px;
+    padding: 0.5rem 1rem;
     position: absolute;
     bottom: 15px;
     left: 50%;
@@ -222,7 +214,11 @@
 
 .toggle-element h6 {
     margin: 1rem;
-    font-size: 25px;
+    font-size: 30px;
+}
+
+.toggle-element p {
+    font-size: 1.2rem;
 }
 
 #h1 {
@@ -270,6 +266,7 @@
 
     .about-me {
         margin-top: 50px;
+        font-size: 20px;
     }
 
     #wiggle1, #wiggle2, #wiggle3 {
