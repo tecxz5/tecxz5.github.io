@@ -111,13 +111,12 @@ header p {
     margin: 0.5vw;
     display: flex;
     flex-direction: row;
-    text-align: left;
-    justify-content:center
+    justify-content: flex-start
 }
 
 #typing-text::after {
     content: '|';
-    animation: blink 0.5s infinite;
+    animation: blink 0.5s step-end infinite;
 }
 
 @keyframes blink {
@@ -149,6 +148,10 @@ header p {
 
 .embed {
     width: 70vw;
+}
+
+.e-type {
+    width: 50vw;
 }
 
 .about {
