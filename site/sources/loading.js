@@ -1,4 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // HTML-код для элемента loading
+    const loadingHTML = `
+        <loading>
+            <span>t</span>
+            <span>e</span>
+            <span>c</span>
+            <span>x</span>
+            <span>z</span>
+            <span>5</span>
+        </loading>
+    `;
+
+    // Вставляем HTML-код loading в body
+    document.body.insertAdjacentHTML('afterbegin', loadingHTML);
+
     // Получаем параметры запроса из URL
     const urlParams = new URLSearchParams(window.location.search);
     const loadingElement = document.querySelector('loading');
