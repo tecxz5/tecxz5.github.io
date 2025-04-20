@@ -1,5 +1,5 @@
 .info {
-    margin: 50px 1vw 0px;
+    margin: 60px 1vw 0px;
 }
 
 .floor {
@@ -53,9 +53,10 @@
     transition: box-shadow 0.2s ease;
 }
 
-.git {
-    background-color: #000;
-    color: #fff;
+.news {
+    background-color: #f1dbbd;
+    font-size: 10vw;
+    line-height: 80%;
 }
 
 .tg {
@@ -66,15 +67,12 @@
     background-color: #5865F2;
 }
 
-.vk {
-    background-color: #0077FF;
+.git {
+    background-color: #000;
+    color: #fff;
 }
 
 @media (max-width: 480px) {
-    
-    .info {
-        margin-top: 75px;
-    }
 
     .floor {
         justify-content: center;
@@ -95,6 +93,11 @@
         font-size: 38vw;
         text-align: center;
         align-items: center;
+    }
+
+    .news {
+        font-size: 15vw;
+        text-align: start;
     }
 }
 

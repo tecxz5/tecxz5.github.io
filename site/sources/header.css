@@ -6,7 +6,7 @@ header {
     align-items: center;
     display: flex;
     color: #000;
-    margin: 20px;
+    margin: 1rem;
     position: fixed;
     top: 0;
     left: 50%;
@@ -16,7 +16,7 @@ header {
 
 .home {
     font-family: Navbar;
-    font-size: 35px;
+    font-size: 2rem;
     padding: 0 15px;
     text-align: center;
     white-space: nowrap;
@@ -32,7 +32,6 @@ header a {
 
     header {
         flex-direction: row;
-        font-size: 20px;
         padding: 10px 5px;
     }
 }
