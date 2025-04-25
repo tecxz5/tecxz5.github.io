@@ -1,9 +1,4 @@
 @font-face {
-    font-family: Body;
-    src: url(../fonts/Involve-Medium.ttf);
-}
-
-@font-face {
     font-family: Navbar;
     src: url(../fonts/FeatureMono-Medium.ttf);
 }
@@ -20,7 +15,7 @@ html {
 
 body   {
     background-color: #232323;
-    font-family: Body;
+    font-family: "Geologica", sans-serif;
     color: #fff;
     margin: 0;
     user-select: none;
