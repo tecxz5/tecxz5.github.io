@@ -1,11 +1,6 @@
 @font-face {
     font-family: Base;
-    src: url(../fonts/arfolix/ST-Nizhegorodsky.ttf);
-}
-
-@font-face {
-    font-family: Head;
-    src: url(../fonts/arfolix/signategrotesk-black.ttf);
+    src: url(../sources/fonts/arfolix/ST-Nizhegorodsky.ttf);
 }
 
 * {
@@ -64,11 +59,12 @@ header::before {
 }
 
 header p {
-    font-family: Head;
+    font-family: "Jacquard 24";
     color: #ffffff;
 }
 
 .home a {
+    font-family: "Jacquard 12";
     line-height: 80%;
     font-size: 128px;
 }
@@ -98,7 +94,7 @@ header p {
     left: -5%;  /* отрицательное значение для выхода за левый край */
     width: 120%; /* увеличиваем ширину */
     height: 120%; /* увеличиваем высоту */
-    background-image: url(../pictures/arfloix/ar1.webp);
+    background-image: url(../sources/pictures/arfloix/ar1.webp);
     background-position: center left;
     background-repeat: no-repeat;
     background-size: 60% auto;
@@ -166,7 +162,7 @@ header p {
     left: -10%;  /* отрицательное значение для выхода за левый край */
     width: 120%; /* увеличиваем ширину */
     height: 120%;
-    background-image: url(../pictures/arfloix/ar2.webp);
+    background-image: url(../sources/pictures/arfloix/ar2.webp);
     background-position: center left;
     background-repeat: no-repeat;
     background-size: 100% auto;

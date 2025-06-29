@@ -1,4 +1,3 @@
-// filepath: d:\projects\html\site\sources\site.js
 document.addEventListener('DOMContentLoaded', () => {
     // HTML-код для header
     const headerHTML = `
