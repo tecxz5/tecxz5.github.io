@@ -15,7 +15,7 @@ html {
 
 body   {
     background-color: #232323;
-    font-family: "Geologica", sans-serif;
+    font-family: Geologica;
     color: #fff;
     margin: 0;
     user-select: none;
@@ -23,6 +23,10 @@ body   {
 
 body.no-scroll {
     overflow: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: Unbounded;
 }
 
 @media (max-width: 768px){

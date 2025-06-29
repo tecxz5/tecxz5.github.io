@@ -3,14 +3,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // HTML-код для header
     const headerHTML = `
         <div class="home">
-            <a href="/?l" class="animated-text">tecxz5</a>
+            <a href="/?l">tecxz5</a>
+        </div>
+        <div class="navigation">
+            <a href="test/?l" id="clicky">кнопка</a>
+            <a href="test/?l" id="clicky">кнопка</a>
+            <a href="test/?l" id="clicky">кнопка</a>
         </div>
     `;
 
     // HTML-код для footer
     const footerHTML = `
         <p id="copyright">©<img src="https://github.com/tecxz5/tecxz5/blob/main/copyright.gif?raw=true" onclick="showPopup('copyright')" loading="lazy">
-        <p id="made-by">designed by: <a href="/arfolix"><u>Arfolix</u></a></p>
+        <p><a href="design" id="footer-link">О дизайне сайта</a></p>
     `;
 
     // Находим элементы header и footer

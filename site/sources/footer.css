@@ -1,6 +1,7 @@
 footer {
     background-color: #000;
     margin: 0;
+    margin-top: 20vh;
     padding: 20px;
     display: flex;
     flex-wrap: wrap;
@@ -24,7 +25,7 @@ footer img {
     text-align: left;
 }
 
-#made-by {
+#footer-link {
     text-align: right;
 }
 
@@ -34,15 +35,16 @@ footer img {
 @media (hover:hover) {
 
     footer a:hover {
-        color:#e1ea8f
+        color: #f1dbbd;
+        text-decoration: none
     }
-    
-}
+            
+    }
 
 @media (hover:none) {
 
     footer a:active {
-        color:#e1ea8f
+        color: #f1dbbd;
+        text-decoration: none
     }
-    
 }

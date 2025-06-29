@@ -30,17 +30,6 @@ function getProjects(projects){
     return projects_array;
 }
 
-function openContacts(){
-    const contactLinks = document.querySelector('.contact-links');
-    const toggleButton = document.querySelector('.toggle-button');
-
-    contactLinks.classList.toggle('open');
-    toggleButton.classList.toggle('cross');
-}
-
-document.querySelector(".contact-links").addEventListener('click', openContacts);
-document.querySelector(".toggle-button").addEventListener('click', openContacts);
-
 const projectArray = getProjects(projects)
 projectArray.forEach(array=>{
     const floor = document.createElement("div")
@@ -50,19 +39,3 @@ projectArray.forEach(array=>{
     })
     document.querySelector(".toggle-container").appendChild(floor)
 })
-
-window.addEventListener('scroll', () => {
-    const contactContainer = document.querySelector('.contact-container');
-    const footer = document.querySelector('footer');
-
-    if (contactContainer && footer) {
-        const footerRect = footer.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-
-        if (footerRect.top <= windowHeight - footerRect.height / 2) {
-            contactContainer.classList.add('hidden');
-        } else {
-            contactContainer.classList.remove('hidden');
-        }
-    }
-});

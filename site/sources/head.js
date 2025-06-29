@@ -20,8 +20,8 @@ const siteConfig = {
             },
             {
                 rel: 'stylesheet',
-                href: 'https://fonts.googleapis.com/css2?family=Geologica:wght,CRSV,SHRP@500,1,100&display=swap'
-            }
+                href: 'https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Geologica:wght,CRSV@500,1&family=Unbounded:wght@500&display=swap'
+            },
         ]
     },
 };
