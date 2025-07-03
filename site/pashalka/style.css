@@ -1,0 +1,28 @@
+body {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-60%, -60%);
+    align-items: center;
+    justify-content: center;
+}
+
+h6 {
+    font-size: 5vw;
+    margin: 0;
+    line-height: 85%;
+}
+
+p {
+    font-size: 1.5vw;
+    margin: 0;
+    text-align: center;
+}
+
+img {
+    margin: 0;
+    max-height: 50vh;
+    height: auto;
+}
