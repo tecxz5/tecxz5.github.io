@@ -16,7 +16,7 @@ const siteConfig = {
             },
             {
                 rel: 'stylesheet',
-                href: 'https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Geologica:wght,CRSV@500,1&family=Unbounded:wght@500&display=swap'
+                href: 'https://fonts.googleapis.com/css2?family=Days+One&family=Dela+Gothic+One&family=Geologica:wght@500&family=Unbounded:wght@500&display=swap'
             },
         ]
     },

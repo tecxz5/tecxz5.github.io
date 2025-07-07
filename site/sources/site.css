@@ -26,10 +26,14 @@ body.no-scroll {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: Unbounded;
+    font-family: "Unbounded";
 }
 
-#block-text {
+#block-text-main {
+    font-family: "Days One";
+}
+
+#block-main-secondary {
     font-family: "Dela Gothic One";
 }
 
