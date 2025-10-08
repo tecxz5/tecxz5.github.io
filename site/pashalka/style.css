@@ -10,19 +10,19 @@ body {
 }
 
 h6 {
-    font-size: 5vw;
+    font-size: 100px;
     margin: 0;
     line-height: 85%;
 }
 
 p {
-    font-size: 1.5vw;
+    font-size: 40px;
     margin: 0;
     text-align: center;
 }
 
 img {
     margin: 0;
-    max-height: 50vh;
+    max-height: 600px;
     height: auto;
 }
