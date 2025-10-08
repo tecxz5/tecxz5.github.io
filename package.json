@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Static site served with Node.js and deployable to GitHub Pages",
   "main": "app.js",
-  "homepage": "https://tecxz5.github.io/html",
+  "homepage": "https://tecxz5.github.io",
   "scripts": {
     "start": "node app.js",
     "serve-static": "npx http-server site -p 3000",
