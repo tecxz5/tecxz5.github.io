@@ -1,2 +1,8 @@
+node_modules/
+dist/
+gh-pages/
+.env
+npm-debug.log*
+/.vscode/
 index.js
 node_modules
