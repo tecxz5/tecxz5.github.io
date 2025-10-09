@@ -17,11 +17,6 @@
     margin: 20px;
 }
 
-.water {
-    margin: 20px;
-}
-
-
 .hello::before {
     content: "";
     position: absolute;
@@ -36,8 +31,75 @@
     z-index: -1;
 }
 
+.navig {
+    margin: 40px 20px;
+    }
+
+.chips {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.chip {
+    margin: 20px;
+    padding: 20px;
+    border-radius: 15px;
+    background-color: #f1dbbd;
+    max-width: 80vw;
+    min-width: 30vw;
+    min-height: 20vh;
+    max-height: 40vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: #232323 4px;
+}
+
+.chip h1 {
+    margin: 0px 12px;
+    text-align: justify;
+    color: black;
+}
+
+.chip a {
+    text-align: center;
+    justify-content: center;
+    color: white;
+    background-color: black;
+    padding: 20px;
+    border-radius: 25px;
+    font-size: 2rem;
+    align-items: end;
+    transition: box-shadow 0.5s ease;
+}
+
 @media (max-width: 480px) {
     .hello p {
         font-size: 4rem;
     }
+
+    .chips {
+        flex-direction: column;
+    }
+
+    .chip a {
+        font-size: 1.5rem;
+    }
+}
+
+@media (hover:hover) {
+
+    .chip a:hover {
+        box-shadow: 0 0 0 10px #fff;
+    }
+    
+}
+
+@media (hover:none) {
+
+    .chip a:active {
+        box-shadow: 0 0 0 10px #fff;
+    }
+
 }

@@ -27,14 +27,15 @@ body.no-scroll {
 
 h1, h2, h3, h4, h5, h6 {
     font-family: "Unbounded";
+    text-align: center;
 }
 
-#block-text-main {
-    font-family: "Days One";
-}
-
-#block-main-secondary {
+#chip-main {
     font-family: "Dela Gothic One";
+}
+
+a {
+    text-decoration: none;
 }
 
 @media (max-width: 768px){
