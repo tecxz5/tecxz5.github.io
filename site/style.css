@@ -103,3 +103,19 @@
     }
 
 }
+
+@media (hover:hover) {
+
+    .chip a:hover {
+        box-shadow: 0 0 0 10px #fff;
+    }
+    
+}
+
+@media (hover:none) {
+
+    .chip a:active {
+        box-shadow: 0 0 0 10px #fff;
+    }
+
+}
