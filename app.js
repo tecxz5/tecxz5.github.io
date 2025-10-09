@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
 
 // 404 handler — send custom 404 if exists
 app.use((req, res) => {
-    const errorFilePath = path.join(siteDir, '404', '404.html');
+    const errorFilePath = path.join(siteDir, '404.html');
     if (fs.existsSync(errorFilePath)) {
         return res.status(404).sendFile(errorFilePath);
     }
