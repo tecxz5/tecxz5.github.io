@@ -8,6 +8,11 @@
     justify-content: center;
 }
 
+.nochips {
+    display:flex;
+    justify-content:baseline;
+}
+
 .floor img {
     margin: 20px;
     border-radius: 15px;
@@ -15,6 +20,7 @@
     min-width: 10vw;
     min-height: 10vh;
     max-height: 40vh;
+    box-shadow: 4px 4px 4px 4px #232323;
 }
 .floor {
     display: flex;
@@ -25,4 +31,39 @@
 
 .reverse {
     flex-direction: row-reverse;
+}
+
+.tg {
+    background-color: #4BBAFF;
+}
+
+.ds {
+    background-color: #5865F2;
+}
+
+.gh{
+    background-color: black;
+    color: white;
+}
+
+.mail {
+    background-color: white;
+}
+
+.vk {
+    background-color: #0077FF;
+}
+
+.inst {
+    background: linear-gradient(150deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D, #F77737, #F56040, #FCAF45, #FFDC80);
+}
+
+.x {
+    background-color: black;
+}
+
+@media (max-width: 480px) {
+    .floor img {
+        display: none;
+    }
 }

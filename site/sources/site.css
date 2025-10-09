@@ -44,7 +44,6 @@ h1, h2, h3, h4, h5, h6 {
     margin: 20px;
     padding: 20px;
     border-radius: 15px;
-    background-color: #f1dbbd;
     max-width: 80vw;
     min-width: 30vw;
     min-height: 20vh;
@@ -52,7 +51,7 @@ h1, h2, h3, h4, h5, h6 {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: #232323 4px;
+    box-shadow: 4px 4px 4px 4px #232323;
 }
 
 .chip p {
@@ -86,6 +85,22 @@ a {
 
     body {
         flex-grow: 1;
+    }
+
+}
+
+@media (hover:hover) {
+
+    .chip a:hover {
+        box-shadow: 0 0 0 10px #fff;
+    }
+    
+}
+
+@media (hover:none) {
+
+    .chip a:active {
+        box-shadow: 0 0 0 10px #fff;
     }
 
 }
