@@ -5,9 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <a href="/?l">tecxz5</a>
         </div>
         <div class="navigation">
-            <a href="pashalka/?l" id="clicky">кнопка</a>
-            <a href="pashalka/?l" id="clicky">кнопка</a>
-            <a href="pashalka/?l" id="clicky">кнопка</a>
+            <a href="pashalka" id="clicky">пасхалка</a>
         </div>
     `;
 
