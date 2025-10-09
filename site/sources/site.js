@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // HTML-код для footer
     const footerHTML = `
         <p id="copyright">©<img src="https://github.com/tecxz5/tecxz5/blob/main/copyright.gif?raw=true" onclick="showPopup('copyright')" loading="lazy">
-        <p><a href="design" id="footer-link">О дизайне сайта</a></p>
+        <p><a href="design" id="footer-link">О сайте</a></p>
     `;
 
     // Находим элементы header и footer

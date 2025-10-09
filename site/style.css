@@ -13,7 +13,11 @@
 .hello p {
     font-family: 'Dela Gothic One';
     color: #232323;
-    font-size: 8rem;
+    font-size: 7rem;
+    margin: 20px;
+}
+
+.water {
     margin: 20px;
 }
 
@@ -30,4 +34,10 @@
     background-position: center;
     filter: blur(5px);
     z-index: -1;
+}
+
+@media (max-width: 480px) {
+    .hello p {
+        font-size: 4rem;
+    }
 }
