@@ -1,0 +1,19 @@
+#blank {
+    display: inline-block;
+    height: 100px;
+}
+
+.chips {
+    flex-direction: column;
+    justify-content: center;
+}
+
+.floor {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.two .four {
+    flex-direction: row-reverse;
+}

@@ -28,10 +28,50 @@ body.no-scroll {
 h1, h2, h3, h4, h5, h6 {
     font-family: "Unbounded";
     text-align: center;
+    font-size: 4rem;
 }
 
 #chip-main {
     font-family: "Dela Gothic One";
+}
+
+.chips {
+    display: flex;
+    justify-content: center;
+}
+
+.chip {
+    margin: 20px;
+    padding: 20px;
+    border-radius: 15px;
+    background-color: #f1dbbd;
+    max-width: 80vw;
+    min-width: 30vw;
+    min-height: 20vh;
+    max-height: 40vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: #232323 4px;
+}
+
+.chip p {
+    margin: 0px 12px;
+    text-align: justify;
+    color: black;
+    font-size: 2.5rem;
+}
+
+.chip a {
+    text-align: center;
+    justify-content: center;
+    color: white;
+    background-color: black;
+    padding: 20px;
+    border-radius: 25px;
+    font-size: 2rem;
+    align-items: end;
+    transition: box-shadow 0.5s ease;
 }
 
 a {
