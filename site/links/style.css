@@ -8,12 +8,20 @@
     justify-content: center;
 }
 
+img {
+    margin: 20px;
+    border-radius: 15px;
+    max-width: 50vw;
+    min-width: 30vw;
+    min-height: 20vh;
+    max-height: 40vh;
+}
 .floor {
     display: flex;
     flex-direction: row;
     justify-content: center;
 }
 
-.two .four {
+.reverse {
     flex-direction: row-reverse;
 }
