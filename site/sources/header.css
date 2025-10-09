@@ -30,7 +30,6 @@ header {
 header a {
     color:#000;
     transition: color 0.2s ease;
-    text-decoration: none;
 }
 
 @media (max-width: 480px){
