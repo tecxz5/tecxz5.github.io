@@ -48,6 +48,10 @@
         font-size: 4rem;
     }
 
+    .navig h1 {
+        font-size: 3rem;
+    }
+
     .chips {
         flex-direction: column;
     }
