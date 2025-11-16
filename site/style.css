@@ -41,6 +41,12 @@
 
 .chip {
     background-color: #f1dbbd;
+    color: #000;
+}
+
+.chip a {
+    background-color: #000;
+    color: #fff;
 }
 
 @media (max-width: 480px) {

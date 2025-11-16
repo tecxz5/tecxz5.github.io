@@ -44,10 +44,8 @@ h1, h2, h3, h4, h5, h6 {
     margin: 20px;
     padding: 20px;
     border-radius: 15px;
-    max-width: 80vw;
-    min-width: 30vw;
-    min-height: 20vh;
-    max-height: 40vh;
+    width: 400px;
+    height: 200px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -57,15 +55,12 @@ h1, h2, h3, h4, h5, h6 {
 .chip p {
     margin: 0px 12px;
     text-align: justify;
-    color: black;
     font-size: 2.5rem;
 }
 
 .chip a {
     text-align: center;
     justify-content: center;
-    color: white;
-    background-color: black;
     padding: 20px;
     border-radius: 25px;
     font-size: 2rem;

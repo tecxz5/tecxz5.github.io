@@ -16,10 +16,10 @@
 .floor img {
     margin: 20px;
     border-radius: 15px;
-    max-width: 40vw;
-    min-width: 10vw;
-    min-height: 10vh;
-    max-height: 40vh;
+    max-width: 400px;
+    min-width: 100px;
+    min-height: 100px;
+    max-height: 300px;
     box-shadow: 4px 4px 4px 4px #232323;
 }
 .floor {
@@ -35,10 +35,22 @@
 
 .tg {
     background-color: #4BBAFF;
+    color: #000;
+}
+
+.tg a {
+    background-color: #000;
+    color: #fff;
 }
 
 .ds {
     background-color: #5865F2;
+    color: #000;
+}
+
+.ds a {
+    background-color: #000;
+    color: #fff;
 }
 
 .gh{
@@ -46,20 +58,19 @@
     color: white;
 }
 
+.gh a {
+    background-color: white;
+    color: black;
+}
+
 .mail {
     background-color: white;
+    color: #000;
 }
 
-.vk {
-    background-color: #0077FF;
-}
-
-.inst {
-    background: linear-gradient(150deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D, #F77737, #F56040, #FCAF45, #FFDC80);
-}
-
-.x {
-    background-color: black;
+.mail a {
+    background-color: #000;
+    color: #fff;
 }
 
 @media (max-width: 480px) {
