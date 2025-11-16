@@ -38,6 +38,7 @@ h1, h2, h3, h4, h5, h6 {
 .chips {
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
 .chip {
@@ -83,8 +84,8 @@ a {
     }
 
     .chip {
-        width: 250px;
-        height: 100px;
+        width: 70vw;
+        height: 150px;
         margin: 10px;
         padding: 15px;
     }
