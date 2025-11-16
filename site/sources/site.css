@@ -83,9 +83,18 @@ a {
     }
 
     .chip {
-        width: 300px;
-        height: 150px;
+        width: 250px;
+        height: 100px;
         margin: 10px;
+        padding: 15px;
+    }
+
+    .chip p {
+        font-size: 2rem;
+    }
+
+    .chip a {
+        font-size: 1.5rem;
         padding: 15px;
     }
 
