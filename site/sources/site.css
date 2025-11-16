@@ -82,6 +82,13 @@ a {
         flex-grow: 1;
     }
 
+    .chip {
+        width: 300px;
+        height: 150px;
+        margin: 10px;
+        padding: 15px;
+    }
+
 }
 
 @media (hover:hover) {
