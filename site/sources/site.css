@@ -104,7 +104,7 @@ a {
 @media (hover:hover) {
 
     .chip a:hover {
-        box-shadow: 0 0 0 10px #fff;
+        box-shadow: 0 0 0 10px #888;
     }
     
 }
@@ -112,7 +112,7 @@ a {
 @media (hover:none) {
 
     .chip a:active {
-        box-shadow: 0 0 0 10px #fff;
+        box-shadow: 0 0 0 10px #888;
     }
 
 }
