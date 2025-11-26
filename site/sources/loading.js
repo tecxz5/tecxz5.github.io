@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // HTML-код для элемента loading
     const loadingHTML = `
         <loading>
             <span>t</span>
@@ -11,25 +10,28 @@ document.addEventListener('DOMContentLoaded', () => {
         </loading>
     `;
 
-    // Вставляем HTML-код loading в body
     document.body.insertAdjacentHTML('afterbegin', loadingHTML);
 
-    // Получаем параметры запроса из URL
     const urlParams = new URLSearchParams(window.location.search);
     const loadingElement = document.querySelector('loading');
 
-    // Проверяем, есть ли параметр 'l'
     if (urlParams.has('l')) {
         document.body.classList.remove('no-scroll');
     } else {
         document.body.classList.add('no-scroll');
         const showLoadingScreen = (duration) => {
-            loadingElement.style.transition = 'opacity 0.5s ease-in-out';
             loadingElement.style.display = 'flex';
             loadingElement.classList.add('visible');
 
             setTimeout(() => {
                 loadingElement.classList.add('hidden');
+                
+                // Плавный переход: header становится видным одновременно с уходом loading
+                const header = document.querySelector('header');
+                if (header) {
+                    header.style.animation = 'slideDown 1s ease-in-out forwards';
+                }
+
                 setTimeout(() => {
                     loadingElement.classList.remove('visible');
                     loadingElement.style.display = 'none';
