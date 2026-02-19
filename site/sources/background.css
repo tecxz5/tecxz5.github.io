@@ -1,0 +1,47 @@
+/* Background Grid Generator Styles */
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f1dbbd;
+    overflow: hidden;
+    font-family: sans-serif;
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    background: transparent;
+    pointer-events: none;
+}
+
+.ui {
+    position: relative;
+    z-index: 3;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    color: #333;
+}
+
+h1 {
+    font-size: 4vw;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-weight: 900;
+    text-shadow: 0 0 20px rgba(0,0,0,0.2);
+    opacity: 0.9;
+}
