@@ -29,13 +29,3 @@ function getProjects(projects){
     }
     return projects_array;
 }
-
-const projectArray = getProjects(projects)
-projectArray.forEach(array=>{
-    const floor = document.createElement("div")
-    floor.classList.add('toggle-floor');
-    array.forEach(text=>{
-        floor.insertAdjacentHTML("beforeend", text);
-    })
-    document.querySelector(".toggle-container").appendChild(floor)
-})

@@ -15,7 +15,8 @@
         speed: 0.4,
         colorDark: 0x8a8a8a,
         colorHover: 0x232323,
-        mouseRadius: 100
+        mouseRadius: 100,
+        repelStrength: 18
     };
 
     const iconsList = [
@@ -126,6 +127,7 @@
     const grid = [];
     const highlighted = [];
     const iconTextures = [];
+    const fallbackIconName = 'circle';
     const tintLut = Array.from({ length: 256 }, (_, i) => {
         const t = i / 255;
         const eased = Math.pow(t, 0.35);
@@ -156,6 +158,21 @@
         iconCtx.textAlign = 'center';
         iconCtx.textBaseline = 'middle';
         iconCtx.fillText(icon, size / 2, size / 2 + 1);
+
+        // Some icon names can be unavailable in current font set; use fallback to avoid empty cells.
+        const sample = iconCtx.getImageData(0, 0, size, size).data;
+        let hasGlyph = false;
+        for (let i = 3; i < sample.length; i += 4) {
+            if (sample[i] > 0) {
+                hasGlyph = true;
+                break;
+            }
+        }
+        if (!hasGlyph && icon !== fallbackIconName) {
+            iconCtx.clearRect(0, 0, size, size);
+            iconCtx.fillText(fallbackIconName, size / 2, size / 2 + 1);
+        }
+
         return PIXI.Texture.from(el);
     }
 
@@ -263,10 +280,20 @@
         return { x: rx, y: ry };
     }
 
+    function getColumnDirection(col) {
+        return col % 2 === 0 ? 1 : -1;
+    }
+
+    function getCellY(row, col, scroll) {
+        const y = (row * config.cellSize + config.cellSize / 2 + scroll * getColumnDirection(col)) % state.gridHeight;
+        return y < 0 ? y + state.gridHeight : y;
+    }
+
     function updateCellPositions(scroll) {
         for (let i = 0; i < cells.length; i++) {
             const cell = cells[i];
-            cell.sprite.y = (cell.baseY + scroll) % state.gridHeight;
+            cell.sprite.x = cell.x;
+            cell.sprite.y = getCellY(cell.r, cell.c, scroll);
         }
     }
 
@@ -281,11 +308,8 @@
         const radius = config.mouseRadius;
         const radius2 = radius * radius;
         const cellSize = config.cellSize;
-        const rowRadius = Math.ceil(radius / cellSize);
         const iMin = Math.max(0, Math.floor((mX - radius) / cellSize));
         const iMax = Math.min(state.cols - 1, Math.ceil((mX + radius) / cellSize));
-        const baseMY = (mY - scroll + state.gridHeight) % state.gridHeight;
-        const centerRow = Math.floor((baseMY - cellSize / 2) / cellSize);
 
         for (let c = iMin; c <= iMax; c++) {
             const x = c * cellSize + cellSize / 2;
@@ -296,11 +320,10 @@
                 continue;
             }
 
-            for (let dr = -rowRadius; dr <= rowRadius; dr++) {
-                const r = ((centerRow + dr) % state.rows + state.rows) % state.rows;
+            for (let r = 0; r < state.rows; r++) {
                 const cell = grid[c][r];
-                const yBase = cell.baseY;
-                const dyRaw = Math.abs(yBase - baseMY);
+                const y = getCellY(r, c, scroll);
+                const dyRaw = Math.abs(y - mY);
                 const dy = Math.min(dyRaw, state.gridHeight - dyRaw);
                 const dist2 = dx2 + dy * dy;
 
@@ -308,9 +331,27 @@
                     continue;
                 }
 
-                const intensity = 1 - Math.sqrt(dist2) / radius;
+                const dist = Math.sqrt(dist2);
+                const intensity = 1 - dist / radius;
                 const lutIdx = Math.max(0, Math.min(255, (intensity * 255) | 0));
                 cell.sprite.tint = tintLut[lutIdx];
+
+                // Repel icons away from cursor within radius.
+                let signedDy = y - mY;
+                if (signedDy > state.gridHeight / 2) {
+                    signedDy -= state.gridHeight;
+                } else if (signedDy < -state.gridHeight / 2) {
+                    signedDy += state.gridHeight;
+                }
+
+                if (dist > 0.001) {
+                    const force = intensity * config.repelStrength;
+                    const nx = dx / dist;
+                    const ny = signedDy / dist;
+                    cell.sprite.x = x + nx * force;
+                    cell.sprite.y = y + ny * force;
+                }
+
                 highlighted.push(cell);
             }
         }
