@@ -1,6 +1,6 @@
 @font-face {
     font-family: Base;
-    src: url(../sources/fonts/arfolix/ST-Nizhegorodsky.ttf);
+    src: url(ST-Nizhegorodsky.ttf);
 }
 
 * {
@@ -94,7 +94,7 @@ header p {
     left: -5%;  /* отрицательное значение для выхода за левый край */
     width: 120%; /* увеличиваем ширину */
     height: 120%; /* увеличиваем высоту */
-    background-image: url(../sources/pictures/arfloix/ar1.webp);
+    background-image: url(pic/ar1.webp);
     background-position: center left;
     background-repeat: no-repeat;
     background-size: 60% auto;
@@ -162,7 +162,7 @@ header p {
     left: -10%;  /* отрицательное значение для выхода за левый край */
     width: 120%; /* увеличиваем ширину */
     height: 120%;
-    background-image: url(../sources/pictures/arfloix/ar2.webp);
+    background-image: url(pic/ar2.webp);
     background-position: center left;
     background-repeat: no-repeat;
     background-size: 100% auto;
