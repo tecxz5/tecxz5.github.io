@@ -1,5 +1,6 @@
 .hello {
     position: relative;
+    background: #f1dbbd;
     width: 100vw;
     height: 100vh;
     margin: 0;
@@ -10,10 +11,36 @@
     align-items: end;
 }
 
+.hello canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.hello .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    background: transparent;
+    pointer-events: none;
+}
+
 .hello p {
+    position: relative;
+    z-index: 3;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-start;
+    margin: 0;
     font-family: 'Dela Gothic One';
-    font-size: 7rem;
-    margin: 20px;
+    font-size: 4em;
+    color: #232323;
+    text-shadow: 0 0 20px rgba(0,0,0,0.1);
 }
 
 .navig {
@@ -36,7 +63,7 @@
 
 @media (max-width: 480px) {
     .hello p {
-        font-size: 4rem;
+        font-size: 3rem;
     }
 
     .navig h1 {
