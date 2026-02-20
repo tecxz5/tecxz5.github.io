@@ -1,22 +1,22 @@
 {
   "name": "html",
   "version": "1.0.0",
-  "description": "Static site served with Node.js and deployable to GitHub Pages",
-  "main": "app.js",
+  "description": "Static site built with Vite and deployable to GitHub Pages",
   "homepage": "https://tecxz5.github.io",
   "scripts": {
-    "start": "node app.js",
-    "serve-static": "npx http-server site -p 3000",
+    "start": "vite preview",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "test": "echo \"No tests\" && exit 0"
   },
   "engines": {
     "node": ">=14"
   },
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.21.2",
-    "http": "^0.0.1-security",
-    "http-server": "^14.1.1",
     "three.js": "^0.77.0"
+  },
+  "devDependencies": {
+    "vite": "^7.3.1"
   }
 }

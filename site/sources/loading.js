@@ -1,45 +1,67 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const loadingHTML = `
-        <loading>
-            <span>t</span>
-            <span>e</span>
-            <span>c</span>
-            <span>x</span>
-            <span>z</span>
-            <span>5</span>
-        </loading>
-    `;
+(() => {
+    const LOADING_CLASS_VISIBLE = 'visible';
+    const LOADING_CLASS_HIDDEN = 'hidden';
+    const BODY_CLASS_NO_SCROLL = 'no-scroll';
+    const LOADING_DURATION_MS = 2000;
+    const HIDE_DURATION_MS = 500;
 
-    document.body.insertAdjacentHTML('afterbegin', loadingHTML);
+    function createLoader() {
+        const existing = document.querySelector('loading');
+        if (existing) {
+            return existing;
+        }
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const loadingElement = document.querySelector('loading');
+        const loading = document.createElement('loading');
+        for (const char of ['t', 'e', 'c', 'x', 'z', '5']) {
+            const span = document.createElement('span');
+            span.textContent = char;
+            loading.appendChild(span);
+        }
 
-    if (urlParams.has('l')) {
-        document.body.classList.remove('no-scroll');
-    } else {
-        document.body.classList.add('no-scroll');
-        const showLoadingScreen = (duration) => {
-            loadingElement.style.display = 'flex';
-            loadingElement.classList.add('visible');
-
-            setTimeout(() => {
-                loadingElement.classList.add('hidden');
-                
-                // Плавный переход: header становится видным одновременно с уходом loading
-                const header = document.querySelector('header');
-                if (header) {
-                    header.style.animation = 'slideDown 1s ease-in-out forwards';
-                }
-
-                setTimeout(() => {
-                    loadingElement.classList.remove('visible');
-                    loadingElement.style.display = 'none';
-                    document.body.classList.remove('no-scroll');
-                }, 500);
-            }, duration);
-        };
-
-        showLoadingScreen(2000);
+        document.body.insertAdjacentElement('afterbegin', loading);
+        return loading;
     }
-});
+
+    function shouldSkipLoader() {
+        return new URLSearchParams(window.location.search).has('l');
+    }
+
+    function playLoader(loadingElement) {
+        document.body.classList.add(BODY_CLASS_NO_SCROLL);
+        loadingElement.style.display = 'flex';
+        loadingElement.classList.add(LOADING_CLASS_VISIBLE);
+
+        window.setTimeout(() => {
+            loadingElement.classList.add(LOADING_CLASS_HIDDEN);
+
+            const header = document.querySelector('header');
+            if (header) {
+                header.style.animation = 'slideDown 1s ease-in-out forwards';
+            }
+
+            window.setTimeout(() => {
+                loadingElement.classList.remove(LOADING_CLASS_VISIBLE);
+                loadingElement.style.display = 'none';
+                document.body.classList.remove(BODY_CLASS_NO_SCROLL);
+            }, HIDE_DURATION_MS);
+        }, LOADING_DURATION_MS);
+    }
+
+    function initLoader() {
+        const loadingElement = createLoader();
+
+        if (shouldSkipLoader()) {
+            document.body.classList.remove(BODY_CLASS_NO_SCROLL);
+            loadingElement.style.display = 'none';
+            return;
+        }
+
+        playLoader(loadingElement);
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initLoader, { once: true });
+    } else {
+        initLoader();
+    }
+})();

@@ -1,27 +1,32 @@
-document.addEventListener('DOMContentLoaded', function () {
+(() => {
+    const ANIMATION_MS = 300;
+    const POPUP_ID = 'popup';
+    const BODY_LOCKED_OVERFLOW = 'hidden';
+    const BODY_DEFAULT_OVERFLOW = 'auto';
+
     const textData = {
         'kitek-important': {
-            title: 'Ð’ÐÐ˜ÐœÐÐÐ˜Ð•',
-            content: 'ÐÐµ Ð½Ð°Ð¶Ð¸Ð¼Ð°Ð¹ Ð½Ð° ÐºÐ¾Ñ‚Ð°, ÐµÐ¼Ñƒ Ð½Ðµ Ð¿Ñ€Ð¸ÑÑ‚Ð½Ð¾ ;)' + '\n' + 'Ð—Ð° Ð¿Ð¾Ð²Ñ‚Ð¾Ñ€Ð½Ð¾Ðµ Ð½ÐµÑƒÐ²Ð°Ð¶ÐµÐ½Ð¸Ðµ Ðº ÐºÐ¾Ñ‚Ñƒ, Ñ‚ÐµÐ±Ñ Ð¶Ð´ÐµÑ‚ Ð´Ð¾ÐºÑ, ÑÐ²Ð°Ñ‚, ÑÐ¿Ð¾Ñ€Ñ‚Ð¸ÐºÐ¸, Ð°Ð³ÑƒÑƒÑƒÑƒÑƒÑƒ Ð°ÑƒÐ°ÑƒÐ°ÑƒÐ°ÑƒÐ°ÑƒÐ°ÑƒÐ°ÑƒÐ°ÑƒÐ°Ð°Ð°Ð°Ð°Ð°Ð°Ð°Ð°Ð°',
-            closeButtonText: 'ÐŸÐ¾ÑÑ‚Ð°Ñ€Ð°ÑŽÑÑŒ Ð½Ðµ Ñ‚Ñ€Ð¾Ð³Ð°Ñ‚ÑŒ',
+            title: 'ÂÍÈÌÀÍÈÅ',
+            content: 'Íå íàæèìàé íà êîòà, åìó íå ïðèÿòíî ;)\nÇà ïîâòîðíîå íåóâàæåíèå ê êîòó, òåáÿ æäåò äîêñ, ñâàò, ñïîðòèêè, àãóóóóóóóó àóàóàóàóàóàóàóàóàóàóààààààààààà',
+            closeButtonText: 'Ïîñòàðàþñü íå òðîãàòü'
         },
         'copyright': {
-            title: 'ÐšÑ€ÑƒÑ‚ÑÑˆÐºÐµ',
-            content: 'ÐšÐ¾Ð½ÐµÑ‡Ð½Ð¾ Ð¿Ñ€Ð¸ÐºÐ¾Ð»ÑŒÐ½Ð¾ Ñ‡Ñ‚Ð¾ ÐºÑ‚Ð¾-Ñ‚Ð¾ ÑÑŽÐ´Ð° Ð½Ð°Ð¶Ð°Ð», Ð½Ð¾ Ð·Ð´ÐµÑÑŒ Ð½Ð¸Ñ‡ÐµÐ³Ð¾ Ð½ÐµÑ‚Ñƒ Â¯\\_(ãƒ„)_/Â¯',
-            closeButtonText: 'Ð›Ð°Ð´Ð½Ð¾',
-        },
+            title: 'Êðóòÿøêå',
+            content: 'Êîíå÷íî ïðèêîëüíî ÷òî êòî-òî ñþäà íàæàë, íî çäåñü íè÷åãî íåòó ?\\_(?)_/?',
+            closeButtonText: 'Ëàäíî'
+        }
     };
 
     function createPopup() {
         const popup = document.createElement('div');
-        popup.id = 'popup';
-        popup.classList.add('popup');
+        popup.id = POPUP_ID;
+        popup.className = 'popup';
 
         const popupContent = document.createElement('div');
-        popupContent.classList.add('popup-content');
+        popupContent.className = 'popup-content';
         popup.appendChild(popupContent);
 
-        popup.addEventListener('click', function (event) {
+        popup.addEventListener('click', (event) => {
             if (event.target === popup) {
                 closePopup();
             }
@@ -30,49 +35,94 @@ document.addEventListener('DOMContentLoaded', function () {
         return popup;
     }
 
-    function showPopup(key) {
-        let popup = document.getElementById('popup');
+    function getPopup() {
+        let popup = document.getElementById(POPUP_ID);
         if (!popup) {
             popup = createPopup();
             document.body.appendChild(popup);
         }
+        return popup;
+    }
 
-        const popupContent = popup.querySelector('.popup-content');
-        popupContent.innerHTML = '';
+    function renderPopupContent(container, content) {
+        container.replaceChildren();
 
         const title = document.createElement('h2');
-        title.textContent = textData[key].title;
+        title.textContent = content.title;
 
-        const content = document.createElement('p');
-        content.textContent = textData[key].content;
+        const text = document.createElement('p');
+        text.textContent = content.content;
 
         const closeButton = document.createElement('p');
-        closeButton.classList.add('close-button');
-        closeButton.textContent = textData[key].closeButtonText;
-        closeButton.onclick = closePopup;
+        closeButton.className = 'close-button';
+        closeButton.textContent = content.closeButtonText;
+        closeButton.addEventListener('click', closePopup);
 
-        popupContent.appendChild(title);
-        popupContent.appendChild(content);
-        popupContent.appendChild(closeButton);
+        container.append(title, text, closeButton);
+    }
+
+    function showPopup(key) {
+        const content = textData[key];
+        if (!content) {
+            return;
+        }
+
+        const popup = getPopup();
+        const popupContent = popup.querySelector('.popup-content');
+
+        renderPopupContent(popupContent, content);
 
         popup.style.display = 'block';
-        document.body.style.overflow = 'hidden';
+        document.body.style.overflow = BODY_LOCKED_OVERFLOW;
 
         requestAnimationFrame(() => {
-            popup.classList.add('popup-show'); // Ð”Ð¾Ð±Ð°Ð²Ð»ÑÐµÐ¼ ÐºÐ»Ð°ÑÑ Ð´Ð»Ñ Ð°Ð½Ð¸Ð¼Ð°Ñ†Ð¸Ð¸
+            popup.classList.add('popup-show');
         });
     }
 
     function closePopup() {
-        const popup = document.getElementById('popup');
-        if (popup) {
-            popup.classList.remove('popup-show'); // Ð£Ð´Ð°Ð»ÑÐµÐ¼ ÐºÐ»Ð°ÑÑ Ð´Ð»Ñ Ð°Ð½Ð¸Ð¼Ð°Ñ†Ð¸Ð¸ Ð·Ð°ÐºÑ€Ñ‹Ñ‚Ð¸Ñ
-            setTimeout(() => {
-                popup.style.display = 'none';
-                document.body.style.overflow = 'auto';
-            }, 300); // Ð—Ð°Ð´ÐµÑ€Ð¶ÐºÐ° Ð´Ð¾Ð»Ð¶Ð½Ð° ÑÐ¾Ð¾Ñ‚Ð²ÐµÑ‚ÑÑ‚Ð²Ð¾Ð²Ð°Ñ‚ÑŒ Ð´Ð»Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ð¾ÑÑ‚Ð¸ Ð°Ð½Ð¸Ð¼Ð°Ñ†Ð¸Ð¸
+        const popup = document.getElementById(POPUP_ID);
+        if (!popup) {
+            return;
         }
+
+        popup.classList.remove('popup-show');
+        window.setTimeout(() => {
+            popup.style.display = 'none';
+            document.body.style.overflow = BODY_DEFAULT_OVERFLOW;
+        }, ANIMATION_MS);
     }
 
-    window.showPopup = showPopup;
-});
+    function initPopups() {
+        document.addEventListener('click', (event) => {
+            const trigger = event.target.closest('[data-popup-key]');
+            if (!trigger) {
+                return;
+            }
+
+            const key = trigger.getAttribute('data-popup-key');
+            if (!key) {
+                return;
+            }
+
+            event.preventDefault();
+            showPopup(key);
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closePopup();
+            }
+        });
+
+        // Keep backward compatibility for any legacy inline handlers.
+        window.showPopup = showPopup;
+        window.closePopup = closePopup;
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initPopups, { once: true });
+    } else {
+        initPopups();
+    }
+})();

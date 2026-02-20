@@ -1,66 +1,55 @@
-const siteConfig = {
-    icons: {
-        defaultIcon: '/sources/pictures/icon/t5.ico',
-        type: 'image/x-icon'
-    },
-    fonts: {
-        links: [
-            {
-                rel: 'preconnect',
-                href: 'https://fonts.googleapis.com'
-            },
-            {
-                rel: 'preconnect',
-                href: 'https://fonts.gstatic.com',
-                crossorigin: true
-            },
-            {
-                rel: 'stylesheet',
-                href: 'https://fonts.googleapis.com/css2?family=Days+One&family=Dela+Gothic+One&family=Geologica:wght@500&family=Unbounded:wght@500&display=swap'
-            },
+(() => {
+    const CONFIG = {
+        icon: {
+            href: '/sources/pictures/icon/t5.ico',
+            type: 'image/x-icon'
+        },
+        fonts: [
+            { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+            { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: 'anonymous' },
+            { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Days+One&family=Dela+Gothic+One&family=Geologica:wght@500&family=Unbounded:wght@500&display=swap' }
         ]
-    },
-};
+    };
 
-const siteResources = {
-    config: siteConfig,
+    function ensureFavicon() {
+        const head = document.head;
+        let iconLink = head.querySelector('link[rel="icon"], link[rel="shortcut icon"]');
 
-    /**
-     * Установка иконки для страницы
-     * @param {string} iconPath - путь к иконке (опционально)
-     */
-    setFavicon: function(iconPath = this.config.icons.defaultIcon) {
-        const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
-        link.type = this.config.icons.type;
-        link.rel = 'shortcut icon';
-        link.href = iconPath;
-        document.getElementsByTagName('head')[0].appendChild(link);
-    },
+        if (!iconLink) {
+            iconLink = document.createElement('link');
+            head.appendChild(iconLink);
+        }
 
-    /**
-     * Добавление ссылок на шрифты
-     */
-    setFonts: function() {
-        const head = document.getElementsByTagName('head')[0];
-        this.config.fonts.links.forEach(linkData => {
-            const link = document.createElement('link');
-            Object.entries(linkData).forEach(([key, value]) => {
-                link[key] = value;
-            });
-            head.appendChild(link);
-        });
-    },
-
-    /**
-     * Инициализация ресурсов при загрузке страницы
-     */
-    init: function() {
-        document.addEventListener('DOMContentLoaded', () => {
-            this.setFavicon();
-            this.setFonts();
-        });
+        iconLink.rel = 'shortcut icon';
+        iconLink.type = CONFIG.icon.type;
+        iconLink.href = CONFIG.icon.href;
     }
-};
 
-// Автоматическая инициализация
-siteResources.init();
+    function ensureFontLinks() {
+        const head = document.head;
+
+        for (const attrs of CONFIG.fonts) {
+            const existing = head.querySelector(`link[href="${attrs.href}"]`);
+            if (existing) {
+                continue;
+            }
+
+            const link = document.createElement('link');
+            for (const [key, value] of Object.entries(attrs)) {
+                link.setAttribute(key, value);
+            }
+            head.appendChild(link);
+        }
+    }
+
+    function initHeadResources() {
+        ensureFavicon();
+        ensureFontLinks();
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initHeadResources, { once: true });
+    } else {
+        initHeadResources();
+    }
+})();
