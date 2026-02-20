@@ -9,7 +9,7 @@
     `;
 
     const footerHTML = `
-        <p id="copyright">@<img src="https://github.com/tecxz5/tecxz5/blob/main/copyright.gif?raw=true" data-popup-key="copyright" loading="lazy" alt="copyright"></p>
+        <p id="copyright">@<img src="https://github.com/tecxz5/tecxz5/blob/main/copyright.gif?raw=true" loading="lazy" alt="copyright"></p>
         <p><a href="/design" id="footer-link">О Сайте</a></p>
     `;
 
