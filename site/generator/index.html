@@ -28,11 +28,29 @@
         </label>
         <label>
           <span>Фон</span>
-          <input type="color" id="bg-color" value="#000000">
+          <div class="color-control" data-target="bg-color">
+            <input type="text" id="bg-color" value="#000000" maxlength="7" spellcheck="false">
+            <div class="color-swatches">
+              <button type="button" class="swatch" data-color="#000000" style="--swatch:#000000;" aria-label="Черный"></button>
+              <button type="button" class="swatch" data-color="#101010" style="--swatch:#101010;" aria-label="Темно-серый"></button>
+              <button type="button" class="swatch" data-color="#1a1a1a" style="--swatch:#1a1a1a;" aria-label="Графит"></button>
+              <button type="button" class="swatch" data-color="#232323" style="--swatch:#232323;" aria-label="Антрацит"></button>
+              <button type="button" class="swatch" data-color="#f1dbbd" style="--swatch:#f1dbbd;" aria-label="Светло-бежевый"></button>
+            </div>
+          </div>
         </label>
         <label>
           <span>Цвет иконок</span>
-          <input type="color" id="fg-color" value="#ffffff">
+          <div class="color-control" data-target="fg-color">
+            <input type="text" id="fg-color" value="#ffffff" maxlength="7" spellcheck="false">
+            <div class="color-swatches">
+              <button type="button" class="swatch" data-color="#ffffff" style="--swatch:#ffffff;" aria-label="Белый"></button>
+              <button type="button" class="swatch" data-color="#d9d9d9" style="--swatch:#d9d9d9;" aria-label="Светло-серый"></button>
+              <button type="button" class="swatch" data-color="#b3b3b3" style="--swatch:#b3b3b3;" aria-label="Серый"></button>
+              <button type="button" class="swatch" data-color="#8a8a8a" style="--swatch:#8a8a8a;" aria-label="Темно-серый"></button>
+              <button type="button" class="swatch" data-color="#333333" style="--swatch:#333333;" aria-label="Графит"></button>
+            </div>
+          </div>
         </label>
         <label>
           <span>Прозрачность</span>

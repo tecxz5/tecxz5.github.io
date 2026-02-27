@@ -41,6 +41,15 @@ function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
 }
 
+function normalizeHex(value, fallback) {
+  if (typeof value !== 'string') return fallback;
+  let v = value.trim();
+  if (!v) return fallback;
+  if (!v.startsWith('#')) v = `#${v}`;
+  if (!/^#[0-9a-fA-F]{6}$/.test(v)) return fallback;
+  return v.toLowerCase();
+}
+
 function mulberry32(seed) {
   let t = seed >>> 0;
   return function rand() {
@@ -88,8 +97,8 @@ function readConfigFromForm() {
   currentConfig = {
     width: clamp(Math.round(num('bg-width', DEFAULT_CONFIG.width)), 512, 5000),
     height: clamp(Math.round(num('bg-height', DEFAULT_CONFIG.height)), 512, 5000),
-    bg: text('bg-color', DEFAULT_CONFIG.bg),
-    fg: text('fg-color', DEFAULT_CONFIG.fg),
+    bg: normalizeHex(text('bg-color', DEFAULT_CONFIG.bg), DEFAULT_CONFIG.bg),
+    fg: normalizeHex(text('fg-color', DEFAULT_CONFIG.fg), DEFAULT_CONFIG.fg),
     opacity: clamp(num('bg-opacity', DEFAULT_CONFIG.opacity), 0.05, 1),
     cell: clamp(Math.round(num('bg-cell', DEFAULT_CONFIG.cell)), 16, 96),
     fontSize: clamp(Math.round(num('bg-cell', DEFAULT_CONFIG.fontSize)), 16, 96),
@@ -99,6 +108,49 @@ function readConfigFromForm() {
   };
 
   return currentConfig;
+}
+
+function syncSwatchState(control, color) {
+  const swatches = control.querySelectorAll('.swatch');
+  swatches.forEach((swatch) => {
+    if (!(swatch instanceof HTMLButtonElement)) return;
+    const isActive = swatch.dataset.color?.toLowerCase() === color.toLowerCase();
+    swatch.classList.toggle('active', isActive);
+  });
+}
+
+function initColorControls() {
+  const controls = document.querySelectorAll('.color-control');
+  controls.forEach((control) => {
+    if (!(control instanceof HTMLElement)) return;
+    const targetId = control.dataset.target;
+    if (!targetId) return;
+    const input = document.getElementById(targetId);
+    if (!(input instanceof HTMLInputElement)) return;
+
+    input.value = normalizeHex(input.value, targetId === 'bg-color' ? DEFAULT_CONFIG.bg : DEFAULT_CONFIG.fg);
+    syncSwatchState(control, input.value);
+
+    control.addEventListener('click', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLButtonElement) || !target.classList.contains('swatch')) return;
+      const color = normalizeHex(target.dataset.color || '', input.value);
+      input.value = color;
+      syncSwatchState(control, color);
+    });
+
+    input.addEventListener('input', () => {
+      const raw = input.value.replace(/[^#0-9a-fA-F]/g, '');
+      input.value = raw.slice(0, 7);
+    });
+
+    input.addEventListener('blur', () => {
+      const fallback = targetId === 'bg-color' ? DEFAULT_CONFIG.bg : DEFAULT_CONFIG.fg;
+      const color = normalizeHex(input.value, fallback);
+      input.value = color;
+      syncSwatchState(control, color);
+    });
+  });
 }
 
 function nextFrame() {
@@ -180,6 +232,7 @@ async function generateBackgroundJpeg(config) {
 function initBackgroundDownloader() {
   const link = document.getElementById(DOWNLOAD_ID);
   if (!link) return;
+  initColorControls();
 
   link.addEventListener('click', async (event) => {
     event.preventDefault();
