@@ -18,19 +18,25 @@
       <h1>Генератор фона</h1>
       <div class="generator-layout">
         <form id="bg-generator-form" class="generator-form">
-          <label>
-            <span>Ширина</span>
-            <input type="number" id="bg-width" min="512" max="5000" step="1" value="2000">
-          </label>
-          <label>
-            <span>Высота</span>
-            <input type="number" id="bg-height" min="512" max="5000" step="1" value="2000">
-          </label>
+          <div class="size-row">
+            <label>
+              <span>Ширина</span>
+              <input type="number" id="bg-width" min="512" max="5000" step="1" value="2000">
+            </label>
+            <label>
+              <span>Высота</span>
+              <input type="number" id="bg-height" min="512" max="5000" step="1" value="2000">
+            </label>
+          </div>
           <label>
             <span>Цвет фона (HEX)</span>
             <div class="color-input">
               <div class="color-swatch" id="bg-swatch"></div>
               <input type="text" id="bg-color" value="#000000" maxlength="7" spellcheck="false">
+            </div>
+            <div class="history-box">
+              <p>История фона</p>
+              <div id="color-history-bg" class="color-history"></div>
             </div>
           </label>
           <label>
@@ -39,7 +45,33 @@
               <div class="color-swatch" id="fg-swatch"></div>
               <input type="text" id="fg-color" value="#ffffff" maxlength="7" spellcheck="false">
             </div>
+            <div class="history-box">
+              <p>История иконок</p>
+              <div id="color-history-fg" class="color-history"></div>
+            </div>
           </label>
+          <section class="picker-box hidden" id="picker-box">
+            <div class="picker-header">
+              <p>Колорпикер</p>
+              <button type="button" id="close-picker-btn" aria-label="Закрыть">×</button>
+            </div>
+            <div class="picker-area">
+              <canvas id="picker-sv" width="220" height="160"></canvas>
+              <canvas id="picker-hue-strip" width="24" height="160"></canvas>
+            </div>
+            <div class="picker-actions">
+              <button type="button" id="random-color-btn">Случайный</button>
+              <label class="extractor-upload">
+                <span>Экстрактор</span>
+                <input type="file" id="palette-image" accept="image/*">
+              </label>
+            </div>
+            <section class="history-box">
+              <p>История цветов (сохраняется после генерации)</p>
+              <div id="color-history" class="color-history"></div>
+            </section>
+            <div id="extracted-palette" class="extracted-palette"></div>
+          </section>
           <label>
             <span>Прозрачность</span>
             <input type="number" id="bg-opacity" min="0.05" max="1" step="0.05" value="0.30">
@@ -63,40 +95,7 @@
         <aside class="tools-panel">
           <section class="preview-box">
             <p>Превью</p>
-            <canvas id="bg-preview" width="100" height="100"></canvas>
-          </section>
-          <section class="picker-box hidden" id="picker-box">
-            <div class="picker-header">
-              <p>Колорпикер</p>
-              <button type="button" id="close-picker-btn" aria-label="Закрыть">×</button>
-            </div>
-            <label>
-              <span>Редактировать</span>
-              <select id="color-target">
-                <option value="bg-color">Фон</option>
-                <option value="fg-color">Иконки</option>
-              </select>
-            </label>
-            <div class="picker-area">
-              <canvas id="picker-sv" width="220" height="160"></canvas>
-              <canvas id="picker-hue-strip" width="24" height="160"></canvas>
-            </div>
-            <label>
-              <span>Alpha иконок</span>
-              <input type="range" id="picker-alpha" min="0.05" max="1" step="0.01" value="0.3">
-            </label>
-            <div class="picker-actions">
-              <button type="button" id="random-color-btn">Случайный</button>
-              <label class="extractor-upload">
-                <span>Экстрактор</span>
-                <input type="file" id="palette-image" accept="image/*">
-              </label>
-            </div>
-            <section class="history-box">
-              <p>История цветов (сохраняется после генерации)</p>
-              <div id="color-history" class="color-history"></div>
-            </section>
-            <div id="extracted-palette" class="extracted-palette"></div>
+            <canvas id="bg-preview" width="150" height="150"></canvas>
           </section>
         </aside>
       </div>

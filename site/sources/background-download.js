@@ -1,6 +1,6 @@
 ﻿const DOWNLOAD_ID = 'download-bg-jpeg';
 const FORM_ID = 'bg-generator-form';
-const PREVIEW_SIZE = 100;
+const PREVIEW_SIZE = 150;
 
 const DEFAULT_CONFIG = {
   width: 2000,
@@ -206,7 +206,8 @@ const ICONS = [
 ];
 
 const MAX_HISTORY = 12;
-const colorHistory = [];
+const colorHistoryBg = [];
+const colorHistoryFg = [];
 
 let currentConfig = { ...DEFAULT_CONFIG };
 let previewCtx = null;
@@ -223,28 +224,29 @@ function resetPreviewSeed() {
   previewSeed = null;
 }
 
-function addToHistory(bg, fg) {
-  const key = `${bg}|${fg}`;
-  // удаляем дубль если уже есть
-  const idx = colorHistory.indexOf(key);
-  if (idx !== -1) colorHistory.splice(idx, 1);
-  colorHistory.unshift(key);
-  if (colorHistory.length > MAX_HISTORY) colorHistory.pop();
-  renderHistory();
+function addToHistory(color, list, containerId) {
+  const idx = list.indexOf(color);
+  if (idx !== -1) list.splice(idx, 1);
+  list.unshift(color);
+  if (list.length > MAX_HISTORY) list.pop();
+  renderHistory(list, containerId);
 }
 
-function renderHistory() {
-  const container = document.getElementById('color-history');
+function renderHistory(list, containerId) {
+  const container = document.getElementById(containerId);
   if (!container) return;
   container.innerHTML = '';
-  colorHistory.forEach((key) => {
-    const [bg, fg] = key.split('|');
+  list.forEach((hex) => {
     const btn = document.createElement('button');
     btn.className = 'history-item';
-    btn.title = `${bg} / ${fg}`;
-    btn.style.background = `linear-gradient(90deg, ${bg} 0 50%, ${fg} 50% 100%)`;
+    btn.title = hex;
+    btn.style.background = hex;
     btn.addEventListener('click', () => {
-      applyColors(bg, fg);
+      if (containerId === 'color-history-bg') {
+        applyColors(hex, document.getElementById('fg-color')?.value || DEFAULT_CONFIG.fg);
+      } else {
+        applyColors(document.getElementById('bg-color')?.value || DEFAULT_CONFIG.bg, hex);
+      }
       updatePreview();
     });
     container.appendChild(btn);
@@ -275,10 +277,6 @@ function applyDefaults() {
   // синхронизируем picker
   setPickerFromHex(DEFAULT_CONFIG.bg);
   pickerState.target = 'bg-color';
-  const targetSelect = document.getElementById('color-target');
-  if (targetSelect instanceof HTMLSelectElement) {
-    targetSelect.value = 'bg-color';
-  }
   const alphaInput = document.getElementById('picker-alpha');
   if (alphaInput instanceof HTMLInputElement) {
     alphaInput.value = String(DEFAULT_CONFIG.opacity);
@@ -297,8 +295,6 @@ function applyColors(bg, fg) {
   // синхронизируем picker
   setPickerFromHex(bg);
   pickerState.target = 'bg-color';
-  const targetSelect = document.getElementById('color-target');
-  if (targetSelect instanceof HTMLSelectElement) targetSelect.value = 'bg-color';
   updatePickerUI();
 }
 
@@ -546,13 +542,10 @@ function readConfigFromForm() {
 }
 
 function initAdvancedPicker() {
-  const targetSelect = document.getElementById('color-target');
-  const alphaInput = document.getElementById('picker-alpha');
   const svCanvas = document.getElementById('picker-sv');
   const hueCanvas = document.getElementById('picker-hue-strip');
   const eyeBtn = document.getElementById('eyedropper-btn');
   const paletteInput = document.getElementById('palette-image');
-  const opacityField = document.getElementById('bg-opacity');
   const randomBtn = document.getElementById('random-color-btn');
   const copyBtn = document.getElementById('copy-hex-btn');
   const pickerBox = document.getElementById('picker-box');
@@ -569,9 +562,6 @@ function initAdvancedPicker() {
 
   function openPicker(targetId) {
     pickerState.target = targetId;
-    if (targetSelect instanceof HTMLSelectElement) {
-      targetSelect.value = targetId;
-    }
     const input = document.getElementById(targetId);
     const color = normalizeHex(input instanceof HTMLInputElement ? input.value : DEFAULT_CONFIG.bg, DEFAULT_CONFIG.bg);
     setPickerFromHex(color);
@@ -594,18 +584,6 @@ function initAdvancedPicker() {
 
   if (closePickerBtn instanceof HTMLButtonElement) {
     closePickerBtn.addEventListener('click', () => closePicker());
-  }
-
-  if (targetSelect instanceof HTMLSelectElement) {
-    targetSelect.addEventListener('change', () => {
-      pickerState.target = targetSelect.value;
-      const input = document.getElementById(pickerState.target);
-      const color = normalizeHex(input instanceof HTMLInputElement ? input.value : DEFAULT_CONFIG.bg, DEFAULT_CONFIG.bg);
-      setPickerFromHex(color);
-      updatePickerUI();
-      updatePreview();
-      updateSwatches();
-    });
   }
 
   if (svCanvas instanceof HTMLCanvasElement) {
@@ -634,20 +612,6 @@ function initAdvancedPicker() {
       window.addEventListener('mouseup', upHandler, { once: true });
     };
     hueCanvas.addEventListener('mousedown', handleDown);
-  }
-
-  if (alphaInput instanceof HTMLInputElement && opacityField instanceof HTMLInputElement) {
-    alphaInput.addEventListener('input', () => {
-      alphaInput.value = String(Number(alphaInput.value).toFixed(2));
-      opacityField.value = alphaInput.value;
-      updatePreview();
-    });
-    opacityField.addEventListener('input', () => {
-      const val = clamp(Number(opacityField.value), 0.05, 1);
-      opacityField.value = String(val);
-      alphaInput.value = String(val);
-      updatePreview();
-    });
   }
 
   if (eyeBtn instanceof HTMLButtonElement && 'EyeDropper' in window) {
@@ -947,7 +911,6 @@ function initBackgroundDownloader() {
     const closePickerBtn = document.getElementById('close-picker-btn');
     const bgInput = document.getElementById('bg-color');
     const fgInput = document.getElementById('fg-color');
-    const targetSelect = document.getElementById('color-target');
 
     const positionPicker = (anchor, box) => {
       if (!(anchor instanceof HTMLElement) || !(box instanceof HTMLElement)) return;

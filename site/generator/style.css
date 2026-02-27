@@ -12,9 +12,12 @@
 .generator-layout {
   width: min(1100px, 100%);
   display: grid;
+  grid-template-areas: "form preview";
   grid-template-columns: 1.2fr 0.8fr;
   gap: 18px;
   align-items: start;
+  position: relative;
+  justify-content: center;
 }
 
 .generator-page h1 {
@@ -26,6 +29,7 @@
 }
 
 .generator-form {
+  grid-area: form;
   width: 100%;
   display: grid;
   grid-template-columns: repeat(2, minmax(240px, 1fr));
@@ -58,8 +62,23 @@
   font: inherit;
 }
 
+.inline-preview {
+  display: none;
+}
+
+.inline-preview p {
+  margin: 0;
+}
+
 .generator-form span {
   font-size: 0.95rem;
+}
+
+.size-row {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 14px;
 }
 
 .generator-form input {
@@ -94,15 +113,29 @@
 }
 
 .tools-panel {
+  grid-area: preview;
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  align-items: center;
 }
 
-.preview-box,
+.preview-box {
+  position: static;
+  width: auto;
+  max-width: 220px;
+  background: #1c1c1c;
+  border: 1px solid #555;
+  border-radius: 12px;
+  padding: 12px 14px;
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
 .picker-box {
-  position: fixed;
+  position: absolute;
+  grid-column: 1 / -1;
   width: 280px;
   max-width: 92vw;
   background: #1c1c1c;
@@ -111,7 +144,10 @@
   padding: 12px 14px;
   text-align: left;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
-  z-index: 20;
+  z-index: 0;
+  top: 40px;
+  right: auto;
+  left: 60%;
 }
 
 .picker-header {
@@ -197,7 +233,7 @@
 .picker-actions label {
   background: #000;
   color: #fff;
-  border: 1px solid #555;
+  border: 0px;
   border-radius: 10px;
   padding: 10px 14px;
   cursor: pointer;
@@ -216,7 +252,7 @@
 }
 
 .history-box {
-  margin-top: 10px;
+  margin-top: 6px;
 }
 
 .history-box p {
@@ -266,8 +302,11 @@
 }
 
 .swatch:hover {
-  transform: scale(1.05);
-  border-color: #888;
+  box-shadow: 0 0 0 10px #888;
+}
+
+.picker-box.hidden {
+  display: none;
 }
 
 .generate-btn {
@@ -296,10 +335,28 @@
 @media (max-width: 900px) {
   .generator-layout {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "preview"
+      "form";
   }
 
   .generator-form {
     grid-template-columns: 1fr;
+  }
+
+  .size-row {
+    grid-template-columns: 1fr;
+  }
+
+  .inline-preview {
+    display: none;
+  }
+
+  .picker-box {
+    position: static;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 12px;
   }
 }
 
