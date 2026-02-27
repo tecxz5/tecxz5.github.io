@@ -9,6 +9,14 @@
   text-align: center;
 }
 
+.generator-layout {
+  width: min(1100px, 100%);
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 18px;
+  align-items: start;
+}
+
 .generator-page h1 {
   margin: 0;
 }
@@ -18,7 +26,7 @@
 }
 
 .generator-form {
-  width: min(900px, 100%);
+  width: 100%;
   display: grid;
   grid-template-columns: repeat(2, minmax(240px, 1fr));
   column-gap: 24px;
@@ -32,6 +40,22 @@
   align-items: flex-start;
   gap: 8px;
   text-align: left;
+}
+
+.form-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.form-actions button {
+  background: #000;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  font: inherit;
 }
 
 .generator-form span {
@@ -50,27 +74,189 @@
   font: inherit;
 }
 
-.color-control {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.color-control input {
+.color-input input {
   text-transform: uppercase;
 }
 
-.color-swatches {
+.color-input {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-swatch {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #555;
+  box-sizing: border-box;
+}
+
+.tools-panel {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.preview-box,
+.picker-box {
+  position: fixed;
+  width: 280px;
+  max-width: 92vw;
+  background: #1c1c1c;
+  border: 1px solid #555;
+  border-radius: 12px;
+  padding: 12px 14px;
+  text-align: left;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  z-index: 20;
+}
+
+.picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+#close-picker-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #555;
+  background: #000;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+}
+
+.picker-box.hidden {
+  display: none;
+}
+
+.preview-box p,
+.picker-box p {
+  margin: 0 0 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+#bg-preview {
+  border-radius: 10px;
+  border: 1px solid #444;
+  display: block;
+  margin: 0 auto;
+}
+
+.picker-box label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.picker-box select,
+.picker-box input[type="range"] {
+  width: 100%;
+}
+
+#picker-sv {
+  width: 220px;
+  height: 160px;
+  border-radius: 10px;
+  border: 1px solid #444;
+  cursor: crosshair;
+  display: block;
+}
+
+#picker-hue-strip {
+  width: 24px;
+  height: 160px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  cursor: crosshair;
+}
+
+.picker-area {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.picker-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.picker-actions button,
+.picker-actions label {
+  background: #000;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font: inherit;
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.picker-actions button:hover,
+.picker-actions label:hover {
+  box-shadow: 0 0 0 8px #888;
+  transform: translateY(-1px);
+}
+
+.extractor-upload input {
+  display: none;
+}
+
+.history-box {
+  margin-top: 10px;
+}
+
+.history-box p {
+  margin-bottom: 6px;
+}
+
+.color-history {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
 
+.history-item {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #555;
+  cursor: pointer;
+  padding: 0;
+  box-sizing: border-box;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+  background: #444;
+}
+
+.history-item:hover {
+  transform: scale(1.05);
+  border-color: #888;
+}
+
+.extracted-palette {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
 .swatch {
   width: 26px;
   height: 26px;
-  border-radius: 999px;
+  border-radius: 6px;
   border: 1px solid #666;
   background: var(--swatch);
   cursor: pointer;
@@ -80,12 +266,8 @@
 }
 
 .swatch:hover {
-  transform: scale(1.08);
-  border-color: #999;
-}
-
-.swatch.active {
-  border: 2px solid #f1dbbd;
+  transform: scale(1.05);
+  border-color: #888;
 }
 
 .generate-btn {
@@ -112,6 +294,10 @@
 }
 
 @media (max-width: 900px) {
+  .generator-layout {
+    grid-template-columns: 1fr;
+  }
+
   .generator-form {
     grid-template-columns: 1fr;
   }
