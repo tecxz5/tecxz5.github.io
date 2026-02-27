@@ -1,0 +1,26 @@
+.generator-page {
+  min-height: calc(100vh - 180px);
+  display: grid;
+  place-content: center;
+  gap: 16px;
+  padding: 32px;
+  text-align: center;
+}
+
+.generator-page h1 {
+  margin: 0;
+}
+
+.generator-page p {
+  margin: 0;
+}
+
+.generate-btn {
+  display: inline-block;
+  margin: 12px auto 0;
+  padding: 14px 24px;
+  border-radius: 12px;
+  background: #000;
+  color: #fff;
+  text-decoration: none;
+}

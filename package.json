@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "gen:bg:jpg": "node scripts/generate-icon-background-jpeg.mjs",
     "test": "echo \"No tests\" && exit 0"
   },
   "engines": {
@@ -17,6 +18,7 @@
     "three.js": "^0.77.0"
   },
   "devDependencies": {
+    "playwright": "^1.54.2",
     "vite": "^7.3.1"
   }
 }

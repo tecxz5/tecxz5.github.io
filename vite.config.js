@@ -73,7 +73,7 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'site/index.html'),
         links: resolve(__dirname, 'site/links/index.html'),
-        pashalka: resolve(__dirname, 'site/pashalka/index.html'),
+        generator: resolve(__dirname, 'site/generator/index.html'),
         404: resolve(__dirname, 'site/404.html')
       }
     },

@@ -1,16 +1,16 @@
-(() => {
+﻿(() => {
     const headerHTML = `
         <div class="home">
             <a href="/?l">tecxz5</a>
         </div>
         <div class="navigation">
-            <a href="/pashalka/" id="clicky">пасхалка</a>
+            <a href="/generator/" id="clicky">Генератор фона</a>
         </div>
     `;
 
     const footerHTML = `
         <p id="copyright">@<img src="https://github.com/tecxz5/tecxz5/blob/main/copyright.gif?raw=true" loading="lazy" alt="copyright"></p>
-        <p><a href="/design" id="footer-link">О Сайте</a></p>
+        <p><a href="/design" id="footer-link">О сайте</a></p>
     `;
 
     function renderLayout() {
@@ -32,4 +32,3 @@
         renderLayout();
     }
 })();
-
