@@ -238,6 +238,7 @@ function renderHistory(list, containerId) {
   container.innerHTML = '';
   list.forEach((hex) => {
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = 'history-item';
     btn.title = hex;
     btn.style.background = hex;
@@ -566,7 +567,26 @@ function initAdvancedPicker() {
     const color = normalizeHex(input instanceof HTMLInputElement ? input.value : DEFAULT_CONFIG.bg, DEFAULT_CONFIG.bg);
     setPickerFromHex(color);
     updatePickerUI();
-    if (pickerBox) pickerBox.classList.remove('hidden');
+    if (!pickerBox) return;
+
+    const isMobile = window.matchMedia('(max-width: 900px)').matches;
+    if (isMobile && input instanceof HTMLElement) {
+      const label = input.closest('label');
+      const colorField = label?.querySelector('.color-input');
+      if (colorField) {
+        colorField.insertAdjacentElement('afterend', pickerBox);
+      }
+      pickerBox.style.position = 'static';
+      pickerBox.style.width = '100%';
+      pickerBox.style.left = '';
+      pickerBox.style.top = '';
+    } else {
+      const layout = document.querySelector('.generator-layout');
+      if (layout instanceof HTMLElement) layout.appendChild(pickerBox);
+      pickerBox.style.position = '';
+      pickerBox.style.width = '';
+    }
+    pickerBox.classList.remove('hidden');
   }
 
   function closePicker() {
@@ -708,6 +728,7 @@ function renderExtractedPalette(colors) {
   container.innerHTML = '';
   colors.forEach((hex) => {
     const btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = 'swatch';
     btn.style.setProperty('--swatch', hex);
     btn.dataset.color = hex;
@@ -890,6 +911,7 @@ function initBackgroundDownloader() {
   initAdvancedPicker();
   const form = document.getElementById(FORM_ID);
   if (form instanceof HTMLFormElement) {
+    form.addEventListener('submit', (e) => e.preventDefault());
     form.addEventListener('input', () => updatePreview());
     form.addEventListener('change', () => updatePreview());
     const seedInput = document.getElementById('bg-seed');
@@ -939,10 +961,28 @@ function initBackgroundDownloader() {
       const color = normalizeHex(input instanceof HTMLInputElement ? input.value : DEFAULT_CONFIG.bg, DEFAULT_CONFIG.bg);
       setPickerFromHex(color);
       updatePickerUI();
-      if (pickerBox) {
+      if (!pickerBox) return;
+
+      const isMobile = window.matchMedia('(max-width: 900px)').matches;
+      if (isMobile && input instanceof HTMLElement) {
+        const label = input.closest('label');
+        const colorField = label?.querySelector('.color-input');
+        if (colorField) {
+          colorField.insertAdjacentElement('afterend', pickerBox);
+        }
+        pickerBox.style.position = 'static';
+        pickerBox.style.width = '100%';
+        pickerBox.style.left = '';
+        pickerBox.style.top = '';
+      } else {
+        const layout = document.querySelector('.generator-layout');
+        if (layout instanceof HTMLElement) layout.appendChild(pickerBox);
+        pickerBox.style.position = 'absolute';
+        pickerBox.style.width = '';
         pickerBox.classList.remove('hidden');
         positionPicker(input, pickerBox);
       }
+      pickerBox.classList.remove('hidden');
     };
 
     if (bgInput instanceof HTMLInputElement) {
