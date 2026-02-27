@@ -1,9 +1,11 @@
 .generator-page {
   min-height: calc(100vh - 180px);
-  display: grid;
-  place-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 16px;
-  padding: 32px;
+  padding: 120px 24px 48px;
   text-align: center;
 }
 
@@ -15,6 +17,60 @@
   margin: 0;
 }
 
+.generator-form {
+  width: min(900px, 100%);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(240px, 1fr));
+  column-gap: 24px;
+  row-gap: 14px;
+  margin-top: 8px;
+}
+
+.generator-form label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  text-align: left;
+}
+
+.generator-form span {
+  font-size: 0.95rem;
+}
+
+.generator-form input {
+  width: 100%;
+  height: 44px;
+  box-sizing: border-box;
+  border: 1px solid #555;
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: #1c1c1c;
+  color: #fff;
+  font: inherit;
+}
+
+.generator-form input[type="color"] {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 6px;
+  cursor: pointer;
+}
+
+.generator-form input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.generator-form input[type="color"]::-webkit-color-swatch {
+  border: 0;
+  border-radius: 6px;
+}
+
+.generator-form input[type="color"]::-moz-color-swatch {
+  border: 0;
+  border-radius: 6px;
+}
+
 .generate-btn {
   display: inline-block;
   margin: 12px auto 0;
@@ -23,4 +79,49 @@
   background: #000;
   color: #fff;
   text-decoration: none;
+  transition: box-shadow 0.5s ease;
+}
+
+@media (hover:hover) {
+  .generate-btn:hover {
+    box-shadow: 0 0 0 10px #888;
+  }
+}
+
+@media (hover:none) {
+  .generate-btn:active {
+    box-shadow: 0 0 0 10px #888;
+  }
+}
+
+@media (max-width: 900px) {
+  .generator-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .generator-page {
+    padding: 104px 14px 28px;
+    gap: 12px;
+  }
+
+  .generator-page h1 {
+    font-size: 2.2rem;
+  }
+
+  .generator-page p {
+    font-size: 1rem;
+  }
+
+  .generator-form span {
+    font-size: 0.9rem;
+  }
+
+  .generate-btn {
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1rem;
+    padding: 12px 14px;
+  }
 }

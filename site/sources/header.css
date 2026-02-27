@@ -20,7 +20,12 @@ header {
 }
 
 .navigation {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
+}
+
+.menu-toggle,
+.mobile-nav {
+    display: none;
 }
 
 #clicky {
@@ -33,7 +38,72 @@ header a {
 }
 
 @media (max-width: 480px){
+    header {
+        padding: 15px 16px;
+    }
 
+    .navigation {
+        display: none;
+    }
+
+    .menu-toggle {
+        display: inline-flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-left: auto;
+        padding: 8px;
+        border: 1px solid #232323;
+        border-radius: 8px;
+        background: #f1dbbd;
+        cursor: pointer;
+    }
+
+    .menu-toggle span {
+        width: 18px;
+        height: 2px;
+        background: #232323;
+        display: block;
+    }
+
+    .mobile-nav {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 16px;
+        min-width: 200px;
+        border: 1px solid #232323;
+        border-radius: 10px;
+        background: #f1dbbd;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        padding: 8px;
+        z-index: 11;
+    }
+
+    .mobile-nav-link {
+        display: block;
+        color: #000;
+        font-size: 1rem;
+        padding: 10px 12px;
+        border-radius: 8px;
+    }
+
+    header.menu-open .mobile-nav {
+        display: block;
+    }
+
+}
+
+@media (max-width: 480px) and (hover:hover) {
+    .mobile-nav-link:hover {
+        background: rgba(0, 0, 0, 0.08);
+        color: #000;
+    }
+}
+
+@media (max-width: 480px) and (hover:none) {
+    .mobile-nav-link:active {
+        background: rgba(0, 0, 0, 0.08);
+        color: #000;
+    }
 }
 
 @media (hover:hover) {

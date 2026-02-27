@@ -1,6 +1,7 @@
 ﻿const DOWNLOAD_ID = 'download-bg-jpeg';
+const FORM_ID = 'bg-generator-form';
 
-const CONFIG = {
+const DEFAULT_CONFIG = {
   width: 2000,
   height: 2000,
   bg: '#000000',
@@ -9,8 +10,10 @@ const CONFIG = {
   cell: 36,
   fontSize: 36,
   angle: -15,
-  quality: 0.92
+  quality: 1,
+  seed: Date.now()
 };
+
 const RENDER_BATCH_ROWS = 6;
 
 const ICONS = [
@@ -32,6 +35,12 @@ const ICONS = [
   'settings_input_antenna', 'settings_remote', 'settings_suggest', 'settings_applications'
 ];
 
+let currentConfig = { ...DEFAULT_CONFIG };
+
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
+
 function mulberry32(seed) {
   let t = seed >>> 0;
   return function rand() {
@@ -50,30 +59,46 @@ function pickIcon(rand, pool, left, top) {
   return pool[Math.floor(rand() * pool.length)];
 }
 
-function iconLooksValid(measureCtx, iconName, cell) {
+function iconLooksValid(measureCtx, iconName, fontSize) {
   const width = measureCtx.measureText(iconName).width;
-  return width > 0 && width <= cell * 1.2;
+  return width > 0 && width <= fontSize * 1.25;
 }
 
-let iconPoolPromise = null;
-
-async function getValidIconPool() {
-  if (iconPoolPromise) {
-    return iconPoolPromise;
+function readConfigFromForm() {
+  const form = document.getElementById(FORM_ID);
+  if (!form) {
+    currentConfig = { ...DEFAULT_CONFIG, seed: Date.now() };
+    return currentConfig;
   }
 
-  iconPoolPromise = (async () => {
-    await document.fonts.load(`${CONFIG.fontSize}px "Material Icons"`);
-    await document.fonts.ready;
+  const num = (id, fallback) => {
+    const input = form.querySelector(`#${id}`);
+    if (!input) return fallback;
+    const parsed = Number(input.value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  };
 
-    const measureCanvas = document.createElement('canvas');
-    const measureCtx = measureCanvas.getContext('2d');
-    measureCtx.font = `${CONFIG.fontSize}px "Material Icons"`;
-    const validIcons = ICONS.filter((icon) => iconLooksValid(measureCtx, icon, CONFIG.cell));
-    return validIcons.length ? validIcons : ['apps'];
-  })();
+  const text = (id, fallback) => {
+    const input = form.querySelector(`#${id}`);
+    return input && input.value ? input.value : fallback;
+  };
 
-  return iconPoolPromise;
+  const seedRaw = num('bg-seed', NaN);
+
+  currentConfig = {
+    width: clamp(Math.round(num('bg-width', DEFAULT_CONFIG.width)), 512, 5000),
+    height: clamp(Math.round(num('bg-height', DEFAULT_CONFIG.height)), 512, 5000),
+    bg: text('bg-color', DEFAULT_CONFIG.bg),
+    fg: text('fg-color', DEFAULT_CONFIG.fg),
+    opacity: clamp(num('bg-opacity', DEFAULT_CONFIG.opacity), 0.05, 1),
+    cell: clamp(Math.round(num('bg-cell', DEFAULT_CONFIG.cell)), 16, 96),
+    fontSize: clamp(Math.round(num('bg-cell', DEFAULT_CONFIG.fontSize)), 16, 96),
+    angle: clamp(num('bg-angle', DEFAULT_CONFIG.angle), -90, 90),
+    quality: DEFAULT_CONFIG.quality,
+    seed: Number.isFinite(seedRaw) && seedRaw > 0 ? Math.floor(seedRaw) : Date.now()
+  };
+
+  return currentConfig;
 }
 
 function nextFrame() {
@@ -82,41 +107,48 @@ function nextFrame() {
   });
 }
 
-async function generateBackgroundJpeg() {
-  const iconPool = await getValidIconPool();
+async function generateBackgroundJpeg(config) {
+  await document.fonts.load(`${config.fontSize}px "Material Icons"`);
+  await document.fonts.ready;
+
+  const measureCanvas = document.createElement('canvas');
+  const measureCtx = measureCanvas.getContext('2d');
+  measureCtx.font = `${config.fontSize}px "Material Icons"`;
+  const validIcons = ICONS.filter((icon) => iconLooksValid(measureCtx, icon, config.fontSize));
+  const iconPool = validIcons.length >= 20 ? validIcons : ICONS;
 
   const canvas = document.createElement('canvas');
-  canvas.width = CONFIG.width;
-  canvas.height = CONFIG.height;
+  canvas.width = config.width;
+  canvas.height = config.height;
   const ctx = canvas.getContext('2d');
 
-  ctx.fillStyle = CONFIG.bg;
-  ctx.fillRect(0, 0, CONFIG.width, CONFIG.height);
+  ctx.fillStyle = config.bg;
+  ctx.fillRect(0, 0, config.width, config.height);
 
-  const diag = Math.hypot(CONFIG.width, CONFIG.height);
-  const cols = Math.ceil(diag / CONFIG.cell) + 8;
-  const rows = Math.ceil(diag / CONFIG.cell) + 8;
+  const diag = Math.hypot(config.width, config.height);
+  const cols = Math.ceil(diag / config.cell) + 8;
+  const rows = Math.ceil(diag / config.cell) + 8;
   const grid = Array.from({ length: rows }, () => Array(cols).fill(''));
 
   ctx.save();
-  ctx.translate(CONFIG.width / 2, CONFIG.height / 2);
-  ctx.rotate((CONFIG.angle * Math.PI) / 180);
+  ctx.translate(config.width / 2, config.height / 2);
+  ctx.rotate((config.angle * Math.PI) / 180);
   ctx.translate(-diag / 2, -diag / 2);
-  ctx.font = `${CONFIG.fontSize}px "Material Icons"`;
+  ctx.font = `${config.fontSize}px "Material Icons"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillStyle = CONFIG.fg;
-  ctx.globalAlpha = CONFIG.opacity;
+  ctx.fillStyle = config.fg;
+  ctx.globalAlpha = config.opacity;
 
-  const rand = mulberry32(Date.now());
+  const rand = mulberry32(config.seed);
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       const left = c > 0 ? grid[r][c - 1] : '';
       const top = r > 0 ? grid[r - 1][c] : '';
       const icon = pickIcon(rand, iconPool, left, top);
       grid[r][c] = icon;
-      const x = c * CONFIG.cell + CONFIG.cell / 2;
-      const y = r * CONFIG.cell + CONFIG.cell / 2;
+      const x = c * config.cell + config.cell / 2;
+      const y = r * config.cell + config.cell / 2;
       ctx.fillText(icon, x, y);
     }
 
@@ -124,10 +156,11 @@ async function generateBackgroundJpeg() {
       await nextFrame();
     }
   }
+
   ctx.restore();
 
   const blob = await new Promise((resolve) => {
-    canvas.toBlob((b) => resolve(b), 'image/jpeg', CONFIG.quality);
+    canvas.toBlob((b) => resolve(b), 'image/jpeg', config.quality);
   });
 
   if (!blob) {
@@ -153,8 +186,10 @@ function initBackgroundDownloader() {
     const original = link.textContent;
     link.textContent = 'Генерация...';
     link.style.pointerEvents = 'none';
+
     try {
-      await generateBackgroundJpeg();
+      const config = readConfigFromForm();
+      await generateBackgroundJpeg(config);
       link.textContent = 'Скачать еще';
     } catch (error) {
       console.error(error);

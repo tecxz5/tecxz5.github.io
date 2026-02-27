@@ -9,13 +9,48 @@
     <link rel="stylesheet" href="/sources/site.css">
     <link rel="stylesheet" href="/sources/header.css">
     <link rel="stylesheet" href="/sources/footer.css">
+    <link rel="stylesheet" href="/sources/loading.css">
     <link rel="stylesheet" href="/generator/style.css">
   </head>
   <body>
     <header id="header"></header>
     <main class="generator-page">
       <h1>Генератор фона</h1>
-      <p>Создает JPEG 2000x2000 в стиле главной страницы.</p>
+      <p>Генератор с настройками</p>
+      <form id="bg-generator-form" class="generator-form">
+        <label>
+          <span>Ширина</span>
+          <input type="number" id="bg-width" min="512" max="5000" step="1" value="2000">
+        </label>
+        <label>
+          <span>Высота</span>
+          <input type="number" id="bg-height" min="512" max="5000" step="1" value="2000">
+        </label>
+        <label>
+          <span>Фон</span>
+          <input type="color" id="bg-color" value="#000000">
+        </label>
+        <label>
+          <span>Цвет иконок</span>
+          <input type="color" id="fg-color" value="#ffffff">
+        </label>
+        <label>
+          <span>Прозрачность</span>
+          <input type="number" id="bg-opacity" min="0.05" max="1" step="0.05" value="0.30">
+        </label>
+        <label>
+          <span>Размер сетки и иконок</span>
+          <input type="number" id="bg-cell" min="16" max="96" step="1" value="36">
+        </label>
+        <label>
+          <span>Угол</span>
+          <input type="number" id="bg-angle" min="-90" max="90" step="1" value="-15">
+        </label>
+        <label>
+          <span>Seed (опц.)</span>
+          <input type="number" id="bg-seed" min="1" step="1" placeholder="случайно">
+        </label>
+      </form>
       <a href="#" id="download-bg-jpeg" class="generate-btn">Сгенерировать и скачать</a>
     </main>
     <footer id="footer"></footer>
