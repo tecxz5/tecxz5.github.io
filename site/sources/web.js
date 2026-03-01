@@ -19,12 +19,12 @@
         repelStrength: 18
     };
     const iconStyleVariants = [
-        { family: 'Material Symbols Outlined', filled: false, weight: 400 },
-        { family: 'Material Symbols Rounded', filled: false, weight: 400 },
-        { family: 'Material Symbols Sharp', filled: false, weight: 400 },
-        { family: 'Material Symbols Outlined', filled: true, weight: 400 },
-        { family: 'Material Symbols Rounded', filled: true, weight: 400 },
-        { family: 'Material Symbols Sharp', filled: true, weight: 400 }
+        { family: 'Material Symbols Outlined', filled: false, weight: 400, fillAxis: 0 },
+        { family: 'Material Symbols Rounded', filled: false, weight: 400, fillAxis: 0 },
+        { family: 'Material Symbols Sharp', filled: false, weight: 400, fillAxis: 0 },
+        { family: 'Material Symbols Outlined', filled: true, weight: 400, fillAxis: 1 },
+        { family: 'Material Symbols Rounded', filled: true, weight: 400, fillAxis: 1 },
+        { family: 'Material Symbols Sharp', filled: true, weight: 400, fillAxis: 1 }
     ];
 
     const iconsList = [
@@ -259,6 +259,9 @@
     const grid = [];
     const highlighted = [];
     const iconTextures = [];
+    const iconTextureIds = [];
+    const iconTextureNames = [];
+    const iconTextureStyles = [];
     const fallbackIconName = 'circle';
     const tintLut = Array.from({ length: 256 }, (_, i) => {
         const t = i / 255;
@@ -286,8 +289,16 @@
         const iconCtx = el.getContext('2d');
         const fontWeight = variant && variant.weight ? variant.weight : 400;
         const fontFamily = variant && variant.family ? variant.family : 'Material Symbols Outlined';
-        iconCtx.clearRect(0, 0, size, size);
+        const maxLigatureWidth = config.fontSize * 1.42;
+
         iconCtx.font = `${fontWeight} ${config.fontSize}px "${fontFamily}"`;
+        iconCtx.fontVariationSettings = `'FILL' ${variant && Number.isFinite(variant.fillAxis) ? variant.fillAxis : 0}, 'wght' ${fontWeight}, 'GRAD' 0, 'opsz' 48`;
+        const width = iconCtx.measureText(icon).width;
+        if (!Number.isFinite(width) || width <= 0 || width > maxLigatureWidth) {
+            return null;
+        }
+
+        iconCtx.clearRect(0, 0, size, size);
         iconCtx.fillStyle = '#ffffff';
         iconCtx.textAlign = 'center';
         iconCtx.textBaseline = 'middle';
@@ -334,6 +345,10 @@
             for (let f = 0; f < iconStyleVariants.length; f++) {
                 const texture = createIconTexture(icon, iconStyleVariants[f]);
                 if (texture) {
+                    const styleId = `${iconStyleVariants[f].family}|${iconStyleVariants[f].filled ? 1 : 0}`;
+                    iconTextureIds.push(`${icon}|${styleId}`);
+                    iconTextureNames.push(icon);
+                    iconTextureStyles.push(styleId);
                     iconTextures.push(texture);
                 }
             }
@@ -342,6 +357,10 @@
         if (iconTextures.length === 0) {
             const fallback = createIconTexture(fallbackIconName, iconStyleVariants[0]);
             if (fallback) {
+                const styleId = `${iconStyleVariants[0].family}|0`;
+                iconTextureIds.push(`${fallbackIconName}|${styleId}`);
+                iconTextureNames.push(fallbackIconName);
+                iconTextureStyles.push(styleId);
                 iconTextures.push(fallback);
             }
         }
@@ -404,13 +423,16 @@
         let textureOrder = shuffledIndices(iconTextures.length);
         let textureCursor = 0;
 
-        function nextTexture() {
+        function pullNextIndex() {
             if (textureCursor >= textureOrder.length) {
                 textureOrder = shuffledIndices(iconTextures.length);
                 textureCursor = 0;
             }
-            const idx = textureOrder[textureCursor++];
-            return iconTextures[idx];
+            return textureOrder[textureCursor++];
+        }
+
+        function nextTextureIndex() {
+            return pullNextIndex();
         }
 
         for (let c = 0; c < state.cols; c++) {
@@ -418,7 +440,8 @@
             const x = c * config.cellSize + config.cellSize / 2;
 
             for (let r = 0; r < state.rows; r++) {
-                const sprite = new PIXI.Sprite(nextTexture());
+                const textureIdx = nextTextureIndex();
+                const sprite = new PIXI.Sprite(iconTextures[textureIdx]);
                 const baseY = r * config.cellSize + config.cellSize / 2;
 
                 sprite.anchor.set(0.5);
@@ -433,6 +456,9 @@
                     r,
                     x,
                     baseY,
+                    iconId: iconTextureIds[textureIdx],
+                    iconName: iconTextureNames[textureIdx],
+                    styleId: iconTextureStyles[textureIdx],
                     sprite
                 };
                 cells.push(cell);

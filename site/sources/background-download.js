@@ -11,11 +11,20 @@ const DEFAULT_CONFIG = {
   cell: 36,
   fontSize: 36,
   angle: -15,
+  iconStyles: ['outlined', 'rounded', 'sharp', 'outlined-filled', 'rounded-filled', 'sharp-filled'],
   quality: 1,
   seed: Date.now()
 };
 
 const RENDER_BATCH_ROWS = 6;
+const ICON_STYLE_VARIANTS = [
+  { key: 'outlined', family: 'Material Symbols Outlined', fill: 0, weight: 400 },
+  { key: 'rounded', family: 'Material Symbols Rounded', fill: 0, weight: 400 },
+  { key: 'sharp', family: 'Material Symbols Sharp', fill: 0, weight: 400 },
+  { key: 'outlined-filled', family: 'Material Symbols Outlined', fill: 1, weight: 400 },
+  { key: 'rounded-filled', family: 'Material Symbols Rounded', fill: 1, weight: 400 },
+  { key: 'sharp-filled', family: 'Material Symbols Sharp', fill: 1, weight: 400 }
+];
 
 const ICONS = [
   'grid_view', 'memory', 'cpu', 'router', 'dns', 'settings',
@@ -205,12 +214,10 @@ const ICONS = [
   'gas_meter', 'gavel', 'generating_tokens', 'gesture', 'get_app'
 ];
 
-const MAX_HISTORY = 12;
-const colorHistoryBg = [];
-const colorHistoryFg = [];
-
 let currentConfig = { ...DEFAULT_CONFIG };
 let previewCtx = null;
+let cachedIconPoolKey = '';
+let cachedIconPool = null;
 let pickerState = {
   target: 'bg-color',
   h: 0,
@@ -224,42 +231,93 @@ function resetPreviewSeed() {
   previewSeed = null;
 }
 
-function addToHistory(color, list, containerId) {
-  const idx = list.indexOf(color);
-  if (idx !== -1) list.splice(idx, 1);
-  list.unshift(color);
-  if (list.length > MAX_HISTORY) list.pop();
-  renderHistory(list, containerId);
+function getSelectedVariants(styleKey) {
+  if (!Array.isArray(styleKey)) return ICON_STYLE_VARIANTS;
+  if (styleKey.length === 0) return ICON_STYLE_VARIANTS;
+  const selected = ICON_STYLE_VARIANTS.filter((v) => styleKey.includes(v.key));
+  return selected.length > 0 ? selected : ICON_STYLE_VARIANTS;
 }
 
-function renderHistory(list, containerId) {
-  const container = document.getElementById(containerId);
-  if (!container) return;
-  container.innerHTML = '';
-  list.forEach((hex) => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'history-item';
-    btn.title = hex;
-    btn.style.background = hex;
-    btn.addEventListener('click', () => {
-      if (containerId === 'color-history-bg') {
-        applyColors(hex, document.getElementById('fg-color')?.value || DEFAULT_CONFIG.fg);
-      } else {
-        applyColors(document.getElementById('bg-color')?.value || DEFAULT_CONFIG.bg, hex);
+function getIconFont(variant, fontSize) {
+  return `${variant.weight} ${fontSize}px "${variant.family}"`;
+}
+
+function loadSymbolFonts(fontSize) {
+  const unique = new Set(ICON_STYLE_VARIANTS.map((v) => getIconFont(v, fontSize)));
+  return Promise.all(Array.from(unique, (font) => document.fonts.load(font)));
+}
+
+function glyphExists(checkCtx, iconName, variant, fontSize) {
+  const size = Math.max(48, fontSize + 16);
+  const maxLigatureWidth = fontSize * 1.42;
+  checkCtx.canvas.width = size;
+  checkCtx.canvas.height = size;
+  checkCtx.clearRect(0, 0, size, size);
+  checkCtx.font = getIconFont(variant, fontSize);
+  checkCtx.fontVariationSettings = `'FILL' ${Number.isFinite(variant.fill) ? variant.fill : 0}, 'wght' ${variant.weight}, 'GRAD' 0, 'opsz' 48`;
+  const width = checkCtx.measureText(iconName).width;
+  if (!Number.isFinite(width) || width <= 0 || width > maxLigatureWidth) {
+    return false;
+  }
+  checkCtx.fillStyle = '#fff';
+  checkCtx.textAlign = 'center';
+  checkCtx.textBaseline = 'middle';
+  checkCtx.fillText(iconName, size / 2, size / 2);
+  const sample = checkCtx.getImageData(0, 0, size, size).data;
+  for (let i = 3; i < sample.length; i += 4) {
+    if (sample[i] > 0) return true;
+  }
+  return false;
+}
+
+function getRenderableIconPool(config) {
+  const styleKey = Array.isArray(config.iconStyles) ? [...config.iconStyles].sort().join(',') : '';
+  const key = `${config.fontSize}|${styleKey}`;
+  if (cachedIconPool && cachedIconPoolKey === key) return cachedIconPool;
+
+  const selectedVariants = getSelectedVariants(config.iconStyles);
+  const variants = selectedVariants.length > 0 ? selectedVariants : ICON_STYLE_VARIANTS;
+  const uniqueIcons = Array.from(new Set(ICONS));
+  const checkCanvas = document.createElement('canvas');
+  const checkCtx = checkCanvas.getContext('2d');
+  if (!checkCtx) return [{ id: 'circle|outlined', icon: 'circle', styleId: 'outlined', variant: ICON_STYLE_VARIANTS[0] }];
+
+  const pool = [];
+  for (let i = 0; i < uniqueIcons.length; i++) {
+    const iconName = uniqueIcons[i];
+    for (let j = 0; j < variants.length; j++) {
+      const variant = variants[j];
+      if (glyphExists(checkCtx, iconName, variant, config.fontSize)) {
+        pool.push({
+          id: `${iconName}|${variant.key}`,
+          icon: iconName,
+          styleId: variant.key,
+          variant
+        });
       }
-      updatePreview();
-    });
-    container.appendChild(btn);
-  });
-}
+    }
+  }
 
+  if (pool.length === 0) {
+    pool.push({ id: 'circle|outlined', icon: 'circle', styleId: 'outlined', variant: ICON_STYLE_VARIANTS[0] });
+  }
+
+  cachedIconPoolKey = key;
+  cachedIconPool = pool;
+  return pool;
+}
 
 function applyDefaults() {
   const setVal = (id, value) => {
     const el = document.getElementById(id);
     if (el instanceof HTMLInputElement) {
       el.value = String(value);
+    }
+    if (el instanceof HTMLSelectElement) {
+      const values = Array.isArray(value) ? value : [String(value)];
+      for (const option of el.options) {
+        option.selected = values.includes(option.value);
+      }
     }
   };
 
@@ -270,6 +328,7 @@ function applyDefaults() {
   setVal('bg-opacity', DEFAULT_CONFIG.opacity);
   setVal('bg-cell', DEFAULT_CONFIG.cell);
   setVal('bg-angle', DEFAULT_CONFIG.angle);
+  setVal('bg-icon-style', DEFAULT_CONFIG.iconStyles);
 
   // очищаем seed, чтобы использовался дефолтный (Date.now при чтении)
   setVal('bg-seed', '');
@@ -484,17 +543,8 @@ function mulberry32(seed) {
   };
 }
 
-function pickIcon(rand, pool, left, top) {
-  for (let i = 0; i < 24; i++) {
-    const icon = pool[Math.floor(rand() * pool.length)];
-    if (icon !== left && icon !== top) return icon;
-  }
+function pickIcon(rand, pool) {
   return pool[Math.floor(rand() * pool.length)];
-}
-
-function iconLooksValid(measureCtx, iconName, fontSize) {
-  const width = measureCtx.measureText(iconName).width;
-  return width > 0 && width <= fontSize * 1.25;
 }
 
 function rowsPerChunk(config) {
@@ -523,6 +573,12 @@ function readConfigFromForm() {
     const input = form.querySelector(`#${id}`);
     return input && input.value ? input.value : fallback;
   };
+  const multi = (id, fallback) => {
+    const input = form.querySelector(`#${id}`);
+    if (!(input instanceof HTMLSelectElement)) return fallback;
+    const selected = Array.from(input.selectedOptions, (opt) => opt.value);
+    return selected.length > 0 ? selected : fallback;
+  };
 
   const seedRaw = num('bg-seed', NaN);
 
@@ -535,6 +591,7 @@ function readConfigFromForm() {
     cell: clamp(Math.round(num('bg-cell', DEFAULT_CONFIG.cell)), 16, 96),
     fontSize: clamp(Math.round(num('bg-cell', DEFAULT_CONFIG.fontSize)), 16, 96),
     angle: clamp(num('bg-angle', DEFAULT_CONFIG.angle), -90, 90),
+    iconStyles: multi('bg-icon-style', DEFAULT_CONFIG.iconStyles),
     quality: DEFAULT_CONFIG.quality,
     seed: Number.isFinite(seedRaw) && seedRaw > 0 ? Math.floor(seedRaw) : Date.now()
   };
@@ -560,6 +617,7 @@ function initAdvancedPicker() {
   setPickerFromHex(DEFAULT_CONFIG.bg);
   updatePickerUI();
   updateSwatches();
+  initIconStyleSelect();
 
   function openPicker(targetId) {
     pickerState.target = targetId;
@@ -618,6 +676,26 @@ function initAdvancedPicker() {
       window.addEventListener('mouseup', upHandler, { once: true });
     };
     svCanvas.addEventListener('mousedown', handleDown);
+
+    const getTouchPoint = (ev) => {
+      const t = ev.touches && ev.touches[0];
+      if (!t) return null;
+      return { clientX: t.clientX, clientY: t.clientY };
+    };
+    const handleTouchStart = (ev) => {
+      const p = getTouchPoint(ev);
+      if (!p) return;
+      ev.preventDefault();
+      handlePickerSV(p);
+    };
+    const handleTouchMove = (ev) => {
+      const p = getTouchPoint(ev);
+      if (!p) return;
+      ev.preventDefault();
+      handlePickerSV(p);
+    };
+    svCanvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+    svCanvas.addEventListener('touchmove', handleTouchMove, { passive: false });
   }
 
   if (hueCanvas instanceof HTMLCanvasElement) {
@@ -632,6 +710,26 @@ function initAdvancedPicker() {
       window.addEventListener('mouseup', upHandler, { once: true });
     };
     hueCanvas.addEventListener('mousedown', handleDown);
+
+    const getTouchPoint = (ev) => {
+      const t = ev.touches && ev.touches[0];
+      if (!t) return null;
+      return { clientX: t.clientX, clientY: t.clientY };
+    };
+    const handleTouchStart = (ev) => {
+      const p = getTouchPoint(ev);
+      if (!p) return;
+      ev.preventDefault();
+      handleHueStrip(p);
+    };
+    const handleTouchMove = (ev) => {
+      const p = getTouchPoint(ev);
+      if (!p) return;
+      ev.preventDefault();
+      handleHueStrip(p);
+    };
+    hueCanvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+    hueCanvas.addEventListener('touchmove', handleTouchMove, { passive: false });
   }
 
   if (eyeBtn instanceof HTMLButtonElement && 'EyeDropper' in window) {
@@ -722,6 +820,95 @@ function initAdvancedPicker() {
   }
 }
 
+function initIconStyleSelect() {
+  const select = document.getElementById('bg-icon-style');
+  const previewSelect = document.getElementById('icon-preview-glyph');
+  if (!(select instanceof HTMLSelectElement)) return;
+  const preview = document.getElementById('icon-style-preview');
+  if (select.selectedOptions.length === 0) {
+    for (const option of select.options) {
+      option.selected = DEFAULT_CONFIG.iconStyles.includes(option.value);
+    }
+  }
+  const labels = {
+    outlined: 'Outlined',
+    rounded: 'Rounded',
+    sharp: 'Sharp',
+    'outlined-filled': 'Outlined Filled',
+    'rounded-filled': 'Rounded Filled',
+    'sharp-filled': 'Sharp Filled'
+  };
+  const previewOrder = [
+    'outlined',
+    'outlined-filled',
+    'rounded',
+    'rounded-filled',
+    'sharp',
+    'sharp-filled'
+  ];
+  const variantByKey = new Map(ICON_STYLE_VARIANTS.map((v) => [v.key, v]));
+  for (const option of select.options) {
+    option.textContent = labels[option.value] || option.value;
+  }
+
+  if (!(preview instanceof HTMLElement)) return;
+  const getPreviewIcon = () => (
+    previewSelect instanceof HTMLSelectElement && previewSelect.value
+      ? previewSelect.value
+      : 'star'
+  );
+  const drawStylePreview = () => {
+    const previewIcon = getPreviewIcon();
+    preview.innerHTML = '';
+    for (const key of previewOrder) {
+      const label = labels[key];
+      const variant = variantByKey.get(key);
+      if (!variant) continue;
+
+      const option = Array.from(select.options).find((o) => o.value === key);
+      if (!option) continue;
+
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'icon-style-item';
+      item.dataset.styleKey = key;
+
+      const glyph = document.createElement('span');
+      glyph.className = 'icon-style-glyph';
+      glyph.textContent = previewIcon;
+      glyph.style.fontFamily = `"${variant.family}", sans-serif`;
+      glyph.style.fontWeight = String(variant.weight);
+    glyph.style.fontVariationSettings = `'FILL' ${Number.isFinite(variant.fill) ? variant.fill : 0}, 'wght' ${variant.weight}, 'GRAD' 0, 'opsz' 48`;
+      glyph.style.fontSize = '48px';
+      glyph.style.lineHeight = '1';
+
+      const text = document.createElement('span');
+      text.className = 'icon-style-label';
+      text.textContent = label;
+
+      item.appendChild(glyph);
+      item.appendChild(text);
+      const syncState = () => {
+        const active = option.selected;
+        item.classList.toggle('is-active', active);
+        item.setAttribute('aria-pressed', active ? 'true' : 'false');
+      };
+      syncState();
+      item.addEventListener('click', () => {
+        option.selected = !option.selected;
+        syncState();
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+        select.dispatchEvent(new Event('input', { bubbles: true }));
+      });
+      preview.appendChild(item);
+    }
+  };
+  if (previewSelect instanceof HTMLSelectElement) {
+    previewSelect.addEventListener('change', drawStylePreview);
+  }
+  drawStylePreview();
+}
+
 function renderExtractedPalette(colors) {
   const container = document.getElementById('extracted-palette');
   if (!container) return;
@@ -765,14 +952,10 @@ function nextFrame() {
 }
 
 async function generateBackgroundJpeg(config) {
-  await document.fonts.load(`${config.fontSize}px "Material Icons"`);
+  await loadSymbolFonts(config.fontSize);
   await document.fonts.ready;
 
-  const measureCanvas = document.createElement('canvas');
-  const measureCtx = measureCanvas.getContext('2d');
-  measureCtx.font = `${config.fontSize}px "Material Icons"`;
-  const validIcons = ICONS.filter((icon) => iconLooksValid(measureCtx, icon, config.fontSize));
-  const iconPool = validIcons.length >= 20 ? validIcons : ICONS;
+  const iconPool = getRenderableIconPool(config);
 
   const canvas = document.createElement('canvas');
   canvas.width = config.width;
@@ -791,23 +974,27 @@ async function generateBackgroundJpeg(config) {
   ctx.translate(config.width / 2, config.height / 2);
   ctx.rotate((config.angle * Math.PI) / 180);
   ctx.translate(-diag / 2, -diag / 2);
-  ctx.font = `${config.fontSize}px "Material Icons"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillStyle = config.fg;
   ctx.globalAlpha = config.opacity;
+  let activeFont = '';
 
   const rand = mulberry32(config.seed);
   const chunkRows = rowsPerChunk(config);
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-      const left = c > 0 ? grid[r][c - 1] : '';
-      const top = r > 0 ? grid[r - 1][c] : '';
-      const icon = pickIcon(rand, iconPool, left, top);
-      grid[r][c] = icon;
+      const iconEntry = pickIcon(rand, iconPool);
+      grid[r][c] = iconEntry;
       const x = c * config.cell + config.cell / 2;
       const y = r * config.cell + config.cell / 2;
-      ctx.fillText(icon, x, y);
+      const font = getIconFont(iconEntry.variant, config.fontSize);
+      if (activeFont !== font) {
+        activeFont = font;
+        ctx.font = font;
+      }
+      ctx.fontVariationSettings = `'FILL' ${Number.isFinite(iconEntry.variant.fill) ? iconEntry.variant.fill : 0}, 'wght' ${iconEntry.variant.weight}, 'GRAD' 0, 'opsz' 48`;
+      ctx.fillText(iconEntry.icon, x, y);
     }
 
     if (r % chunkRows === 0) {
@@ -848,34 +1035,33 @@ function renderBackgroundToCanvas(config, canvas, ctx) {
   const rows = Math.ceil(diag / config.cell) + 8;
   const grid = Array.from({ length: rows }, () => Array(cols).fill(''));
 
-  // подберём тот же пул иконок, что и в основной генерации, чтобы избежать наложений
-  const measureCanvas = document.createElement('canvas');
-  const measureCtx = measureCanvas.getContext('2d');
-  measureCtx.font = `${config.fontSize}px "Material Icons"`;
-  const validIcons = ICONS.filter((icon) => iconLooksValid(measureCtx, icon, config.fontSize));
-  const iconPool = validIcons.length >= 20 ? validIcons : ICONS;
+  const iconPool = getRenderableIconPool(config);
 
   ctx.save();
   ctx.translate(config.width / 2, config.height / 2);
   ctx.rotate((config.angle * Math.PI) / 180);
   ctx.translate(-diag / 2, -diag / 2);
-  ctx.font = `${config.fontSize}px "Material Icons"`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillStyle = config.fg;
   ctx.globalAlpha = config.opacity;
+  let activeFont = '';
 
   const rand = mulberry32(config.seed);
   const chunkRows = rowsPerChunk(config);
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-      const left = c > 0 ? grid[r][c - 1] : '';
-      const top = r > 0 ? grid[r - 1][c] : '';
-      const icon = pickIcon(rand, iconPool, left, top);
-      grid[r][c] = icon;
+      const iconEntry = pickIcon(rand, iconPool);
+      grid[r][c] = iconEntry;
       const x = c * config.cell + config.cell / 2;
       const y = r * config.cell + config.cell / 2;
-      ctx.fillText(icon, x, y);
+      const font = getIconFont(iconEntry.variant, config.fontSize);
+      if (activeFont !== font) {
+        activeFont = font;
+        ctx.font = font;
+      }
+      ctx.fontVariationSettings = `'FILL' ${Number.isFinite(iconEntry.variant.fill) ? iconEntry.variant.fill : 0}, 'wght' ${iconEntry.variant.weight}, 'GRAD' 0, 'opsz' 48`;
+      ctx.fillText(iconEntry.icon, x, y);
     }
     if (r % chunkRows === 0 && config.width * config.height > 10000) {
       // yield lightly on larger preview sizes
@@ -900,7 +1086,14 @@ function updatePreview() {
     previewCtx = canvas.getContext('2d');
   }
   if (!previewCtx) return;
-  const cfg = { ...currentConfig, width: PREVIEW_SIZE, height: PREVIEW_SIZE, quality: 0.8 };
+  const previewCanvas = previewCtx.canvas;
+  const cssSize = Math.max(
+    PREVIEW_SIZE,
+    Math.round(previewCanvas.clientWidth || PREVIEW_SIZE)
+  );
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const renderSize = Math.max(PREVIEW_SIZE, Math.round(cssSize * dpr));
+  const cfg = { ...currentConfig, width: renderSize, height: renderSize, quality: 0.8 };
   renderBackgroundToCanvas(cfg, previewCtx.canvas, previewCtx);
   updateSwatches();
 }
@@ -928,74 +1121,6 @@ function initBackgroundDownloader() {
     if (resetBtn instanceof HTMLButtonElement) {
       resetBtn.addEventListener('click', () => applyDefaults());
     }
-
-    const pickerBox = document.getElementById('picker-box');
-    const closePickerBtn = document.getElementById('close-picker-btn');
-    const bgInput = document.getElementById('bg-color');
-    const fgInput = document.getElementById('fg-color');
-
-    const positionPicker = (anchor, box) => {
-      if (!(anchor instanceof HTMLElement) || !(box instanceof HTMLElement)) return;
-      const rect = anchor.getBoundingClientRect();
-      const boxWidth = box.offsetWidth || 280;
-      const boxHeight = box.offsetHeight || 240;
-      const margin = 8;
-      let left = rect.left;
-      let top = rect.bottom + margin;
-      if (left + boxWidth > window.innerWidth - margin) {
-        left = window.innerWidth - margin - boxWidth;
-      }
-      if (left < margin) left = margin;
-      if (top + boxHeight > window.innerHeight - margin) {
-        top = rect.top - boxHeight - margin;
-      }
-      if (top < margin) top = margin;
-      box.style.left = `${left + window.scrollX}px`;
-      box.style.top = `${top + window.scrollY}px`;
-    };
-
-    const openPicker = (targetId) => {
-      pickerState.target = targetId;
-      if (targetSelect instanceof HTMLSelectElement) targetSelect.value = targetId;
-      const input = document.getElementById(targetId);
-      const color = normalizeHex(input instanceof HTMLInputElement ? input.value : DEFAULT_CONFIG.bg, DEFAULT_CONFIG.bg);
-      setPickerFromHex(color);
-      updatePickerUI();
-      if (!pickerBox) return;
-
-      const isMobile = window.matchMedia('(max-width: 900px)').matches;
-      if (isMobile && input instanceof HTMLElement) {
-        const label = input.closest('label');
-        const colorField = label?.querySelector('.color-input');
-        if (colorField) {
-          colorField.insertAdjacentElement('afterend', pickerBox);
-        }
-        pickerBox.style.position = 'static';
-        pickerBox.style.width = '100%';
-        pickerBox.style.left = '';
-        pickerBox.style.top = '';
-      } else {
-        const layout = document.querySelector('.generator-layout');
-        if (layout instanceof HTMLElement) layout.appendChild(pickerBox);
-        pickerBox.style.position = 'absolute';
-        pickerBox.style.width = '';
-        pickerBox.classList.remove('hidden');
-        positionPicker(input, pickerBox);
-      }
-      pickerBox.classList.remove('hidden');
-    };
-
-    if (bgInput instanceof HTMLInputElement) {
-      bgInput.addEventListener('focus', () => openPicker('bg-color'));
-      bgInput.addEventListener('click', () => openPicker('bg-color'));
-    }
-    if (fgInput instanceof HTMLInputElement) {
-      fgInput.addEventListener('focus', () => openPicker('fg-color'));
-      fgInput.addEventListener('click', () => openPicker('fg-color'));
-    }
-    if (closePickerBtn instanceof HTMLButtonElement && pickerBox) {
-      closePickerBtn.addEventListener('click', () => pickerBox.classList.add('hidden'));
-    }
   }
   updatePreview();
 
@@ -1009,7 +1134,6 @@ function initBackgroundDownloader() {
       const config = readConfigFromForm();
       currentConfig = config;
       await generateBackgroundJpeg(config);
-      addToHistory(config.bg, config.fg);
       link.textContent = 'Скачать еще';
     } catch (error) {
       console.error(error);

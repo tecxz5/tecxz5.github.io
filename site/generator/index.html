@@ -5,7 +5,9 @@
     <title>Генератор фона</title>
     <meta name="description" content="Генерация и скачивание фона">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     <link rel="stylesheet" href="/sources/site.css">
     <link rel="stylesheet" href="/sources/header.css">
     <link rel="stylesheet" href="/sources/footer.css">
@@ -18,38 +20,83 @@
       <h1>Генератор фона</h1>
       <div class="generator-layout">
         <form id="bg-generator-form" class="generator-form">
-          <div class="size-row">
+          <section class="settings-group">
+            <h2>Стиль иконок</h2>
             <label>
-              <span>Ширина</span>
-              <input type="number" id="bg-width" min="512" max="5000" step="1" value="2000">
+              <select id="bg-icon-style" class="icon-style-native" multiple size="6">
+                <option value="outlined" selected>Outlined</option>
+                <option value="rounded" selected>Rounded</option>
+                <option value="sharp" selected>Sharp</option>
+                <option value="outlined-filled" selected>Outlined Filled</option>
+                <option value="rounded-filled" selected>Rounded Filled</option>
+                <option value="sharp-filled" selected>Sharp Filled</option>
+              </select>
+              <div class="icon-preview-picker">
+                <span>Иконка примера</span>
+                <select id="icon-preview-glyph">
+                  <option value="star" selected>star</option>
+                  <option value="favorite">favorite</option>
+                  <option value="rocket_launch">rocket_launch</option>
+                  <option value="bolt">bolt</option>
+                  <option value="lock">lock</option>
+                  <option value="code">code</option>
+                  <option value="terminal">terminal</option>
+                  <option value="cloud">cloud</option>
+                </select>
+              </div>
+              <div id="icon-style-preview" class="icon-style-preview"></div>
+              <small>Выбирай стили кликом по карточкам (можно несколько).</small>
             </label>
-            <label>
-              <span>Высота</span>
-              <input type="number" id="bg-height" min="512" max="5000" step="1" value="2000">
-            </label>
-          </div>
-          <label>
-            <span>Цвет фона (HEX)</span>
-            <div class="color-input">
-              <div class="color-swatch" id="bg-swatch"></div>
-              <input type="text" id="bg-color" value="#000000" maxlength="7" spellcheck="false">
+          </section>
+          <section class="settings-group">
+            <h2>Размер и угол</h2>
+            <div class="settings-grid">
+              <label>
+                <span>Размер сетки и иконок</span>
+                <input type="number" id="bg-cell" min="16" max="96" step="1" value="36">
+              </label>
+              <label>
+                <span>Угол</span>
+                <input type="number" id="bg-angle" min="-90" max="90" step="1" value="-15">
+              </label>
             </div>
-            <div class="history-box">
-              <p>История фона</p>
-              <div id="color-history-bg" class="color-history"></div>
+          </section>
+          <section class="settings-group">
+            <h2>Размер изображения</h2>
+            <div class="settings-grid">
+              <label>
+                <span>Ширина</span>
+                <input type="number" id="bg-width" min="512" max="5000" step="1" value="2000">
+              </label>
+              <label>
+                <span>Высота</span>
+                <input type="number" id="bg-height" min="512" max="5000" step="1" value="2000">
+              </label>
             </div>
-          </label>
-          <label>
-            <span>Цвет иконок (HEX)</span>
-            <div class="color-input">
-              <div class="color-swatch" id="fg-swatch"></div>
-              <input type="text" id="fg-color" value="#ffffff" maxlength="7" spellcheck="false">
+          </section>
+          <section class="settings-group">
+            <h2>Цвета и прозрачность</h2>
+            <div class="settings-grid">
+              <label>
+                <span>Цвет фона (HEX)</span>
+                <div class="color-input">
+                  <div class="color-swatch" id="bg-swatch"></div>
+                  <input type="text" id="bg-color" value="#000000" maxlength="7" spellcheck="false">
+                </div>
+              </label>
+              <label>
+                <span>Цвет иконок (HEX)</span>
+                <div class="color-input">
+                  <div class="color-swatch" id="fg-swatch"></div>
+                  <input type="text" id="fg-color" value="#ffffff" maxlength="7" spellcheck="false">
+                </div>
+              </label>
+              <label class="full-width">
+                <span>Прозрачность</span>
+                <input type="number" id="bg-opacity" min="0.05" max="1" step="0.05" value="0.30">
+              </label>
             </div>
-            <div class="history-box">
-              <p>История иконок</p>
-              <div id="color-history-fg" class="color-history"></div>
-            </div>
-          </label>
+          </section>
           <section class="picker-box hidden" id="picker-box">
             <div class="picker-header">
               <p>Колорпикер</p>
@@ -66,24 +113,8 @@
                 <input type="file" id="palette-image" accept="image/*">
               </label>
             </div>
-            <section class="history-box">
-              <p>История цветов (сохраняется после генерации)</p>
-              <div id="color-history" class="color-history"></div>
-            </section>
             <div id="extracted-palette" class="extracted-palette"></div>
           </section>
-          <label>
-            <span>Прозрачность</span>
-            <input type="number" id="bg-opacity" min="0.05" max="1" step="0.05" value="0.30">
-          </label>
-          <label>
-            <span>Размер сетки и иконок</span>
-            <input type="number" id="bg-cell" min="16" max="96" step="1" value="36">
-          </label>
-          <label>
-            <span>Угол</span>
-            <input type="number" id="bg-angle" min="-90" max="90" step="1" value="-15">
-          </label>
           <label>
             <span>Seed (опц.)</span>
             <input type="number" id="bg-seed" min="1" step="1" placeholder="случайно">

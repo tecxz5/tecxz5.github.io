@@ -32,10 +32,11 @@
   grid-area: form;
   width: 100%;
   display: grid;
-  grid-template-columns: repeat(2, minmax(240px, 1fr));
-  column-gap: 24px;
+  grid-template-columns: minmax(280px, 680px);
+  column-gap: 0;
   row-gap: 14px;
   margin-top: 8px;
+  justify-content: start;
 }
 
 .generator-form label {
@@ -44,6 +45,30 @@
   align-items: flex-start;
   gap: 8px;
   text-align: left;
+}
+
+.settings-group {
+  border: 1px solid #3d3d3d;
+  border-radius: 12px;
+  padding: 12px;
+  background: rgba(20, 20, 20, 0.55);
+}
+
+.settings-group h2 {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+  font-family: "Geologica", sans-serif;
+  text-align: left;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.settings-grid .full-width {
+  grid-column: 1 / -1;
 }
 
 .form-actions {
@@ -74,14 +99,8 @@
   font-size: 0.95rem;
 }
 
-.size-row {
-  grid-column: 1 / -1;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(120px, 1fr));
-  gap: 14px;
-}
-
-.generator-form input {
+.generator-form input,
+.generator-form select {
   width: 100%;
   height: 44px;
   box-sizing: border-box;
@@ -91,6 +110,81 @@
   background: #1c1c1c;
   color: #fff;
   font: inherit;
+}
+
+#bg-icon-style {
+  height: auto;
+  min-height: 180px;
+  font-family: "Geologica", sans-serif;
+}
+
+#bg-icon-style option {
+  padding: 6px 8px;
+  font-family: "Geologica", sans-serif;
+}
+
+.icon-style-native {
+  display: none;
+}
+
+.icon-style-preview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.icon-preview-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+#icon-preview-glyph {
+  font-family: "Geologica", sans-serif !important;
+}
+
+#icon-preview-glyph option {
+  font-family: "Geologica", sans-serif !important;
+}
+
+.icon-style-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 56px;
+  color: #fff;
+  cursor: pointer;
+  border: 1px solid #444;
+  border-radius: 8px;
+  padding: 6px 8px;
+  background: #161616;
+  text-align: left;
+  font: inherit;
+}
+
+.icon-style-item.is-active {
+  border-color: #888;
+  box-shadow: 0 0 0 2px rgba(136, 136, 136, 0.35);
+}
+
+.icon-style-glyph {
+  font-size: 48px;
+  line-height: 1;
+  width: 48px;
+  text-align: center;
+}
+
+.icon-style-label {
+  font-family: "Geologica", sans-serif;
+  font-size: 0.85rem;
+}
+
+.generator-form small {
+  opacity: 0.8;
+  font-size: 0.82rem;
 }
 
 .color-input input {
@@ -123,8 +217,7 @@
 
 .preview-box {
   position: static;
-  width: auto;
-  max-width: 220px;
+  width: min(100%, 320px);
   background: #1c1c1c;
   border: 1px solid #555;
   border-radius: 12px;
@@ -180,6 +273,9 @@
 }
 
 #bg-preview {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
   border-radius: 10px;
   border: 1px solid #444;
   display: block;
@@ -205,6 +301,7 @@
   border: 1px solid #444;
   cursor: crosshair;
   display: block;
+  touch-action: none;
 }
 
 #picker-hue-strip {
@@ -213,6 +310,7 @@
   border-radius: 8px;
   border: 1px solid #444;
   cursor: crosshair;
+  touch-action: none;
 }
 
 .picker-area {
@@ -249,37 +347,6 @@
 
 .extractor-upload input {
   display: none;
-}
-
-.history-box {
-  margin-top: 6px;
-}
-
-.history-box p {
-  margin-bottom: 6px;
-}
-
-.color-history {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.history-item {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  border: 1px solid #555;
-  cursor: pointer;
-  padding: 0;
-  box-sizing: border-box;
-  transition: transform 0.15s ease, border-color 0.15s ease;
-  background: #444;
-}
-
-.history-item:hover {
-  transform: scale(1.05);
-  border-color: #888;
 }
 
 .extracted-palette {
@@ -344,8 +411,12 @@
     grid-template-columns: 1fr;
   }
 
-  .size-row {
+  .settings-grid {
     grid-template-columns: 1fr;
+  }
+
+  .settings-grid .full-width {
+    grid-column: auto;
   }
 
   .inline-preview {
@@ -357,6 +428,14 @@
     width: 100%;
     max-width: 100%;
     margin-top: 12px;
+  }
+}
+
+@media (min-width: 901px) {
+  .tools-panel {
+    position: sticky;
+    top: 110px;
+    align-self: start;
   }
 }
 
