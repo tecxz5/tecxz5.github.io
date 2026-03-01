@@ -1,4 +1,4 @@
-﻿const DOWNLOAD_ID = 'download-bg-jpeg';
+const DOWNLOAD_ID = 'download-bg-jpeg';
 const FORM_ID = 'bg-generator-form';
 const PREVIEW_SIZE = 150;
 
@@ -330,11 +330,11 @@ function applyDefaults() {
   setVal('bg-angle', DEFAULT_CONFIG.angle);
   setVal('bg-icon-style', DEFAULT_CONFIG.iconStyles);
 
-  // очищаем seed, чтобы использовался дефолтный (Date.now при чтении)
+  // reset seed: empty input means random seed (Date.now on generate)
   setVal('bg-seed', '');
   resetPreviewSeed();
 
-  // синхронизируем picker
+  // reset picker
   setPickerFromHex(DEFAULT_CONFIG.bg);
   pickerState.target = 'bg-color';
   const alphaInput = document.getElementById('picker-alpha');
@@ -352,7 +352,7 @@ function applyColors(bg, fg) {
   if (bgInput instanceof HTMLInputElement) bgInput.value = bg;
   if (fgInput instanceof HTMLInputElement) fgInput.value = fg;
 
-  // синхронизируем picker
+  // reset picker
   setPickerFromHex(bg);
   pickerState.target = 'bg-color';
   updatePickerUI();
@@ -619,6 +619,33 @@ function initAdvancedPicker() {
   updateSwatches();
   initIconStyleSelect();
 
+  function positionPicker(anchor, box) {
+    if (!(anchor instanceof HTMLElement) || !(box instanceof HTMLElement)) return;
+    const colorField = anchor.closest('.color-input');
+    const target = colorField instanceof HTMLElement ? colorField : anchor;
+    const rect = target.getBoundingClientRect();
+    const host = box.offsetParent instanceof HTMLElement ? box.offsetParent : document.body;
+    const hostRect = host.getBoundingClientRect();
+    const margin = 8;
+    const boxWidth = box.offsetWidth || 280;
+    const boxHeight = box.offsetHeight || 240;
+    let left = rect.left - hostRect.left;
+    let top = rect.bottom - hostRect.top + 6;
+
+    if (left + boxWidth > host.clientWidth - margin) {
+      left = host.clientWidth - margin - boxWidth;
+    }
+    if (left < margin) left = margin;
+
+    if (top + boxHeight > host.clientHeight - margin) {
+      top = rect.top - hostRect.top - boxHeight - margin;
+    }
+    if (top < margin) top = margin;
+
+    box.style.left = `${left}px`;
+    box.style.top = `${top}px`;
+  }
+
   function openPicker(targetId) {
     pickerState.target = targetId;
     const input = document.getElementById(targetId);
@@ -641,8 +668,12 @@ function initAdvancedPicker() {
     } else {
       const layout = document.querySelector('.generator-layout');
       if (layout instanceof HTMLElement) layout.appendChild(pickerBox);
-      pickerBox.style.position = '';
+      pickerBox.style.position = 'absolute';
       pickerBox.style.width = '';
+      pickerBox.classList.remove('hidden');
+      if (input instanceof HTMLElement) {
+        positionPicker(input, pickerBox);
+      }
     }
     pickerBox.classList.remove('hidden');
   }
@@ -755,13 +786,24 @@ function initAdvancedPicker() {
   }
 
   if (paletteInput instanceof HTMLInputElement) {
+    let paletteRequestId = 0;
+
+    // Allow re-selecting the same file and always force a fresh extract pass.
+    paletteInput.addEventListener('click', () => {
+      paletteInput.value = '';
+    });
+
     paletteInput.addEventListener('change', () => {
       const file = paletteInput.files?.[0];
       if (!file) return;
+      const requestId = ++paletteRequestId;
       const reader = new FileReader();
       reader.onload = () => {
         const img = new Image();
         img.onload = () => {
+          // Ignore stale async reads if user selected another image meanwhile.
+          if (requestId !== paletteRequestId) return;
+
           const canvas = document.createElement('canvas');
           canvas.width = 32;
           canvas.height = 32;
@@ -810,11 +852,11 @@ function initAdvancedPicker() {
       const hex = normalizeHex(input instanceof HTMLInputElement ? input.value : '', DEFAULT_CONFIG.bg);
       try {
         await navigator.clipboard.writeText(hex);
-        copyBtn.textContent = 'Скопировано';
-        setTimeout(() => { copyBtn.textContent = 'Копировать HEX'; }, 1200);
+        copyBtn.textContent = '\u0421\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e';
+        setTimeout(() => { copyBtn.textContent = '\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c HEX'; }, 1200);
       } catch (e) {
-        copyBtn.textContent = 'Не скопировано';
-        setTimeout(() => { copyBtn.textContent = 'Копировать HEX'; }, 1200);
+        copyBtn.textContent = '\u041d\u0435 \u0441\u043a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u043d\u043e';
+        setTimeout(() => { copyBtn.textContent = '\u041a\u043e\u043f\u0438\u0440\u043e\u0432\u0430\u0442\u044c HEX'; }, 1200);
       }
     });
   }
@@ -1071,9 +1113,7 @@ function renderBackgroundToCanvas(config, canvas, ctx) {
 }
 
 function updatePreview() {
-  // читаем текущие значения формы
   currentConfig = readConfigFromForm();
-  // фиксируем паттерн один раз: первый вызов сохраняет seed, далее используем его
   if (previewSeed === null) {
     previewSeed = currentConfig.seed;
   } else {
@@ -1127,17 +1167,17 @@ function initBackgroundDownloader() {
   link.addEventListener('click', async (event) => {
     event.preventDefault();
     const original = link.textContent;
-    link.textContent = 'Генерация...';
+    link.textContent = '\u0413\u0435\u043d\u0435\u0440\u0430\u0446\u0438\u044f...';
     link.style.pointerEvents = 'none';
 
     try {
       const config = readConfigFromForm();
       currentConfig = config;
       await generateBackgroundJpeg(config);
-      link.textContent = 'Скачать еще';
+      link.textContent = '\u0421\u0433\u0435\u043d\u0435\u0440\u0438\u0440\u043e\u0432\u0430\u0442\u044c \u0435\u0449\u0435';
     } catch (error) {
       console.error(error);
-      link.textContent = 'Ошибка генерации';
+      link.textContent = '\u041e\u0448\u0438\u0431\u043a\u0430 \u0433\u0435\u043d\u0435\u0440\u0430\u0446\u0438\u0438';
     } finally {
       link.style.pointerEvents = '';
       setTimeout(() => {
@@ -1152,3 +1192,4 @@ if (document.readyState === 'loading') {
 } else {
   initBackgroundDownloader();
 }
+
