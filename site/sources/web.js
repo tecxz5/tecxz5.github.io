@@ -18,6 +18,14 @@
         mouseRadius: 100,
         repelStrength: 18
     };
+    const iconStyleVariants = [
+        { family: 'Material Symbols Outlined', filled: false, weight: 400 },
+        { family: 'Material Symbols Rounded', filled: false, weight: 400 },
+        { family: 'Material Symbols Sharp', filled: false, weight: 400 },
+        { family: 'Material Symbols Outlined', filled: true, weight: 400 },
+        { family: 'Material Symbols Rounded', filled: true, weight: 400 },
+        { family: 'Material Symbols Sharp', filled: true, weight: 400 }
+    ];
 
     const iconsList = [
         'grid_view', 'memory', 'cpu', 'router', 'dns', 'settings',
@@ -270,14 +278,16 @@
         state.sinNeg = Math.sin(-rad);
     }
 
-    function createIconTexture(icon) {
+    function createIconTexture(icon, variant) {
         const size = config.cellSize;
         const el = document.createElement('canvas');
         el.width = size;
         el.height = size;
         const iconCtx = el.getContext('2d');
+        const fontWeight = variant && variant.weight ? variant.weight : 400;
+        const fontFamily = variant && variant.family ? variant.family : 'Material Symbols Outlined';
         iconCtx.clearRect(0, 0, size, size);
-        iconCtx.font = `${config.fontSize}px "Material Icons"`;
+        iconCtx.font = `${fontWeight} ${config.fontSize}px "${fontFamily}"`;
         iconCtx.fillStyle = '#ffffff';
         iconCtx.textAlign = 'center';
         iconCtx.textBaseline = 'middle';
@@ -292,12 +302,25 @@
                 break;
             }
         }
-        if (!hasGlyph && icon !== fallbackIconName) {
-            iconCtx.clearRect(0, 0, size, size);
-            iconCtx.fillText(fallbackIconName, size / 2, size / 2 + 1);
+        if (!hasGlyph) {
+            return null;
         }
 
         return PIXI.Texture.from(el);
+    }
+
+    function shuffledIndices(count) {
+        const out = new Array(count);
+        for (let i = 0; i < count; i++) {
+            out[i] = i;
+        }
+        for (let i = count - 1; i > 0; i--) {
+            const j = (Math.random() * (i + 1)) | 0;
+            const tmp = out[i];
+            out[i] = out[j];
+            out[j] = tmp;
+        }
+        return out;
     }
 
     function ensureTextures() {
@@ -305,8 +328,22 @@
             return;
         }
 
-        for (let i = 0; i < iconsList.length; i++) {
-            iconTextures.push(createIconTexture(iconsList[i]));
+        const uniqueIcons = Array.from(new Set(iconsList));
+        for (let i = 0; i < uniqueIcons.length; i++) {
+            const icon = uniqueIcons[i];
+            for (let f = 0; f < iconStyleVariants.length; f++) {
+                const texture = createIconTexture(icon, iconStyleVariants[f]);
+                if (texture) {
+                    iconTextures.push(texture);
+                }
+            }
+        }
+
+        if (iconTextures.length === 0) {
+            const fallback = createIconTexture(fallbackIconName, iconStyleVariants[0]);
+            if (fallback) {
+                iconTextures.push(fallback);
+            }
         }
     }
 
@@ -364,14 +401,24 @@
         stageRoot.rotation = config.angle * Math.PI / 180;
         gridContainer.x = -state.gridWidth / 2;
         gridContainer.y = -state.gridHeight / 2;
+        let textureOrder = shuffledIndices(iconTextures.length);
+        let textureCursor = 0;
+
+        function nextTexture() {
+            if (textureCursor >= textureOrder.length) {
+                textureOrder = shuffledIndices(iconTextures.length);
+                textureCursor = 0;
+            }
+            const idx = textureOrder[textureCursor++];
+            return iconTextures[idx];
+        }
 
         for (let c = 0; c < state.cols; c++) {
             grid[c] = [];
             const x = c * config.cellSize + config.cellSize / 2;
 
             for (let r = 0; r < state.rows; r++) {
-                const textureIndex = (Math.random() * iconTextures.length) | 0;
-                const sprite = new PIXI.Sprite(iconTextures[textureIndex]);
+                const sprite = new PIXI.Sprite(nextTexture());
                 const baseY = r * config.cellSize + config.cellSize / 2;
 
                 sprite.anchor.set(0.5);
@@ -533,7 +580,10 @@
         });
     }
 
-    document.fonts.load(`${config.fontSize}px "Material Icons"`).then(() => {
+    const fontLoadTasks = iconStyleVariants.map((variant) => (
+        document.fonts.load(`${variant.weight} ${config.fontSize}px "${variant.family}"`)
+    ));
+    Promise.all(fontLoadTasks).then(() => {
         ensureTextures();
         rebuildGrid();
         setupEvents();
