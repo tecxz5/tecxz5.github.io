@@ -1,0 +1,29 @@
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background: #000;
+  color: #fff;
+  font-family: "Fira Mono", monospace;
+  font-weight: 500;
+}
+
+.empty-page {
+  display: grid;
+  min-height: 100vh;
+  place-items: center;
+  padding: 24px;
+}
+
+.empty-page p {
+  margin: 0;
+  font-size: 32px;
+}
