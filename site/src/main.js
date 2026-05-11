@@ -7,12 +7,12 @@ const gl = canvas.getContext('webgl', {
 
 let resizeTimer;
 let animationFrame;
-let activeScenes = [];
-let finishedScenes = [];
+let activeSignals = [];
+let archivedSignals = [];
 
-const archivedOpacity = 0.72;
-const activeLineCount = 4;
-const initialLineOffset = 1800;
+const activeSignalCount = 3;
+const archivedOpacity = 0.34;
+const initialSignalOffset = 2400;
 
 const vertexShaderSource = `
   attribute vec2 a_position;
@@ -44,11 +44,7 @@ function randomBetween(min, max) {
 }
 
 function smoothStep(progress) {
-  return progress * progress * (3 - 2 * progress);
-}
-
-function fadeBetween(from, to, progress) {
-  return from + (to - from) * smoothStep(progress);
+  return progress * progress * (3.0 - 2.0 * progress);
 }
 
 function compileShader(type, source) {
@@ -83,66 +79,81 @@ const alphaLocation = gl?.getAttribLocation(program, 'a_alpha');
 const resolutionLocation = gl?.getUniformLocation(program, 'u_resolution');
 const buffer = gl?.createBuffer();
 
-function makePath(width, height) {
-  const pointCount = Math.floor(randomBetween(9, 13));
-  const startX = -width * 0.12;
-  const endX = width * 1.12;
-  const centerY = height * randomBetween(0.42, 0.58);
-  const amplitude = height * randomBetween(0.1, 0.23);
-  const waveA = randomBetween(1.6, 2.5);
-  const waveB = randomBetween(4.8, 7.2);
-  const points = [];
-
-  for (let index = 0; index < pointCount; index += 1) {
-    const progress = index / (pointCount - 1);
-    const drift = Math.sin(progress * Math.PI * waveA) * amplitude;
-    const wobble = Math.sin(progress * Math.PI * waveB) * amplitude * 0.34;
-
-    points.push({
-      x: startX + (endX - startX) * progress + randomBetween(-width * 0.018, width * 0.018),
-      y: centerY + drift + wobble + randomBetween(-height * 0.038, height * 0.038)
-    });
-  }
-
-  return smoothPath(points, 12);
-}
-
-function getCatmullPoint(p0, p1, p2, p3, progress) {
-  const t2 = progress * progress;
-  const t3 = t2 * progress;
-
+function makePulse(center, width, height) {
   return {
-    x:
-      0.5 *
-      ((2 * p1.x) +
-        (-p0.x + p2.x) * progress +
-        (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 +
-        (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3),
-    y:
-      0.5 *
-      ((2 * p1.y) +
-        (-p0.y + p2.y) * progress +
-        (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 +
-        (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3)
+    center,
+    width,
+    height,
+    polarity: Math.random() > 0.5 ? 1 : -1
   };
 }
 
-function smoothPath(points, stepsPerSegment) {
-  const smoothed = [];
+function makeSignalPath() {
+  const pointCount = 220;
+  const amplitude = randomBetween(0.08, 0.18);
+  const phaseA = randomBetween(0, Math.PI * 2);
+  const phaseB = randomBetween(0, Math.PI * 2);
+  const phaseC = randomBetween(0, Math.PI * 2);
+  const frequencyA = randomBetween(1.0, 2.2);
+  const frequencyB = randomBetween(3.8, 7.4);
+  const frequencyC = randomBetween(9.0, 15.0);
+  const pulseCount = Math.floor(randomBetween(1, 4));
+  const pulses = Array.from({ length: pulseCount }, () =>
+    makePulse(randomBetween(0.14, 0.86), randomBetween(0.014, 0.04), randomBetween(0.12, 0.28))
+  );
 
-  for (let index = 0; index < points.length - 1; index += 1) {
-    const p0 = points[Math.max(0, index - 1)];
-    const p1 = points[index];
-    const p2 = points[index + 1];
-    const p3 = points[Math.min(points.length - 1, index + 2)];
+  return Array.from({ length: pointCount }, (_, index) => {
+    const progress = index / (pointCount - 1);
+    const x = -0.5 + progress;
+    let y =
+      Math.sin(progress * Math.PI * 2 * frequencyA + phaseA) * amplitude +
+      Math.sin(progress * Math.PI * 2 * frequencyB + phaseB) * amplitude * 0.34 +
+      Math.sin(progress * Math.PI * 2 * frequencyC + phaseC) * amplitude * 0.08;
 
-    for (let step = 0; step < stepsPerSegment; step += 1) {
-      smoothed.push(getCatmullPoint(p0, p1, p2, p3, step / stepsPerSegment));
-    }
+    pulses.forEach((pulse) => {
+      const distance = (progress - pulse.center) / pulse.width;
+      y += Math.exp(-distance * distance) * pulse.height * pulse.polarity;
+    });
+
+    return { x, y };
+  });
+}
+
+function getSignalAngle(signal, now) {
+  if (typeof signal.frozenAngle === 'number') {
+    return signal.frozenAngle;
   }
 
-  smoothed.push(points[points.length - 1]);
-  return smoothed;
+  const elapsed = Math.max(0, now - signal.startedAt);
+  const seconds = elapsed / 1000;
+
+  return (
+    signal.baseRotation +
+    seconds * signal.rotationSpeed +
+    Math.sin(seconds * signal.rotationNoiseSpeed + signal.rotationNoisePhase) *
+      signal.rotationNoise
+  );
+}
+
+function transformSignalPath(signal, now) {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  const scale = Math.min(width, height) * signal.scale;
+  const centerX = width / 2 + signal.centerOffsetX * width;
+  const centerY = height / 2 + signal.centerOffsetY * height;
+  const angle = getSignalAngle(signal, now);
+  const cos = Math.cos(angle);
+  const sin = Math.sin(angle);
+
+  return signal.path.map((point) => {
+    const x = point.x * scale * signal.stretchX;
+    const y = point.y * scale * signal.stretchY;
+
+    return {
+      x: centerX + x * cos - y * sin,
+      y: centerY + x * sin + y * cos
+    };
+  });
 }
 
 function getVisiblePath(points, progress) {
@@ -164,7 +175,7 @@ function getVisiblePath(points, progress) {
   return visible;
 }
 
-function addStroke(vertices, points, width, alpha, offsetX = 0, offsetY = 0) {
+function addLine(vertices, points, width, alpha) {
   for (let index = 0; index < points.length; index += 1) {
     const previous = points[Math.max(0, index - 1)];
     const current = points[index];
@@ -174,16 +185,17 @@ function addStroke(vertices, points, width, alpha, offsetX = 0, offsetY = 0) {
     const length = Math.hypot(dx, dy) || 1;
     const normalX = -dy / length;
     const normalY = dx / length;
-    const taper = Math.sin((index / Math.max(1, points.length - 1)) * Math.PI);
-    const strokeWidth = width * (0.42 + taper * 0.58);
+    const headFade = Math.min(1, index / 8);
+    const tailFade = Math.min(1, (points.length - 1 - index) / 8);
+    const localAlpha = alpha * Math.min(headFade, tailFade);
 
     vertices.push(
-      current.x + offsetX + normalX * strokeWidth,
-      current.y + offsetY + normalY * strokeWidth,
-      alpha,
-      current.x + offsetX - normalX * strokeWidth,
-      current.y + offsetY - normalY * strokeWidth,
-      alpha
+      current.x + normalX * width,
+      current.y + normalY * width,
+      localAlpha,
+      current.x - normalX * width,
+      current.y - normalY * width,
+      localAlpha
     );
   }
 }
@@ -197,7 +209,7 @@ function drawVertices(vertices) {
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, vertices.length / 3);
 }
 
-function createScene() {
+function resizeCanvas() {
   const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
   const width = window.innerWidth;
   const height = window.innerHeight;
@@ -208,86 +220,84 @@ function createScene() {
   canvas.style.height = `${height}px`;
 
   gl.viewport(0, 0, canvas.width, canvas.height);
+}
 
+function createSignal(startOffset = 0) {
   return {
-    width,
-    height,
-    path: makePath(width, height),
-    startedAt: performance.now(),
-    duration: randomBetween(9000, 13000),
-    fadeTail: randomBetween(1400, 2200),
-    mainWidth: randomBetween(2.2, 4.0),
-    ghostWidth: randomBetween(0.8, 1.3),
-    ghostOffsetX: randomBetween(-2, 2),
-    ghostOffsetY: randomBetween(-2, 2)
+    path: makeSignalPath(),
+    startedAt: performance.now() + startOffset,
+    duration: randomBetween(12000, 18000),
+    fadeTail: randomBetween(1800, 2600),
+    width: randomBetween(0.8, 1.45),
+    glowWidth: randomBetween(4, 8),
+    scale: randomBetween(0.62, 0.92),
+    stretchX: randomBetween(1.15, 1.8),
+    stretchY: randomBetween(0.65, 1.15),
+    centerOffsetX: randomBetween(-0.04, 0.04),
+    centerOffsetY: randomBetween(-0.08, 0.08),
+    baseRotation: randomBetween(-Math.PI, Math.PI),
+    rotationSpeed: randomBetween(-0.18, 0.18),
+    rotationNoise: randomBetween(0.18, 0.44),
+    rotationNoiseSpeed: randomBetween(0.09, 0.22),
+    rotationNoisePhase: randomBetween(0, Math.PI * 2)
   };
 }
 
-function createActiveScene(startOffset = 0) {
-  return {
-    ...createScene(),
-    startedAt: performance.now() + startOffset
-  };
+function drawSignal(signal, progress, opacity, now) {
+  const transformedPath = transformSignalPath(signal, now);
+  const visible = getVisiblePath(transformedPath, progress);
+  const glowVertices = [];
+  const lineVertices = [];
+
+  addLine(glowVertices, visible, signal.glowWidth, 0.055 * opacity);
+  addLine(lineVertices, visible, signal.width, 0.82 * opacity);
+  drawVertices(glowVertices);
+  drawVertices(lineVertices);
 }
 
-function drawScenePath(pathScene, progress, opacity = 1) {
-  const visible = getVisiblePath(pathScene.path, progress);
-  const mainVertices = [];
-  const ghostVertices = [];
-
-  addStroke(mainVertices, visible, pathScene.mainWidth, 0.62 * opacity);
-  addStroke(
-    ghostVertices,
-    visible,
-    pathScene.ghostWidth,
-    0.22 * opacity,
-    pathScene.ghostOffsetX,
-    pathScene.ghostOffsetY
-  );
-
-  drawVertices(mainVertices);
-  drawVertices(ghostVertices);
-}
-
-function draw(now) {
+function setupWebGlFrame() {
   gl.clearColor(0, 0, 0, 0);
   gl.clear(gl.COLOR_BUFFER_BIT);
   gl.useProgram(program);
-  gl.uniform2f(resolutionLocation, canvas.clientWidth, canvas.clientHeight);
+  gl.uniform2f(resolutionLocation, window.innerWidth, window.innerHeight);
   gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-
   gl.enableVertexAttribArray(positionLocation);
   gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 12, 0);
   gl.enableVertexAttribArray(alphaLocation);
   gl.vertexAttribPointer(alphaLocation, 1, gl.FLOAT, false, 12, 8);
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+}
 
-  finishedScenes.forEach((finishedScene) => {
-    drawScenePath(finishedScene, 1, archivedOpacity);
+function draw(now) {
+  setupWebGlFrame();
+
+  archivedSignals.forEach((signal) => {
+    drawSignal(signal, 1, archivedOpacity, now);
   });
 
-  activeScenes = activeScenes.map((activeScene) => {
-    const elapsed = now - activeScene.startedAt;
+  activeSignals = activeSignals.map((signal) => {
+    const elapsed = now - signal.startedAt;
 
     if (elapsed < 0) {
-      return activeScene;
+      return signal;
     }
 
-    if (elapsed > activeScene.duration) {
-      finishedScenes.push(activeScene);
-      finishedScenes = finishedScenes.slice(-26);
-      return createActiveScene();
+    if (elapsed > signal.duration) {
+      signal.frozenAngle = getSignalAngle(signal, now);
+      archivedSignals.push(signal);
+      archivedSignals = archivedSignals.slice(-28);
+      return createSignal();
     }
 
-    const rawProgress = Math.min(elapsed / activeScene.duration, 1);
+    const rawProgress = Math.min(elapsed / signal.duration, 1);
     const progress = smoothStep(rawProgress);
-    const fadeStart = activeScene.duration - activeScene.fadeTail;
-    const fadeProgress = Math.max(0, elapsed - fadeStart) / activeScene.fadeTail;
-    const currentOpacity = fadeBetween(1, archivedOpacity, Math.min(fadeProgress, 1));
+    const fadeStart = signal.duration - signal.fadeTail;
+    const fadeProgress = Math.max(0, elapsed - fadeStart) / signal.fadeTail;
+    const opacity = 1 + (archivedOpacity - 1) * smoothStep(Math.min(fadeProgress, 1));
 
-    drawScenePath(activeScene, progress, currentOpacity);
-    return activeScene;
+    drawSignal(signal, progress, opacity, now);
+    return signal;
   });
 
   animationFrame = window.requestAnimationFrame(draw);
@@ -300,9 +310,10 @@ function start() {
   }
 
   window.cancelAnimationFrame(animationFrame);
-  finishedScenes = [];
-  activeScenes = Array.from({ length: activeLineCount }, (_, index) =>
-    createActiveScene(index * initialLineOffset)
+  resizeCanvas();
+  archivedSignals = [];
+  activeSignals = Array.from({ length: activeSignalCount }, (_, index) =>
+    createSignal(index * initialSignalOffset)
   );
   animationFrame = window.requestAnimationFrame(draw);
 }
