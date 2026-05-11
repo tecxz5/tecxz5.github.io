@@ -1,4 +1,5 @@
 const canvas = document.querySelector('#scribble-bg');
+const loader = document.querySelector('#loader');
 const gl = canvas.getContext('webgl', {
   alpha: true,
   antialias: true,
@@ -9,10 +10,20 @@ let resizeTimer;
 let animationFrame;
 let activeSignals = [];
 let archivedSignals = [];
+let loaderHidden = false;
+let firstWebGlFrameReady = false;
+let loaderExitTimer;
+
+const loadingState = {
+  page: false,
+  fonts: false,
+  webgl: false
+};
 
 const activeSignalCount = 3;
 const archivedOpacity = 0.34;
 const initialSignalOffset = 2400;
+const loaderExitDelay = 1500;
 
 const vertexShaderSource = `
   attribute vec2 a_position;
@@ -300,12 +311,14 @@ function draw(now) {
     return signal;
   });
 
+  markLoaded('webgl');
   animationFrame = window.requestAnimationFrame(draw);
 }
 
 function start() {
   if (!gl) {
     canvas.style.display = 'none';
+    markLoaded('webgl');
     return;
   }
 
@@ -318,9 +331,58 @@ function start() {
   animationFrame = window.requestAnimationFrame(draw);
 }
 
+function hideLoader() {
+  if (loaderHidden) {
+    return;
+  }
+
+  loaderHidden = true;
+  document.body.classList.remove('is-loading');
+  document.body.classList.add('is-loaded');
+  window.setTimeout(() => loader.remove(), 1800);
+}
+
+function markLoaded(key) {
+  if (key === 'webgl') {
+    if (firstWebGlFrameReady) {
+      return;
+    }
+
+    firstWebGlFrameReady = true;
+  }
+
+  loadingState[key] = true;
+
+  if (loadingState.page && loadingState.fonts && loadingState.webgl) {
+    window.clearTimeout(loaderExitTimer);
+    loaderExitTimer = window.setTimeout(hideLoader, loaderExitDelay);
+  }
+}
+
+function waitForPageLoad() {
+  if (document.readyState === 'complete') {
+    markLoaded('page');
+    return;
+  }
+
+  window.addEventListener('load', () => markLoaded('page'), { once: true });
+}
+
+function waitForFonts() {
+  if (!document.fonts) {
+    markLoaded('fonts');
+    return;
+  }
+
+  document.fonts.ready.then(() => markLoaded('fonts'));
+}
+
 window.addEventListener('resize', () => {
   window.clearTimeout(resizeTimer);
   resizeTimer = window.setTimeout(start, 180);
 });
 
+document.body.classList.add('is-loading');
+waitForPageLoad();
+waitForFonts();
 start();
