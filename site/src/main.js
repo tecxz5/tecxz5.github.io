@@ -39,6 +39,7 @@ let pageTug = 0;
 let pageDirection = 0;
 let pageResetTimer;
 let isPageAnimating = false;
+let menuRestoreTimer;
 let touchStartY = 0;
 let lastTouchY = 0;
 const symbolPatternSeed = 5185;
@@ -159,19 +160,60 @@ function setupHeaderAngles() {
 }
 
 function setMenuOpen(isOpen) {
+  window.clearTimeout(menuRestoreTimer);
+  siteHeader.classList.remove('is-menu-restoring');
   siteHeader.classList.toggle('is-menu-open', isOpen);
+  siteHeader.classList.remove('is-hovered');
   siteLogo.setAttribute('aria-expanded', String(isOpen));
   siteLogo.setAttribute('aria-label', isOpen ? 'Закрыть меню' : 'tecxz5');
 }
 
 function setupMobileMenu() {
+  function openMenuAfterRestore() {
+    let isRestored = false;
+
+    const finishRestore = () => {
+      if (isRestored) {
+        return;
+      }
+
+      isRestored = true;
+      window.clearTimeout(menuRestoreTimer);
+      siteHeader.removeEventListener('transitionend', handleRestoreEnd);
+      setMenuOpen(true);
+    };
+
+    const handleRestoreEnd = (event) => {
+      if (event.target === siteHeader && event.propertyName === 'height') {
+        finishRestore();
+      }
+    };
+
+    siteHeader.classList.add('is-menu-restoring');
+    siteLogo.setAttribute('aria-expanded', 'false');
+    siteLogo.setAttribute('aria-label', 'Открыть меню');
+    siteHeader.addEventListener('transitionend', handleRestoreEnd);
+    menuRestoreTimer = window.setTimeout(finishRestore, 520);
+  }
+
   siteLogo.addEventListener('click', (event) => {
     if (window.innerWidth > 720) {
       return;
     }
 
     event.preventDefault();
-    setMenuOpen(!siteHeader.classList.contains('is-menu-open'));
+
+    if (siteHeader.classList.contains('is-menu-open')) {
+      setMenuOpen(false);
+      return;
+    }
+
+    if (siteHeader.classList.contains('is-compact')) {
+      openMenuAfterRestore();
+      return;
+    }
+
+    setMenuOpen(true);
   });
 
   siteNavigation.addEventListener('click', (event) => {
@@ -194,6 +236,10 @@ function setupMobileMenu() {
 }
 
 function setupHeaderHoverZone() {
+  if (window.matchMedia('(max-width: 720px)').matches) {
+    return;
+  }
+
   siteHeaderHoverZone.addEventListener('mouseenter', () => {
     siteHeader.classList.add('is-hovered');
   });
@@ -686,7 +732,12 @@ function resetPageTug() {
 }
 
 function handlePagedDelta(delta, threshold) {
-  if (loaderHidden === false || isPageAnimating || Math.abs(delta) < 1) {
+  if (
+    loaderHidden === false ||
+    isPageAnimating ||
+    siteHeader.classList.contains('is-menu-open') ||
+    Math.abs(delta) < 1
+  ) {
     return;
   }
 

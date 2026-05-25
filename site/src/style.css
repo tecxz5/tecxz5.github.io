@@ -133,10 +133,10 @@ body.is-loading {
 .site-header-hover-zone {
   position: fixed;
   z-index: 4;
-  top: clamp(54px, 6.8vw, 80px);
+  top: 0;
   left: 0;
   width: 100%;
-  height: clamp(60px, 5.2vw, 72px);
+  height: calc(clamp(54px, 6.8vw, 80px) + clamp(60px, 5.2vw, 72px));
   pointer-events: none;
 }
 
@@ -144,7 +144,7 @@ body.is-loading {
   pointer-events: auto;
 }
 
-.site-header.is-compact:not(:hover):not(.is-hovered) {
+.site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring):not(:hover):not(.is-hovered) {
   height: 46px;
   margin-top: 0;
   background: rgba(0, 0, 0, 0.22);
@@ -152,15 +152,15 @@ body.is-loading {
   -webkit-backdrop-filter: blur(16px);
 }
 
-.site-header.is-compact:not(:hover):not(.is-hovered)::before,
-.site-header.is-compact:not(:hover):not(.is-hovered)::after {
+.site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring):not(:hover):not(.is-hovered)::before,
+.site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring):not(:hover):not(.is-hovered)::after {
   height: 0;
   opacity: 0;
   transform: translate(-50%, -50%) rotate(0deg);
 }
 
-.site-header.is-compact:not(:hover):not(.is-hovered) .site-header__logo,
-.site-header.is-compact:not(:hover):not(.is-hovered) .site-header__nav a {
+.site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring):not(:hover):not(.is-hovered) .site-header__logo,
+.site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring):not(:hover):not(.is-hovered) .site-header__nav a {
   color: #fff;
   text-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
 }
@@ -467,8 +467,7 @@ body.is-loaded .loader__section--top {
 
 @media (max-width: 720px) {
   .site-header-hover-zone {
-    top: 42px;
-    height: 48px;
+    display: none;
   }
 
   .site-header {
@@ -478,7 +477,12 @@ body.is-loaded .loader__section--top {
     height: 48px;
     margin-top: 42px;
     padding: 0 18px 0 20px;
-    transition: height 0.32s cubic-bezier(0.76, 0, 0.24, 1);
+    transition:
+      height 0.32s cubic-bezier(0.76, 0, 0.24, 1),
+      margin-top 0.32s cubic-bezier(0.76, 0, 0.24, 1),
+      background-color 0.32s ease,
+      backdrop-filter 0.32s ease,
+      transform 0.32s cubic-bezier(0.76, 0, 0.24, 1);
   }
 
   .site-header::before,
@@ -487,6 +491,7 @@ body.is-loaded .loader__section--top {
     height: 56px;
     transition:
       height 0.32s cubic-bezier(0.76, 0, 0.24, 1),
+      opacity 0.32s ease,
       transform 0.32s cubic-bezier(0.76, 0, 0.24, 1);
   }
 
@@ -527,6 +532,11 @@ body.is-loaded .loader__section--top {
     left: 50%;
     transform: translate(-50%, -50%);
     cursor: pointer;
+    transition:
+      color 0.22s ease,
+      opacity 0.24s ease,
+      text-shadow 0.22s ease,
+      transform 0.32s cubic-bezier(0.76, 0, 0.24, 1);
   }
 
   .site-header__nav {
@@ -537,16 +547,46 @@ body.is-loaded .loader__section--top {
     display: grid;
     width: min(240px, calc(100vw - 40px));
     gap: 0;
-    padding: 8px 0;
-    background: transparent;
+    max-height: 0;
+    padding: 0;
+    overflow: hidden;
+    background: rgba(206, 219, 26, 0.98);
     opacity: 0;
     pointer-events: none;
     transform: translate(-50%, -10px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition:
+      max-height 0.28s cubic-bezier(0.76, 0, 0.24, 1),
+      opacity 0.2s ease,
+      padding 0.28s cubic-bezier(0.76, 0, 0.24, 1),
+      transform 0.24s ease;
+  }
+
+  .site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring):not(:hover):not(.is-hovered) {
+    height: 38px;
+    transform: translateY(-8px);
+    transition:
+      height 0.32s cubic-bezier(0.76, 0, 0.24, 1),
+      margin-top 0.32s cubic-bezier(0.76, 0, 0.24, 1),
+      background-color 0.32s ease,
+      backdrop-filter 0.32s ease,
+      transform 0.32s cubic-bezier(0.76, 0, 0.24, 1);
+  }
+
+  .site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring):not(:hover):not(.is-hovered) .site-header__logo {
+    opacity: 0.88;
+    transform: translate(-50%, -50%) scale(0.82);
+  }
+
+  .site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring):not(:hover):not(.is-hovered) .site-header__nav {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, -18px);
   }
 
   .site-header.is-menu-open .site-header__nav {
+    max-height: 210px;
     opacity: 1;
+    padding: 8px 0;
     pointer-events: auto;
     transform: translate(-50%, 0);
   }
