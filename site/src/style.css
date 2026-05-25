@@ -297,7 +297,7 @@ body.is-loaded .loader__section--top {
   .site-header__logo {
     position: absolute;
     z-index: 2;
-    top: 50%;
+    top: 24px;
     left: 50%;
     transform: translate(-50%, -50%);
     cursor: pointer;
@@ -306,7 +306,7 @@ body.is-loaded .loader__section--top {
   .site-header__nav {
     position: absolute;
     z-index: 2;
-    top: 64px;
+    top: 58px;
     left: 50%;
     display: grid;
     width: min(240px, calc(100vw - 40px));
