@@ -1,6 +1,7 @@
 :root {
   color-scheme: dark;
   --accent: #cedb1a;
+  --loader-wave: #fbff9c;
 }
 
 @font-face {
@@ -95,12 +96,41 @@ body.is-loading {
 }
 
 .loader__brand {
+  position: relative;
+  display: inline-block;
   color: #000;
   font-family: "Feature Mono", monospace;
   font-weight: 500;
   font-size: clamp(40px, 11vw, 128px);
   letter-spacing: 0.02em;
   line-height: 1;
+}
+
+.loader__brand::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: var(--loader-wave);
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 38%,
+    #000 62%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    #000 38%,
+    #000 62%,
+    transparent 100%
+  );
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 34% 100%;
+  mask-size: 34% 100%;
+  animation: loaderBrandWave 2.8s cubic-bezier(0.76, 0, 0.24, 1) infinite;
 }
 
 body.is-loaded .loader {
@@ -118,6 +148,28 @@ body.is-loaded .loader__section--middle {
 
 body.is-loaded .loader__section--top {
   animation: loaderSectionExit 1.24s cubic-bezier(0.76, 0, 0.24, 1) 0.34s forwards;
+}
+
+@keyframes loaderBrandWave {
+  0% {
+    -webkit-mask-position: -95% 0;
+    mask-position: -95% 0;
+  }
+
+  18% {
+    -webkit-mask-position: -95% 0;
+    mask-position: -95% 0;
+  }
+
+  72% {
+    -webkit-mask-position: 195% 0;
+    mask-position: 195% 0;
+  }
+
+  100% {
+    -webkit-mask-position: 195% 0;
+    mask-position: 195% 0;
+  }
 }
 
 @keyframes loaderSectionExit {
