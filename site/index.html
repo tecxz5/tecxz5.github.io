@@ -10,11 +10,14 @@
       href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@500&display=swap"
       rel="stylesheet"
     >
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=block"
+      rel="stylesheet"
+    >
     <link rel="stylesheet" href="./src/style.css">
     <title>tecxz5</title>
   </head>
   <body>
-    <canvas class="scribble-bg" id="scribble-bg" aria-hidden="true"></canvas>
     <header class="site-header" id="site-header">
       <a
         class="site-header__logo"
@@ -30,8 +33,44 @@
         <a href="#links">ссылки</a>
       </nav>
     </header>
-    <main class="empty-page">
-      <p>ничего нет, пока<br>на хедере ничего интересного</p>
+    <div class="site-header-hover-zone" id="site-header-hover-zone" aria-hidden="true"></div>
+    <main>
+      <section class="empty-page" id="top">
+        <canvas class="scribble-bg" id="scribble-bg" aria-hidden="true"></canvas>
+        <p>ничего нет, пока<br>на хедере ничего интересного</p>
+      </section>
+      <section class="presentation-stage" id="presentation">
+        <div class="presentation-sticky">
+          <div class="presentation-track" id="presentation-track">
+            <canvas class="symbols-bg" id="symbols-bg" aria-hidden="true"></canvas>
+            <section class="presentation-slide" id="about">
+              <h2>О себе</h2>
+              <p>потом распишу</p>
+            </section>
+            <section class="presentation-slide" id="services">
+              <h2>Услуги</h2>
+              <div class="service-grid">
+                <article><h3>Бот</h3><p>не расскажу</p></article>
+                <article><h3>Сайт</h3><p>не расскажу</p></article>
+                <article><h3>Плагин</h3><p>не расскажу</p></article>
+              </div>
+            </section>
+            <section class="presentation-slide" id="portfolio">
+              <h2>Портфолио</h2>
+              <div class="portfolio-placeholders">
+                <div></div>
+                <div></div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+      <footer class="site-footer" id="links">
+        <div class="site-footer__panel">
+          <p>ot5</p>
+          <p>t.me<br>github.com</p>
+        </div>
+      </footer>
     </main>
     <div class="loader" id="loader" aria-label="Загрузка">
       <section class="loader__section loader__section--top" aria-hidden="true"></section>
