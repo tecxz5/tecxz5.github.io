@@ -1,3 +1,6 @@
+import Lenis from 'lenis';
+import Snap from 'lenis/snap';
+
 const canvas = document.querySelector('#scribble-bg');
 const symbolsCanvas = document.querySelector('#symbols-bg');
 const loader = document.querySelector('#loader');
@@ -35,22 +38,22 @@ let symbolsTexture;
 let symbolsVertexCount = 0;
 let presentationAnimationFrame;
 let presentationAngle = -8;
+let lenis;
+let snapController;
+let snapCleanup = [];
 let activePage = 0;
-let pageTug = 0;
-let pageDirection = 0;
-let pageResetTimer;
 let isPageAnimating = false;
 let menuRestoreTimer;
-let scrollAnimationToken = 0;
 let isLinkJumpAnimating = false;
-let touchStartY = 0;
-let lastTouchY = 0;
+let touchGestureStartY = 0;
+let wheelGestureDelta = 0;
+let wheelGestureDirection = 0;
+let wheelGestureResetTimer;
+let isWheelGestureLocked = false;
+let wheelGestureUnlockTimer;
 const symbolPatternSeed = 5185;
 
 const loaderExitDelay = 1500;
-const wheelPageThreshold = 260;
-const touchPageThreshold = 86;
-const tugPreviewRatio = 0.32;
 const maxPaths = 72;
 const directions = [
   [1, 0],
@@ -195,7 +198,7 @@ function setupSectionLinks() {
       isLinkJumpAnimating = true;
       siteHeader.classList.remove('is-compact', 'is-hovered');
       animateToPage(targetPage, {
-        duration: 360 + pageDistance * 120,
+        duration: 0.36 + pageDistance * 0.12,
         onComplete: () => {
           isLinkJumpAnimating = false;
           updatePresentationScroll();
@@ -753,121 +756,147 @@ function getNearestPageIndex() {
   return nearestIndex;
 }
 
-function scrollToPageTarget(target, duration = 720, onComplete) {
-  const start = window.scrollY;
-  const distance = target - start;
-  const startedAt = performance.now();
-  const token = scrollAnimationToken + 1;
-
-  scrollAnimationToken = token;
-
-  function step(now) {
-    if (token !== scrollAnimationToken) {
-      return;
-    }
-
-    const progress = Math.min((now - startedAt) / duration, 1);
-    const eased = smoothStep(progress);
-
-    window.scrollTo(0, start + distance * eased);
-    updatePresentationScroll();
-
-    if (progress < 1) {
-      window.requestAnimationFrame(step);
-      return;
-    }
-
-    window.scrollTo(0, target);
-    updatePresentationScroll();
-    onComplete?.();
-  }
-
-  window.requestAnimationFrame(step);
-}
-
 function animateToPage(index, options = {}) {
   const targets = getPageTargets();
   const targetIndex = Math.min(Math.max(index, 0), targets.length - 1);
-  const duration = options.duration ?? 720;
+  const duration = options.duration ?? 0.72;
 
   isPageAnimating = true;
   document.body.classList.add('is-page-scrolling');
   activePage = targetIndex;
-  pageTug = 0;
-  pageDirection = 0;
-  scrollToPageTarget(targets[targetIndex], duration, () => {
+
+  lenis.scrollTo(targets[targetIndex], {
+    duration,
+    lock: true,
+    onComplete: () => {
     isPageAnimating = false;
     document.body.classList.remove('is-page-scrolling');
-    window.scrollTo(0, targets[targetIndex]);
+    activePage = targetIndex;
+    snapController.currentSnapIndex = targetIndex;
     updatePresentationScroll();
     options.onComplete?.();
+    }
   });
+
   updatePresentationScroll();
 }
 
-function resetPageTug() {
-  if (isPageAnimating || pageTug === 0) {
+function refreshSnapPoints() {
+  snapCleanup.forEach((cleanup) => cleanup());
+  snapCleanup = [];
+
+  if (!snapController) {
     return;
   }
 
-  const targets = getPageTargets();
-  pageTug = 0;
-  pageDirection = 0;
-  window.scrollTo({ top: targets[activePage], behavior: 'smooth' });
+  getPageTargets().forEach((target) => {
+    snapCleanup.push(snapController.add(target));
+  });
+
+  snapController.currentSnapIndex = activePage;
 }
 
-function handlePagedDelta(delta, threshold) {
-  if (
-    loaderHidden === false ||
-    isPageAnimating ||
-    isLinkJumpAnimating ||
-    siteHeader.classList.contains('is-menu-open') ||
-    Math.abs(delta) < 1
-  ) {
-    return;
-  }
-
-  const targets = getPageTargets();
-  const direction = delta > 0 ? 1 : -1;
-  const nextPage = Math.min(Math.max(activePage + direction, 0), targets.length - 1);
-
-  if (nextPage === activePage) {
-    return;
-  }
-
-  if (direction !== pageDirection) {
-    pageTug = 0;
-    pageDirection = direction;
-  }
-
-  pageTug += Math.abs(delta);
-
-  const progress = Math.min(pageTug / threshold, 1);
-  const eased = smoothStep(progress);
-  const currentTarget = targets[activePage];
-  const nextTarget = targets[nextPage];
-  const previewTarget = currentTarget + (nextTarget - currentTarget) * eased * tugPreviewRatio;
-
-  window.clearTimeout(pageResetTimer);
-
-  if (progress >= 1) {
-    animateToPage(nextPage);
-    return;
-  }
-
-  window.scrollTo(0, previewTarget);
-  updatePresentationScroll();
-  pageResetTimer = window.setTimeout(resetPageTug, 180);
+function canStepSlides() {
+  return (
+    loaderHidden &&
+    !isPageAnimating &&
+    !isLinkJumpAnimating &&
+    !siteHeader.classList.contains('is-menu-open')
+  );
 }
 
-function setupPagedScroll() {
+function stepSlides(direction) {
+  if (!canStepSlides()) {
+    return;
+  }
+
+  if (direction > 0) {
+    snapController.next();
+  } else {
+    snapController.previous();
+  }
+}
+
+function setupSmoothScroll() {
+  lenis = new Lenis({
+    autoRaf: true,
+    smoothWheel: true,
+    syncTouch: true,
+    duration: 0.74,
+    wheelMultiplier: 1.08,
+    touchMultiplier: 1.02,
+    syncTouchLerp: 0.14,
+    touchInertiaExponent: 1.2,
+    prevent: (node) => node.closest('.site-header.is-menu-open') !== null,
+    virtualScroll: ({ event }) => event.type !== 'wheel'
+  });
+
+  snapController = new Snap(lenis, {
+    type: 'lock',
+    duration: 0.58,
+    debounce: 70,
+    easing: (time) => 1 - Math.pow(1 - time, 3),
+    onSnapStart: () => {
+      isPageAnimating = true;
+      document.body.classList.add('is-page-scrolling');
+    },
+    onSnapComplete: (item) => {
+      const targets = getPageTargets();
+      activePage = targets.findIndex((target) => Math.abs(target - item.value) < 2);
+      snapController.currentSnapIndex = activePage;
+      isPageAnimating = false;
+      document.body.classList.remove('is-page-scrolling');
+      requestPresentationUpdate();
+    }
+  });
+
+  refreshSnapPoints();
   activePage = getNearestPageIndex();
+  snapController.stop();
+
+  lenis.on('scroll', () => {
+    requestPresentationUpdate();
+  });
 
   window.addEventListener(
     'wheel',
     (event) => {
+      if (!canStepSlides() || Math.abs(event.deltaY) < 4) {
+        return;
+      }
+
       event.preventDefault();
-      handlePagedDelta(event.deltaY, wheelPageThreshold);
+
+      if (isWheelGestureLocked) {
+        return;
+      }
+
+      const direction = event.deltaY > 0 ? 1 : -1;
+
+      if (direction !== wheelGestureDirection) {
+        wheelGestureDelta = 0;
+        wheelGestureDirection = direction;
+      }
+
+      wheelGestureDelta += Math.abs(event.deltaY);
+      window.clearTimeout(wheelGestureResetTimer);
+
+      if (wheelGestureDelta >= 24) {
+        isWheelGestureLocked = true;
+        wheelGestureDelta = 0;
+        wheelGestureDirection = 0;
+        stepSlides(direction);
+        window.clearTimeout(wheelGestureUnlockTimer);
+        wheelGestureUnlockTimer = window.setTimeout(() => {
+          isWheelGestureLocked = false;
+        }, 420);
+        return;
+      }
+
+      wheelGestureResetTimer = window.setTimeout(() => {
+        wheelGestureDelta = 0;
+        wheelGestureDirection = 0;
+      }, 120);
     },
     { passive: false }
   );
@@ -875,22 +904,32 @@ function setupPagedScroll() {
   window.addEventListener(
     'touchstart',
     (event) => {
-      touchStartY = event.touches[0].clientY;
-      lastTouchY = touchStartY;
+      touchGestureStartY = event.touches[0].clientY;
     },
     { passive: true }
   );
 
   window.addEventListener(
-    'touchmove',
+    'touchend',
     (event) => {
-      const y = event.touches[0].clientY;
-      const delta = lastTouchY - y;
-      lastTouchY = y;
-      event.preventDefault();
-      handlePagedDelta(delta, touchPageThreshold);
+      if (
+        loaderHidden === false ||
+        isPageAnimating ||
+        isLinkJumpAnimating ||
+        siteHeader.classList.contains('is-menu-open')
+      ) {
+        return;
+      }
+
+      const deltaY = touchGestureStartY - event.changedTouches[0].clientY;
+
+      if (Math.abs(deltaY) < 36) {
+        return;
+      }
+
+      stepSlides(deltaY > 0 ? 1 : -1);
     },
-    { passive: false }
+    { passive: true }
   );
 }
 
@@ -899,6 +938,9 @@ window.addEventListener('resize', () => {
   resizeTimer = window.setTimeout(() => {
     startBackground();
     updatePresentationScroll();
+    lenis?.resize();
+    snapController?.resize();
+    refreshSnapPoints();
     activePage = getNearestPageIndex();
   }, 180);
 });
@@ -916,7 +958,7 @@ setupFooterShape();
 updatePresentationScroll();
 setupMobileMenu();
 setupHeaderHoverZone();
-setupPagedScroll();
+setupSmoothScroll();
 setupSectionLinks();
 waitForPageLoad();
 waitForFonts();
