@@ -301,11 +301,6 @@ body.is-loaded .loader__section--top {
     left: 50%;
     transform: translate(-50%, -50%);
     cursor: pointer;
-    transition: top 0.32s cubic-bezier(0.76, 0, 0.24, 1);
-  }
-
-  .site-header.is-menu-open .site-header__logo {
-    top: 24px;
   }
 
   .site-header__nav {
