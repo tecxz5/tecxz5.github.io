@@ -41,6 +41,8 @@ let pageDirection = 0;
 let pageResetTimer;
 let isPageAnimating = false;
 let menuRestoreTimer;
+let scrollAnimationToken = 0;
+let isLinkJumpAnimating = false;
 let touchStartY = 0;
 let lastTouchY = 0;
 const symbolPatternSeed = 5185;
@@ -160,11 +162,48 @@ function setupHeaderAngles() {
 }
 
 function setupFooterShape() {
-  const topHeight = randomBetween(23, 38);
-  const bottomHeight = randomBetween(20, 34);
+  const topHeight = randomBetween(16, 22);
+  const bottomHeight = randomBetween(14, 20);
 
   siteFooter.style.setProperty('--footer-top-height', `${topHeight.toFixed(1)}vh`);
   siteFooter.style.setProperty('--footer-bottom-height', `${bottomHeight.toFixed(1)}vh`);
+}
+
+function setupSectionLinks() {
+  const pageByHash = new Map([
+    ['#top', 0],
+    ['#about', 1],
+    ['#services', 2],
+    ['#portfolio', 3],
+    ['#links', 4]
+  ]);
+
+  document.querySelectorAll('a[href^="#"]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      const hash = link.getAttribute('href');
+
+      if (!pageByHash.has(hash)) {
+        return;
+      }
+
+      event.preventDefault();
+      setMenuOpen(false);
+
+      const targetPage = pageByHash.get(hash);
+      const pageDistance = Math.abs(targetPage - activePage);
+
+      isLinkJumpAnimating = true;
+      siteHeader.classList.remove('is-compact', 'is-hovered');
+      animateToPage(targetPage, {
+        duration: 360 + pageDistance * 120,
+        onComplete: () => {
+          isLinkJumpAnimating = false;
+          updatePresentationScroll();
+          window.history.replaceState(null, '', hash);
+        }
+      });
+    });
+  });
 }
 
 function setMenuOpen(isOpen) {
@@ -210,6 +249,7 @@ function setupMobileMenu() {
     }
 
     event.preventDefault();
+    event.stopImmediatePropagation();
 
     if (siteHeader.classList.contains('is-menu-open')) {
       setMenuOpen(false);
@@ -664,7 +704,10 @@ function updatePresentationScroll() {
   const maxTranslate = presentationTrack.scrollWidth - window.innerWidth;
   const isPresentationVisible = rect.top < window.innerHeight * 0.32 && rect.bottom > window.innerHeight * 0.32;
 
-  siteHeader.classList.toggle('is-compact', isPresentationVisible);
+  if (!isLinkJumpAnimating) {
+    siteHeader.classList.toggle('is-compact', isPresentationVisible);
+  }
+
   presentationTrack.style.transform = `translateX(${-maxTranslate * progress}px)`;
 
   presentationAnimationFrame = undefined;
@@ -710,22 +753,56 @@ function getNearestPageIndex() {
   return nearestIndex;
 }
 
-function animateToPage(index) {
+function scrollToPageTarget(target, duration = 720, onComplete) {
+  const start = window.scrollY;
+  const distance = target - start;
+  const startedAt = performance.now();
+  const token = scrollAnimationToken + 1;
+
+  scrollAnimationToken = token;
+
+  function step(now) {
+    if (token !== scrollAnimationToken) {
+      return;
+    }
+
+    const progress = Math.min((now - startedAt) / duration, 1);
+    const eased = smoothStep(progress);
+
+    window.scrollTo(0, start + distance * eased);
+    updatePresentationScroll();
+
+    if (progress < 1) {
+      window.requestAnimationFrame(step);
+      return;
+    }
+
+    window.scrollTo(0, target);
+    updatePresentationScroll();
+    onComplete?.();
+  }
+
+  window.requestAnimationFrame(step);
+}
+
+function animateToPage(index, options = {}) {
   const targets = getPageTargets();
   const targetIndex = Math.min(Math.max(index, 0), targets.length - 1);
+  const duration = options.duration ?? 720;
 
   isPageAnimating = true;
+  document.body.classList.add('is-page-scrolling');
   activePage = targetIndex;
   pageTug = 0;
   pageDirection = 0;
-  window.scrollTo({ top: targets[targetIndex], behavior: 'smooth' });
-  updatePresentationScroll();
-
-  window.setTimeout(() => {
+  scrollToPageTarget(targets[targetIndex], duration, () => {
     isPageAnimating = false;
+    document.body.classList.remove('is-page-scrolling');
     window.scrollTo(0, targets[targetIndex]);
     updatePresentationScroll();
-  }, 620);
+    options.onComplete?.();
+  });
+  updatePresentationScroll();
 }
 
 function resetPageTug() {
@@ -743,6 +820,7 @@ function handlePagedDelta(delta, threshold) {
   if (
     loaderHidden === false ||
     isPageAnimating ||
+    isLinkJumpAnimating ||
     siteHeader.classList.contains('is-menu-open') ||
     Math.abs(delta) < 1
   ) {
@@ -839,6 +917,7 @@ updatePresentationScroll();
 setupMobileMenu();
 setupHeaderHoverZone();
 setupPagedScroll();
+setupSectionLinks();
 waitForPageLoad();
 waitForFonts();
 startBackground();

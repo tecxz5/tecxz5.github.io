@@ -218,6 +218,10 @@ body.is-loading {
   will-change: transform;
 }
 
+body.is-page-scrolling .presentation-track {
+  transition: none;
+}
+
 .presentation-slide {
   position: relative;
   z-index: 1;
@@ -322,8 +326,8 @@ body.is-loading {
 }
 
 .site-footer {
-  --footer-top-height: 31vh;
-  --footer-bottom-height: 28vh;
+  --footer-top-height: 20vh;
+  --footer-bottom-height: 18vh;
   position: relative;
   z-index: 1;
   display: grid;
@@ -386,13 +390,21 @@ body.is-loading {
   margin-bottom: clamp(10px, 2.4vh, 28px);
 }
 
+.site-footer__links a,
 .site-footer__links img {
   display: block;
+}
+
+.site-footer__links a {
+  color: #000;
+}
+
+.site-footer__links img {
   max-width: min(43vw, 430px);
   height: auto;
 }
 
-.site-footer__links img:first-child {
+.site-footer__links a:first-child img {
   max-width: min(22vw, 170px);
 }
 
@@ -661,21 +673,22 @@ body.is-loaded .loader__section--top {
   }
 
   .site-footer__panel {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 18px;
-    padding-block: 24px;
+    align-items: center;
+    flex-direction: row;
+    gap: 14px;
+    padding-block: 18px;
   }
 
   .site-footer__links {
-    justify-items: start;
+    justify-items: end;
+    margin-bottom: 0;
   }
 
   .site-footer__links img {
-    max-width: min(78vw, 430px);
+    max-width: min(50vw, 430px);
   }
 
-  .site-footer__links img:first-child {
-    max-width: min(42vw, 170px);
+  .site-footer__links a:first-child img {
+    max-width: min(24vw, 170px);
   }
 }
