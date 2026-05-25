@@ -39,8 +39,6 @@ let activePage = 0;
 let pageTug = 0;
 let pageDirection = 0;
 let pageResetTimer;
-let pagePreviewTarget = 0;
-let pagePreviewAnimationFrame;
 let isPageAnimating = false;
 let menuRestoreTimer;
 let scrollAnimationToken = 0;
@@ -792,8 +790,6 @@ function animateToPage(index, options = {}) {
   const targetIndex = Math.min(Math.max(index, 0), targets.length - 1);
   const duration = options.duration ?? 720;
 
-  window.cancelAnimationFrame(pagePreviewAnimationFrame);
-  pagePreviewAnimationFrame = undefined;
   isPageAnimating = true;
   document.body.classList.add('is-page-scrolling');
   activePage = targetIndex;
@@ -809,37 +805,6 @@ function animateToPage(index, options = {}) {
   updatePresentationScroll();
 }
 
-function requestPagePreviewScroll() {
-  if (pagePreviewAnimationFrame) {
-    return;
-  }
-
-  function step() {
-    const current = window.scrollY;
-    const distance = pagePreviewTarget - current;
-    const next = Math.abs(distance) < 0.7
-      ? pagePreviewTarget
-      : current + distance * 0.22;
-
-    window.scrollTo(0, next);
-    updatePresentationScroll();
-
-    if (Math.abs(pagePreviewTarget - next) >= 0.7) {
-      pagePreviewAnimationFrame = window.requestAnimationFrame(step);
-      return;
-    }
-
-    pagePreviewAnimationFrame = undefined;
-  }
-
-  pagePreviewAnimationFrame = window.requestAnimationFrame(step);
-}
-
-function setPagePreviewTarget(target) {
-  pagePreviewTarget = target;
-  requestPagePreviewScroll();
-}
-
 function resetPageTug() {
   if (isPageAnimating || pageTug === 0) {
     return;
@@ -848,7 +813,7 @@ function resetPageTug() {
   const targets = getPageTargets();
   pageTug = 0;
   pageDirection = 0;
-  setPagePreviewTarget(targets[activePage]);
+  window.scrollTo({ top: targets[activePage], behavior: 'smooth' });
 }
 
 function handlePagedDelta(delta, threshold) {
@@ -875,7 +840,7 @@ function handlePagedDelta(delta, threshold) {
     pageDirection = direction;
   }
 
-  pageTug += Math.min(Math.abs(delta), threshold * 0.34);
+  pageTug += Math.abs(delta);
 
   const progress = Math.min(pageTug / threshold, 1);
   const eased = smoothStep(progress);
@@ -890,7 +855,8 @@ function handlePagedDelta(delta, threshold) {
     return;
   }
 
-  setPagePreviewTarget(previewTarget);
+  window.scrollTo(0, previewTarget);
+  updatePresentationScroll();
   pageResetTimer = window.setTimeout(resetPageTug, 180);
 }
 
