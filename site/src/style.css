@@ -322,30 +322,78 @@ body.is-loading {
 }
 
 .site-footer {
+  --footer-top-height: 31vh;
+  --footer-bottom-height: 28vh;
   position: relative;
   z-index: 1;
   display: grid;
   min-height: 100vh;
-  place-items: center;
-  padding: 24px;
+  align-items: end;
+  justify-items: center;
+  padding: 24px 0 0;
+  overflow: hidden;
   scroll-snap-align: start;
   scroll-snap-stop: normal;
+  isolation: isolate;
+}
+
+.site-footer::before,
+.site-footer::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  width: 124vw;
+  background: var(--accent);
+  transform-origin: 50% 100%;
+}
+
+.site-footer::before {
+  bottom: 0;
+  height: var(--footer-top-height);
+  transform: translateX(-50%) rotate(-8deg);
+}
+
+.site-footer::after {
+  bottom: 0;
+  height: var(--footer-bottom-height);
+  transform: translateX(-50%) rotate(7deg);
 }
 
 .site-footer__panel {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 28px;
-  width: min(920px, 100%);
-  color: #fff;
+  width: 100%;
+  min-height: clamp(96px, 16vh, 150px);
+  padding: 0 clamp(18px, 4vw, 56px);
+  background: var(--accent);
+  color: #000;
 }
 
-.site-footer__panel p {
-  margin: 0;
-  font-family: "Pixeloid Mono", monospace;
-  font-size: clamp(28px, 6vw, 72px);
-  line-height: 1;
+.site-footer__copyright {
+  width: clamp(78px, 13vw, 148px);
+  height: auto;
+}
+
+.site-footer__links {
+  display: grid;
+  justify-items: end;
+  gap: clamp(4px, 1vw, 10px);
+  margin-bottom: clamp(10px, 2.4vh, 28px);
+}
+
+.site-footer__links img {
+  display: block;
+  max-width: min(43vw, 430px);
+  height: auto;
+}
+
+.site-footer__links img:first-child {
+  max-width: min(22vw, 170px);
 }
 
 .loader {
@@ -615,5 +663,19 @@ body.is-loaded .loader__section--top {
   .site-footer__panel {
     align-items: flex-start;
     flex-direction: column;
+    gap: 18px;
+    padding-block: 24px;
+  }
+
+  .site-footer__links {
+    justify-items: start;
+  }
+
+  .site-footer__links img {
+    max-width: min(78vw, 430px);
+  }
+
+  .site-footer__links img:first-child {
+    max-width: min(42vw, 170px);
   }
 }

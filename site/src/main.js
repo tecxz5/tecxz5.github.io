@@ -7,6 +7,7 @@ const siteLogo = siteHeader.querySelector('.site-header__logo');
 const siteNavigation = siteHeader.querySelector('.site-header__nav');
 const presentationStage = document.querySelector('#presentation');
 const presentationTrack = document.querySelector('#presentation-track');
+const siteFooter = document.querySelector('#links');
 const ctx = canvas.getContext('2d');
 const symbolsGl = symbolsCanvas.getContext('webgl', {
   alpha: true,
@@ -45,9 +46,9 @@ let lastTouchY = 0;
 const symbolPatternSeed = 5185;
 
 const loaderExitDelay = 1500;
-const wheelPageThreshold = 460;
-const touchPageThreshold = 130;
-const tugPreviewRatio = 0.24;
+const wheelPageThreshold = 260;
+const touchPageThreshold = 86;
+const tugPreviewRatio = 0.32;
 const maxPaths = 72;
 const directions = [
   [1, 0],
@@ -145,7 +146,6 @@ function cellRandom(column, row, salt) {
 }
 
 function setupHeaderAngles() {
-  const isMobile = window.innerWidth <= 720;
   const topAngle = randomBetween(0, 8);
   const bottomAngle = randomBetween(-8, 0);
   const topShift = 0;
@@ -157,6 +157,14 @@ function setupHeaderAngles() {
   siteHeader.style.setProperty('--header-bottom-shift', `${bottomShift.toFixed(0)}px`);
   presentationAngle = bottomAngle;
   document.documentElement.style.setProperty('--presentation-angle', `${bottomAngle.toFixed(2)}deg`);
+}
+
+function setupFooterShape() {
+  const topHeight = randomBetween(23, 38);
+  const bottomHeight = randomBetween(20, 34);
+
+  siteFooter.style.setProperty('--footer-top-height', `${topHeight.toFixed(1)}vh`);
+  siteFooter.style.setProperty('--footer-bottom-height', `${bottomHeight.toFixed(1)}vh`);
 }
 
 function setMenuOpen(isOpen) {
@@ -826,6 +834,7 @@ window.addEventListener('scroll', requestPresentationUpdate, { passive: true });
 
 document.body.classList.add('is-loading');
 setupHeaderAngles();
+setupFooterShape();
 updatePresentationScroll();
 setupMobileMenu();
 setupHeaderHoverZone();
