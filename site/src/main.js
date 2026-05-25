@@ -1,6 +1,8 @@
 const canvas = document.querySelector('#scribble-bg');
 const loader = document.querySelector('#loader');
 const siteHeader = document.querySelector('#site-header');
+const siteLogo = siteHeader.querySelector('.site-header__logo');
+const siteNavigation = siteHeader.querySelector('.site-header__nav');
 const ctx = canvas.getContext('2d');
 
 let resizeTimer;
@@ -31,6 +33,13 @@ const loadingState = {
 };
 
 function randomBetween(min, max) {
+  const values = new Uint32Array(1);
+
+  if (window.crypto?.getRandomValues) {
+    window.crypto.getRandomValues(values);
+    return min + (values[0] / 0xffffffff) * (max - min);
+  }
+
   return min + Math.random() * (max - min);
 }
 
@@ -39,8 +48,51 @@ function randomItem(items) {
 }
 
 function setupHeaderAngles() {
-  siteHeader.style.setProperty('--header-top-angle', `${randomBetween(0, 10).toFixed(2)}deg`);
-  siteHeader.style.setProperty('--header-bottom-angle', `${randomBetween(-10, 0).toFixed(2)}deg`);
+  const isMobile = window.innerWidth <= 720;
+  const topAngle = randomBetween(0, 8);
+  const bottomAngle = randomBetween(-8, 0);
+  const topShift = 0;
+  const bottomShift = 0;
+
+  siteHeader.style.setProperty('--header-top-angle', `${topAngle.toFixed(2)}deg`);
+  siteHeader.style.setProperty('--header-bottom-angle', `${bottomAngle.toFixed(2)}deg`);
+  siteHeader.style.setProperty('--header-top-shift', `${topShift.toFixed(0)}px`);
+  siteHeader.style.setProperty('--header-bottom-shift', `${bottomShift.toFixed(0)}px`);
+}
+
+function setMenuOpen(isOpen) {
+  siteHeader.classList.toggle('is-menu-open', isOpen);
+  siteLogo.setAttribute('aria-expanded', String(isOpen));
+  siteLogo.setAttribute('aria-label', isOpen ? 'Закрыть меню' : 'tecxz5');
+}
+
+function setupMobileMenu() {
+  siteLogo.addEventListener('click', (event) => {
+    if (window.innerWidth > 720) {
+      return;
+    }
+
+    event.preventDefault();
+    setMenuOpen(!siteHeader.classList.contains('is-menu-open'));
+  });
+
+  siteNavigation.addEventListener('click', (event) => {
+    if (event.target.closest('a')) {
+      setMenuOpen(false);
+    }
+  });
+
+  window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+      setMenuOpen(false);
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 720) {
+      setMenuOpen(false);
+    }
+  });
 }
 
 function smoothStep(progress) {
@@ -243,8 +295,13 @@ window.addEventListener('resize', () => {
   resizeTimer = window.setTimeout(startBackground, 180);
 });
 
+window.addEventListener('pageshow', () => {
+  setupHeaderAngles();
+});
+
 document.body.classList.add('is-loading');
 setupHeaderAngles();
+setupMobileMenu();
 waitForPageLoad();
 waitForFonts();
 startBackground();

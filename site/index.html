@@ -16,8 +16,14 @@
   <body>
     <canvas class="scribble-bg" id="scribble-bg" aria-hidden="true"></canvas>
     <header class="site-header" id="site-header">
-      <a class="site-header__logo" href="#top" aria-label="tecxz5">tecxz5</a>
-      <nav class="site-header__nav" aria-label="Навигация">
+      <a
+        class="site-header__logo"
+        href="#top"
+        aria-expanded="false"
+        aria-controls="site-navigation"
+        aria-label="tecxz5"
+      >tecxz5</a>
+      <nav class="site-header__nav" id="site-navigation" aria-label="Навигация">
         <a href="#about">обо мне</a>
         <a href="#services">услуги</a>
         <a href="#portfolio">портфолио</a>
