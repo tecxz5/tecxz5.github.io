@@ -18,6 +18,6 @@
     "vite": "^7.3.1"
   },
   "dependencies": {
-    "lenis": "^1.3.23"
+    "fullpage.js": "^4.0.41"
   }
 }

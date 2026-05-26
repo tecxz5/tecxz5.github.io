@@ -41,19 +41,6 @@ body {
   overscroll-behavior: none;
 }
 
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-
-.lenis.lenis-smooth {
-  scroll-behavior: auto;
-}
-
-.lenis.lenis-stopped {
-  overflow: clip;
-}
-
 body.is-loading {
   cursor: wait;
 }
@@ -208,12 +195,14 @@ body.is-loading {
   transform: translateX(-50%);
 }
 
-.presentation-stage {
+#fullpage {
   position: relative;
   z-index: 1;
-  height: 300vh;
-  scroll-snap-align: start;
-  scroll-snap-stop: normal;
+}
+
+.presentation-section {
+  position: relative;
+  overflow: hidden;
 }
 
 .presentation-sticky {
@@ -221,6 +210,10 @@ body.is-loading {
   top: 0;
   height: 100vh;
   overflow: hidden;
+}
+
+.fp-controlArrow {
+  display: none;
 }
 
 .symbols-bg {
@@ -321,7 +314,7 @@ body.is-loading {
   transform: rotate(-38deg);
 }
 
-body.is-page-scrolling .presentation-track {
+body.is-track-instant .presentation-track {
   transition: none;
 }
 
