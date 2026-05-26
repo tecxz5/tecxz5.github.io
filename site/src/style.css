@@ -843,3 +843,8 @@ body.is-loaded .loader__section--top {
     max-width: min(24vw, 170px);
   }
 }
+
+.fp-watermark, 
+.fp-warning {
+    display: none !important;
+}
