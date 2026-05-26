@@ -190,9 +190,22 @@ body.is-loading {
   scroll-snap-stop: normal;
 }
 
-.empty-page p {
+.empty-page__lead {
   margin: 0;
   font-size: 32px;
+}
+
+.empty-page__hint {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(18px, 3.4vh, 34px);
+  z-index: 1;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: clamp(12px, 1.2vw, 16px);
+  line-height: 1;
+  text-align: center;
+  transform: translateX(-50%);
 }
 
 .presentation-stage {
