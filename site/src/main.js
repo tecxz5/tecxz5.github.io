@@ -44,7 +44,9 @@ let pendingNavHash = null;
 let pendingPresentationSlide = null;
 let presentationSlideTimer;
 let isScrollLocked = false;
+let touchGestureStartX = 0;
 let touchGestureStartY = 0;
+let touchGestureHandled = false;
 let wheelGestureDelta = 0;
 let wheelGestureDirection = 0;
 let wheelGestureResetTimer;
@@ -68,6 +70,7 @@ const trackpadGestureQuietDelay = 280;
 const trackpadGestureMinInterval = 100;
 const trackpadGestureThreshold = 0.01;
 const trackpadBurstIntervalMs = 55;
+const touchGestureThreshold = 24;
 const wheelLineToPixelScale = 16;
 
 const loaderExitDelay = 1500;
@@ -245,7 +248,7 @@ function setMenuOpen(isOpen) {
   siteLogo.setAttribute('aria-label', isOpen ? 'Закрыть меню' : 'tecxz5');
 
   if (loaderHidden && fullpageApi) {
-    fullpageApi.setAllowScrolling(!isOpen);
+    fullpageApi.setAllowScrolling(false);
   }
 }
 
@@ -698,7 +701,7 @@ function hideLoader() {
   loaderHidden = true;
   document.body.classList.remove('is-loading');
   document.body.classList.add('is-loaded');
-  fullpageApi?.setAllowScrolling(true);
+  fullpageApi?.setAllowScrolling(false);
   window.setTimeout(() => loader.remove(), 1800);
 }
 
@@ -1029,6 +1032,40 @@ function stepSlides(direction) {
   return false;
 }
 
+function handleScrollStepIntent(direction, source = 'wheel') {
+  lastWheelWasTrackpad = source === 'trackpad';
+
+  if (!stepSlides(direction)) {
+    return false;
+  }
+
+  if (source === 'trackpad') {
+    registerTrackpadActivity();
+    return true;
+  }
+
+  queueWheelGestureUnlock(mouseWheelGestureUnlockDelay);
+  return true;
+}
+
+function resolveDirectionalGesture(primaryDelta, secondaryDelta = 0, threshold = 0) {
+  if (Math.abs(primaryDelta) < threshold || Math.abs(primaryDelta) < Math.abs(secondaryDelta)) {
+    return null;
+  }
+
+  return primaryDelta > 0 ? 1 : -1;
+}
+
+function handleDirectionalGesture(primaryDelta, secondaryDelta = 0, source = 'wheel', threshold = 0) {
+  const direction = resolveDirectionalGesture(primaryDelta, secondaryDelta, threshold);
+
+  if (!direction) {
+    return false;
+  }
+
+  return handleScrollStepIntent(direction, source);
+}
+
 function completeScrollStep() {
   unlockScrollStep();
 
@@ -1088,11 +1125,7 @@ function setupWheelGestures() {
           return;
         }
 
-        if (stepSlides(direction)) {
-          registerTrackpadActivity();
-          return;
-        }
-
+        handleScrollStepIntent(direction, 'trackpad');
         return;
       }
 
@@ -1108,9 +1141,7 @@ function setupWheelGestures() {
         wheelGestureDelta = 0;
         wheelGestureDirection = 0;
 
-        if (stepSlides(direction)) {
-          queueWheelGestureUnlock(gestureUnlockDelay);
-        }
+        handleScrollStepIntent(direction, 'wheel');
         return;
       }
 
@@ -1125,9 +1156,46 @@ function setupWheelGestures() {
   window.addEventListener(
     'touchstart',
     (event) => {
+      touchGestureStartX = event.touches[0].clientX;
       touchGestureStartY = event.touches[0].clientY;
+      touchGestureHandled = false;
     },
     { passive: true }
+  );
+
+  window.addEventListener(
+    'touchmove',
+    (event) => {
+      if (!loaderHidden || !fullpageApi) {
+        return;
+      }
+
+      const deltaX = Math.abs(touchGestureStartX - event.touches[0].clientX);
+      const deltaY = Math.abs(touchGestureStartY - event.touches[0].clientY);
+
+      if (touchGestureHandled) {
+        if (deltaY >= deltaX && (deltaX > 8 || deltaY > 8)) {
+          event.preventDefault();
+        }
+        return;
+      }
+
+      if (Math.abs(touchGestureStartY - event.touches[0].clientY) >= touchGestureThreshold) {
+        event.preventDefault();
+
+        if (
+          handleDirectionalGesture(
+            touchGestureStartY - event.touches[0].clientY,
+            touchGestureStartX - event.touches[0].clientX,
+            'touch',
+            touchGestureThreshold
+          )
+        ) {
+          touchGestureHandled = true;
+        }
+      }
+    },
+    { passive: false }
   );
 
   window.addEventListener(
@@ -1137,17 +1205,22 @@ function setupWheelGestures() {
         return;
       }
 
-      const deltaY = touchGestureStartY - event.changedTouches[0].clientY;
-
-      if (Math.abs(deltaY) < 36) {
+      if (touchGestureHandled) {
+        touchGestureHandled = false;
         return;
       }
 
-      const direction = deltaY > 0 ? 1 : -1;
+      const deltaX = touchGestureStartX - event.changedTouches[0].clientX;
+      const deltaY = touchGestureStartY - event.changedTouches[0].clientY;
+      handleDirectionalGesture(deltaY, deltaX, 'touch', touchGestureThreshold);
+    },
+    { passive: true }
+  );
 
-      if (stepSlides(direction)) {
-        queueWheelGestureUnlock(mouseWheelGestureUnlockDelay);
-      }
+  window.addEventListener(
+    'touchcancel',
+    () => {
+      touchGestureHandled = false;
     },
     { passive: true }
   );
