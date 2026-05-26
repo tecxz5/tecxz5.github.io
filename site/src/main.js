@@ -50,19 +50,23 @@ let wheelGestureDirection = 0;
 let wheelGestureResetTimer;
 let isWheelGestureLocked = false;
 let wheelGestureUnlockTimer;
-let trackpadEdgeGuardDirection = 0;
-let trackpadEdgeGuardTimer;
+let trackpadGestureActive = false;
+let trackpadGestureTimer;
+let trackpadLastScrollTime = 0;
+let trackpadLastDelta = 0;
 let lastWheelWasTrackpad = false;
 let lastWheelEventAt = 0;
+let lastScrollStepDirection = 0;
+let lastScrollStepWasSectionMove = false;
 const symbolPatternSeed = 5185;
 const presentationSlideCount = 3;
 const mouseWheelGestureThreshold = 24;
 const mouseWheelGestureResetDelay = 120;
 const mouseWheelGestureUnlockDelay = 280;
-const trackpadWheelGestureThreshold = 36;
-const trackpadWheelGestureResetDelay = 220;
-const trackpadWheelGestureUnlockDelay = 620;
-const trackpadEdgeGuardReleaseDelay = 240;
+const trackpadWheelMinAxis = 0.1;
+const trackpadGestureQuietDelay = 280;
+const trackpadGestureMinInterval = 100;
+const trackpadGestureThreshold = 0.01;
 const trackpadBurstIntervalMs = 55;
 const wheelLineToPixelScale = 16;
 
@@ -825,32 +829,44 @@ function queueWheelGestureUnlock(delay) {
   }, delay);
 }
 
-function setTrackpadEdgeGuardForActivePage() {
-  window.clearTimeout(trackpadEdgeGuardTimer);
-  const sectionIndex = getActiveSectionIndex();
-
-  if (sectionIndex === 1 && activeSlideIndex === 0) {
-    trackpadEdgeGuardDirection = -1;
-    return;
-  }
-
-  if (sectionIndex === 1 && activeSlideIndex === presentationSlideCount - 1) {
-    trackpadEdgeGuardDirection = 1;
-    return;
-  }
-
-  trackpadEdgeGuardDirection = 0;
+function queueTrackpadGestureReset() {
+  window.clearTimeout(trackpadGestureTimer);
+  trackpadGestureTimer = window.setTimeout(() => {
+    trackpadGestureActive = false;
+    isWheelGestureLocked = false;
+    trackpadLastScrollTime = 0;
+    trackpadLastDelta = 0;
+    wheelGestureDelta = 0;
+    wheelGestureDirection = 0;
+  }, trackpadGestureQuietDelay);
 }
 
-function releaseTrackpadEdgeGuardAfterQuiet() {
-  if (!trackpadEdgeGuardDirection) {
-    return;
+function registerTrackpadActivity() {
+  trackpadGestureActive = true;
+  isWheelGestureLocked = true;
+  queueTrackpadGestureReset();
+}
+
+function shouldSuppressTrackpadWheel() {
+  return isScrollLocked || trackpadGestureActive || isWheelGestureLocked;
+}
+
+function isIntentionalTrackpadStep(step) {
+  const currentDelta = step.axisDelta;
+
+  if (Math.abs(currentDelta) < trackpadGestureThreshold) {
+    return false;
   }
 
-  window.clearTimeout(trackpadEdgeGuardTimer);
-  trackpadEdgeGuardTimer = window.setTimeout(() => {
-    trackpadEdgeGuardDirection = 0;
-  }, trackpadEdgeGuardReleaseDelay);
+  const now = Date.now();
+  const isNewDirection = (trackpadLastDelta > 0) !== (currentDelta > 0);
+  const isLongPause = now - trackpadLastScrollTime > trackpadGestureMinInterval;
+  const isAccelerating = Math.abs(currentDelta) > Math.abs(trackpadLastDelta);
+
+  trackpadLastScrollTime = now;
+  trackpadLastDelta = currentDelta;
+
+  return isNewDirection || isLongPause || isAccelerating;
 }
 
 function normalizeWheelDelta(value, deltaMode) {
@@ -880,7 +896,7 @@ function isLikelyTrackpadWheel(event) {
     return true;
   }
 
-  if (absDeltaX > 0 && absDeltaY > 0) {
+  if (event.deltaMode === 0) {
     return true;
   }
 
@@ -888,31 +904,21 @@ function isLikelyTrackpadWheel(event) {
     return true;
   }
 
-  if (absDeltaY > 0 && absDeltaY < 80) {
+  if (absDeltaX > 0 && absDeltaY > 0) {
     return true;
   }
 
-  if (isBurst && (absDeltaX > 0 || absDeltaY > 0)) {
+  if (absDeltaY > 0 && absDeltaY < 12) {
     return true;
   }
 
-  if (
-    event.deltaMode === 0 &&
-    Number.isInteger(event.deltaY) &&
-    Math.abs(event.deltaY) >= 48 &&
-    Math.abs(event.deltaX) === 0 &&
-    !isBurst
-  ) {
-    return false;
-  }
-
-  return event.deltaMode === 0;
+  return isBurst && absDeltaY > 0;
 }
 
 function resolveWheelStep(event, forTrackpad = false) {
   const absDeltaX = Math.abs(event.deltaX);
   const absDeltaY = Math.abs(event.deltaY);
-  const minAxis = forTrackpad ? 0.5 : 2;
+  const minAxis = forTrackpad ? trackpadWheelMinAxis : 2;
 
   if (absDeltaX < minAxis && absDeltaY < minAxis) {
     return null;
@@ -937,6 +943,7 @@ function resolveWheelStep(event, forTrackpad = false) {
       : -1;
 
   return {
+    axisDelta: rawDelta,
     magnitude,
     direction,
     isHorizontal: useHorizontal
@@ -969,12 +976,14 @@ function stepSlides(direction) {
   }
 
   const sectionIndex = getActiveSectionIndex();
+  lastScrollStepDirection = direction;
 
   if (sectionIndex === 0) {
     if (direction <= 0) {
       return false;
     }
 
+    lastScrollStepWasSectionMove = true;
     beginSectionScroll(1);
     fullpageApi.moveSectionDown();
     return true;
@@ -983,22 +992,26 @@ function stepSlides(direction) {
   if (sectionIndex === 1) {
     if (direction > 0) {
       if (activeSlideIndex < presentationSlideCount - 1) {
+        lastScrollStepWasSectionMove = false;
         isWheelGestureLocked = true;
         animatePresentationSlide(activeSlideIndex + 1);
         return true;
       }
 
+      lastScrollStepWasSectionMove = true;
       beginSectionScroll(2);
       fullpageApi.moveSectionDown();
       return true;
     }
 
     if (activeSlideIndex > 0) {
+      lastScrollStepWasSectionMove = false;
       isWheelGestureLocked = true;
       animatePresentationSlide(activeSlideIndex - 1);
       return true;
     }
 
+    lastScrollStepWasSectionMove = true;
     beginSectionScroll(0);
     fullpageApi.moveSectionUp();
     return true;
@@ -1007,6 +1020,7 @@ function stepSlides(direction) {
   if (sectionIndex === 2 && direction < 0) {
     pendingPresentationSlide = presentationSlideCount - 1;
     setPresentationSlide(pendingPresentationSlide, false);
+    lastScrollStepWasSectionMove = true;
     beginSectionScroll(1);
     fullpageApi.moveSectionUp();
     return true;
@@ -1017,10 +1031,12 @@ function stepSlides(direction) {
 
 function completeScrollStep() {
   unlockScrollStep();
-  setTrackpadEdgeGuardForActivePage();
-  queueWheelGestureUnlock(
-    lastWheelWasTrackpad ? trackpadWheelGestureUnlockDelay : mouseWheelGestureUnlockDelay
-  );
+
+  if (lastWheelWasTrackpad) {
+    return;
+  }
+
+  queueWheelGestureUnlock(mouseWheelGestureUnlockDelay);
 }
 
 function setupWheelGestures() {
@@ -1029,11 +1045,18 @@ function setupWheelGestures() {
   window.addEventListener(
     'wheel',
     (event) => {
+      const isTrackpad = isLikelyTrackpadWheel(event);
+
+      if (isTrackpad && shouldSuppressTrackpadWheel()) {
+        registerTrackpadActivity();
+        event.preventDefault();
+        return;
+      }
+
       if (!canStepSlides()) {
         return;
       }
 
-      const isTrackpad = isLikelyTrackpadWheel(event);
       lastWheelWasTrackpad = isTrackpad;
       const step = resolveWheelStep(event, isTrackpad);
 
@@ -1044,31 +1067,32 @@ function setupWheelGestures() {
       event.preventDefault();
 
       const gestureResetDelay = isTrackpad
-        ? trackpadWheelGestureResetDelay
+        ? mouseWheelGestureResetDelay
         : mouseWheelGestureResetDelay;
-      const gestureUnlockDelay = isTrackpad
-        ? trackpadWheelGestureUnlockDelay
-        : mouseWheelGestureUnlockDelay;
+      const gestureUnlockDelay = mouseWheelGestureUnlockDelay;
       const gestureThreshold = isTrackpad
-        ? trackpadWheelGestureThreshold
+        ? mouseWheelGestureThreshold
         : mouseWheelGestureThreshold;
 
       if (isWheelGestureLocked) {
-        queueWheelGestureUnlock(gestureUnlockDelay);
+        if (!isTrackpad) {
+          queueWheelGestureUnlock(gestureUnlockDelay);
+        }
         return;
       }
 
       const { magnitude, direction } = step;
 
-      if (isTrackpad && trackpadEdgeGuardDirection === direction) {
-        releaseTrackpadEdgeGuardAfterQuiet();
-        return;
-      }
-
       if (isTrackpad) {
-        if (stepSlides(direction)) {
-          queueWheelGestureUnlock(gestureUnlockDelay);
+        if (!isIntentionalTrackpadStep(step)) {
+          return;
         }
+
+        if (stepSlides(direction)) {
+          registerTrackpadActivity();
+          return;
+        }
+
         return;
       }
 
@@ -1122,7 +1146,7 @@ function setupWheelGestures() {
       const direction = deltaY > 0 ? 1 : -1;
 
       if (stepSlides(direction)) {
-        queueWheelGestureUnlock(trackpadWheelGestureUnlockDelay);
+        queueWheelGestureUnlock(mouseWheelGestureUnlockDelay);
       }
     },
     { passive: true }
