@@ -222,6 +222,10 @@ function setupSectionLinks() {
         return;
       }
 
+      if (getActiveSectionIndex() === 2) {
+        setPresentationSlide(presentationSlideCount - 1, false);
+      }
+
       pendingPresentationSlide = destination.slide;
       fullpageApi.moveTo(destination.section);
     });
