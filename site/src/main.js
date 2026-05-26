@@ -1001,6 +1001,8 @@ function stepSlides(direction) {
   }
 
   if (sectionIndex === 2 && direction < 0) {
+    pendingPresentationSlide = presentationSlideCount - 1;
+    setPresentationSlide(pendingPresentationSlide, false);
     beginSectionScroll(1);
     fullpageApi.moveSectionUp();
     return true;
@@ -1159,8 +1161,11 @@ function setupSmoothScroll() {
           return;
         }
 
-        if (slideIndex === 0 && direction === 'down') {
-          setPresentationSlide(0, false);
+        if (
+          (slideIndex === 0 && direction === 'down') ||
+          (slideIndex === presentationSlideCount - 1 && direction === 'up')
+        ) {
+          setPresentationSlide(slideIndex, false);
         } else {
           animatePresentationSlide(slideIndex);
           return;
