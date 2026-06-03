@@ -107,12 +107,15 @@ class SlideJS {
     this.domSlidBox.style.left = '0';
     this.domSlidBox.style.top = '0';
     this.domSlidBox.style.overflow = 'hidden';
+    this.domSlidBox.style.overscrollBehavior = 'none';
 
     this.domSlidItems.forEach((domItem, index) => {
       domItem.style.position = 'absolute';
       domItem.style.width = `${innerWidth}px`;
       domItem.style.height = `${innerHeight}px`;
       domItem.style.overflow = 'auto';
+      domItem.style.overscrollBehavior = 'contain';
+      domItem.style.webkitOverflowScrolling = 'touch';
       domItem.style.transition = transitionStyle;
       domItem.style.msTransition = transitionStyle;
       domItem.style.webkitTransition = transitionStyle;
