@@ -1,5 +1,4 @@
-import fullpage from 'fullpage.js';
-import 'fullpage.js/dist/fullpage.css';
+import SlideJS from './vendor/slidejs.js';
 
 const canvas = document.querySelector('#scribble-bg');
 const symbolsCanvas = document.querySelector('#symbols-bg');
@@ -36,7 +35,7 @@ let symbolsBuffer;
 let symbolsTexture;
 let symbolsVertexCount = 0;
 let presentationAngle = -8;
-let fullpageApi;
+let sectionSlider;
 let activeSlideIndex = 0;
 let menuRestoreTimer;
 let isLinkJumpAnimating = false;
@@ -44,34 +43,25 @@ let pendingNavHash = null;
 let pendingPresentationSlide = null;
 let presentationSlideTimer;
 let isScrollLocked = false;
+let isProgrammaticSectionMove = false;
+let wheelBurstLocked = false;
+let wheelBurstReleaseTimer;
+let lastWheelEventAt = 0;
 let touchGestureStartX = 0;
 let touchGestureStartY = 0;
 let touchGestureHandled = false;
-let wheelGestureDelta = 0;
-let wheelGestureDirection = 0;
-let wheelGestureResetTimer;
-let isWheelGestureLocked = false;
-let wheelGestureUnlockTimer;
-let trackpadGestureActive = false;
-let trackpadGestureTimer;
-let trackpadLastScrollTime = 0;
-let trackpadLastDelta = 0;
-let lastWheelWasTrackpad = false;
-let lastWheelEventAt = 0;
-let lastScrollStepDirection = 0;
-let lastScrollStepWasSectionMove = false;
 const symbolPatternSeed = 5185;
 const presentationSlideCount = 3;
-const mouseWheelGestureThreshold = 24;
-const mouseWheelGestureResetDelay = 120;
-const mouseWheelGestureUnlockDelay = 280;
-const trackpadWheelMinAxis = 0.1;
-const trackpadGestureQuietDelay = 280;
-const trackpadGestureMinInterval = 100;
-const trackpadGestureThreshold = 0.01;
-const trackpadBurstIntervalMs = 55;
+const wheelIntentThreshold = 16;
+const wheelBurstQuietDelay = 260;
 const touchGestureThreshold = 24;
-const wheelLineToPixelScale = 16;
+const pageByHash = new Map([
+  ['#top', { section: 1 }],
+  ['#about', { section: 2, slide: 0 }],
+  ['#services', { section: 2, slide: 1 }],
+  ['#portfolio', { section: 2, slide: 2 }],
+  ['#links', { section: 3 }]
+]);
 
 const loaderExitDelay = 1500;
 const maxPaths = 72;
@@ -193,14 +183,6 @@ function setupFooterShape() {
 }
 
 function setupSectionLinks() {
-  const pageByHash = new Map([
-    ['#top', { section: 1 }],
-    ['#about', { section: 2, slide: 0 }],
-    ['#services', { section: 2, slide: 1 }],
-    ['#portfolio', { section: 2, slide: 2 }],
-    ['#links', { section: 3 }]
-  ]);
-
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener('click', (event) => {
       const hash = link.getAttribute('href');
@@ -220,7 +202,10 @@ function setupSectionLinks() {
       document.body.classList.add('is-page-scrolling');
 
       if (destination.slide === undefined) {
-        fullpageApi.moveTo(destination.section);
+        if (!moveToSection(destination.section)) {
+          finishNavigation();
+        }
+
         return;
       }
 
@@ -234,7 +219,7 @@ function setupSectionLinks() {
       }
 
       pendingPresentationSlide = destination.slide;
-      fullpageApi.moveTo(destination.section);
+      moveToSection(destination.section);
     });
   });
 }
@@ -246,10 +231,6 @@ function setMenuOpen(isOpen) {
   siteHeader.classList.remove('is-hovered');
   siteLogo.setAttribute('aria-expanded', String(isOpen));
   siteLogo.setAttribute('aria-label', isOpen ? 'Закрыть меню' : 'tecxz5');
-
-  if (loaderHidden && fullpageApi) {
-    fullpageApi.setAllowScrolling(false);
-  }
 }
 
 function setupMobileMenu() {
@@ -701,7 +682,6 @@ function hideLoader() {
   loaderHidden = true;
   document.body.classList.remove('is-loading');
   document.body.classList.add('is-loaded');
-  fullpageApi?.setAllowScrolling(false);
   window.setTimeout(() => loader.remove(), 1800);
 }
 
@@ -761,7 +741,6 @@ function animatePresentationSlide(slideIndex, onComplete) {
   }
 
   isScrollLocked = true;
-  isWheelGestureLocked = true;
   setHeaderCompact(true);
   setPresentationSlide(clampedIndex, true);
   window.clearTimeout(presentationSlideTimer);
@@ -812,10 +791,36 @@ function finishNavigation() {
   }
 }
 
+function withProgrammaticSectionMove(action) {
+  isProgrammaticSectionMove = true;
+
+  try {
+    action();
+  } finally {
+    isProgrammaticSectionMove = false;
+  }
+}
+
+function moveToSection(sectionNumber) {
+  if (!sectionSlider) {
+    return false;
+  }
+
+  const destinationIndex = Math.max(sectionNumber - 1, 0);
+
+  if (sectionSlider.activeIndex === destinationIndex) {
+    return false;
+  }
+
+  withProgrammaticSectionMove(() => {
+    sectionSlider.slideTo(destinationIndex);
+  });
+
+  return true;
+}
+
 function getActiveSectionIndex() {
-  return [...document.querySelectorAll('#fullpage .section')].findIndex((section) =>
-    section.classList.contains('active')
-  );
+  return sectionSlider?.activeIndex ?? 0;
 }
 
 function unlockScrollStep() {
@@ -823,58 +828,22 @@ function unlockScrollStep() {
   document.body.classList.remove('is-page-scrolling');
 }
 
-function queueWheelGestureUnlock(delay) {
-  window.clearTimeout(wheelGestureUnlockTimer);
-  wheelGestureUnlockTimer = window.setTimeout(() => {
-    isWheelGestureLocked = false;
-    wheelGestureDelta = 0;
-    wheelGestureDirection = 0;
-  }, delay);
-}
+function beginSectionScroll(destinationSectionIndex) {
+  isScrollLocked = true;
+  document.body.classList.add('is-page-scrolling');
 
-function queueTrackpadGestureReset() {
-  window.clearTimeout(trackpadGestureTimer);
-  trackpadGestureTimer = window.setTimeout(() => {
-    trackpadGestureActive = false;
-    isWheelGestureLocked = false;
-    trackpadLastScrollTime = 0;
-    trackpadLastDelta = 0;
-    wheelGestureDelta = 0;
-    wheelGestureDirection = 0;
-  }, trackpadGestureQuietDelay);
-}
-
-function registerTrackpadActivity() {
-  trackpadGestureActive = true;
-  isWheelGestureLocked = true;
-  queueTrackpadGestureReset();
-}
-
-function shouldSuppressTrackpadWheel() {
-  return isScrollLocked || trackpadGestureActive || isWheelGestureLocked;
-}
-
-function isIntentionalTrackpadStep(step) {
-  const currentDelta = step.axisDelta;
-
-  if (Math.abs(currentDelta) < trackpadGestureThreshold) {
-    return false;
+  if (destinationSectionIndex !== undefined) {
+    setHeaderCompact(destinationSectionIndex === 1);
   }
-
-  const now = Date.now();
-  const isNewDirection = (trackpadLastDelta > 0) !== (currentDelta > 0);
-  const isLongPause = now - trackpadLastScrollTime > trackpadGestureMinInterval;
-  const isAccelerating = Math.abs(currentDelta) > Math.abs(trackpadLastDelta);
-
-  trackpadLastScrollTime = now;
-  trackpadLastDelta = currentDelta;
-
-  return isNewDirection || isLongPause || isAccelerating;
 }
 
-function normalizeWheelDelta(value, deltaMode) {
+function completeScrollStep() {
+  unlockScrollStep();
+}
+
+function normalizeWheelDelta(value, deltaMode = 0) {
   if (deltaMode === 1) {
-    return Math.abs(value) * wheelLineToPixelScale;
+    return Math.abs(value) * 16;
   }
 
   if (deltaMode === 2) {
@@ -884,278 +853,161 @@ function normalizeWheelDelta(value, deltaMode) {
   return Math.abs(value);
 }
 
-function isLikelyTrackpadWheel(event) {
-  const absDeltaX = Math.abs(event.deltaX);
-  const absDeltaY = Math.abs(event.deltaY);
-  const now = performance.now();
-  const isBurst = now - lastWheelEventAt < trackpadBurstIntervalMs;
-  lastWheelEventAt = now;
+function resolveWheelStep(event) {
+  const deltaX = event.deltaX ?? (event.wheelDeltaX ? -event.wheelDeltaX : 0);
+  const deltaY = event.deltaY ?? (event.wheelDelta ? -event.wheelDelta : event.detail ?? 0);
+  const absDeltaX = Math.abs(deltaX);
+  const absDeltaY = Math.abs(deltaY);
 
-  if (event.deltaMode === 1) {
-    return absDeltaX <= 8 && absDeltaY <= 8;
-  }
-
-  if (event.deltaMode === 2) {
-    return true;
-  }
-
-  if (event.deltaMode === 0) {
-    return true;
-  }
-
-  if (!Number.isInteger(event.deltaY) || !Number.isInteger(event.deltaX)) {
-    return true;
-  }
-
-  if (absDeltaX > 0 && absDeltaY > 0) {
-    return true;
-  }
-
-  if (absDeltaY > 0 && absDeltaY < 12) {
-    return true;
-  }
-
-  return isBurst && absDeltaY > 0;
-}
-
-function resolveWheelStep(event, forTrackpad = false) {
-  const absDeltaX = Math.abs(event.deltaX);
-  const absDeltaY = Math.abs(event.deltaY);
-  const minAxis = forTrackpad ? trackpadWheelMinAxis : 2;
-
-  if (absDeltaX < minAxis && absDeltaY < minAxis) {
+  if (absDeltaX < 0.1 && absDeltaY < 0.1) {
     return null;
   }
 
-  const sectionIndex = getActiveSectionIndex();
-  const useHorizontal =
-    sectionIndex === 1 && absDeltaX >= absDeltaY && absDeltaX >= minAxis;
-  const rawDelta = useHorizontal ? event.deltaX : event.deltaY;
-  const magnitude = normalizeWheelDelta(rawDelta, event.deltaMode);
+  const useHorizontal = getActiveSectionIndex() === 1 && absDeltaX > absDeltaY;
+  const rawDelta = useHorizontal ? deltaX : deltaY;
+  const magnitude = normalizeWheelDelta(rawDelta, event.deltaMode ?? 0);
 
-  if (magnitude < minAxis) {
+  if (magnitude < wheelIntentThreshold) {
     return null;
   }
-
-  const direction = useHorizontal
-    ? rawDelta < 0
-      ? 1
-      : -1
-    : rawDelta > 0
-      ? 1
-      : -1;
 
   return {
     axisDelta: rawDelta,
-    magnitude,
-    direction,
-    isHorizontal: useHorizontal
+    direction: useHorizontal ? (rawDelta < 0 ? 1 : -1) : rawDelta > 0 ? 1 : -1,
+    magnitude
   };
 }
 
-function canStepSlides() {
-  return (
-    loaderHidden &&
-    !isScrollLocked &&
-    !isLinkJumpAnimating &&
-    !siteHeader.classList.contains('is-menu-open') &&
-    fullpageApi
-  );
+function queueWheelBurstRelease() {
+  window.clearTimeout(wheelBurstReleaseTimer);
+  wheelBurstReleaseTimer = window.setTimeout(() => {
+    const isWheelBurstStillActive = performance.now() - lastWheelEventAt < wheelBurstQuietDelay;
+
+    if (isScrollLocked || isWheelBurstStillActive) {
+      queueWheelBurstRelease();
+      return;
+    }
+
+    wheelBurstLocked = false;
+  }, wheelBurstQuietDelay);
 }
 
-function beginSectionScroll(destinationSectionIndex) {
-  isScrollLocked = true;
-  isWheelGestureLocked = true;
-  document.body.classList.add('is-page-scrolling');
-
-  if (destinationSectionIndex !== undefined) {
-    setHeaderCompact(destinationSectionIndex === 1);
-  }
-}
-
-function stepSlides(direction) {
-  if (!canStepSlides()) {
+function stepByWheelGesture(direction) {
+  if (
+    !loaderHidden ||
+    !sectionSlider ||
+    isScrollLocked ||
+    isLinkJumpAnimating ||
+    siteHeader.classList.contains('is-menu-open')
+  ) {
     return false;
   }
 
   const sectionIndex = getActiveSectionIndex();
-  lastScrollStepDirection = direction;
-
-  if (sectionIndex === 0) {
-    if (direction <= 0) {
-      return false;
-    }
-
-    lastScrollStepWasSectionMove = true;
-    beginSectionScroll(1);
-    fullpageApi.moveSectionDown();
-    return true;
-  }
 
   if (sectionIndex === 1) {
-    if (direction > 0) {
-      if (activeSlideIndex < presentationSlideCount - 1) {
-        lastScrollStepWasSectionMove = false;
-        isWheelGestureLocked = true;
-        animatePresentationSlide(activeSlideIndex + 1);
-        return true;
-      }
+    document.body.classList.add('is-page-scrolling');
 
-      lastScrollStepWasSectionMove = true;
-      beginSectionScroll(2);
-      fullpageApi.moveSectionDown();
+    if (direction > 0 && activeSlideIndex < presentationSlideCount - 1) {
+      animatePresentationSlide(activeSlideIndex + 1);
       return true;
     }
 
-    if (activeSlideIndex > 0) {
-      lastScrollStepWasSectionMove = false;
-      isWheelGestureLocked = true;
+    if (direction < 0 && activeSlideIndex > 0) {
       animatePresentationSlide(activeSlideIndex - 1);
       return true;
     }
+  }
 
-    lastScrollStepWasSectionMove = true;
-    beginSectionScroll(0);
-    fullpageApi.moveSectionUp();
+  if (direction > 0) {
+    if (sectionIndex >= 2) {
+      return false;
+    }
+
+    sectionSlider.slideNext();
     return true;
   }
 
-  if (sectionIndex === 2 && direction < 0) {
-    pendingPresentationSlide = presentationSlideCount - 1;
-    setPresentationSlide(pendingPresentationSlide, false);
-    lastScrollStepWasSectionMove = true;
-    beginSectionScroll(1);
-    fullpageApi.moveSectionUp();
-    return true;
-  }
-
-  return false;
-}
-
-function handleScrollStepIntent(direction, source = 'wheel') {
-  lastWheelWasTrackpad = source === 'trackpad';
-
-  if (!stepSlides(direction)) {
+  if (sectionIndex <= 0) {
     return false;
   }
 
-  if (source === 'trackpad') {
-    registerTrackpadActivity();
-    return true;
-  }
-
-  queueWheelGestureUnlock(mouseWheelGestureUnlockDelay);
+  sectionSlider.slidePrev();
   return true;
 }
 
-function resolveDirectionalGesture(primaryDelta, secondaryDelta = 0, threshold = 0) {
-  if (Math.abs(primaryDelta) < threshold || Math.abs(primaryDelta) < Math.abs(secondaryDelta)) {
+function setupWheelGestureLock() {
+  const handleWheel = (event) => {
+    const step = resolveWheelStep(event);
+
+    if (!step) {
+      return;
+    }
+
+    if (event.cancelable) {
+      event.preventDefault();
+    }
+
+    event.stopImmediatePropagation();
+
+    if (!loaderHidden || !sectionSlider) {
+      return;
+    }
+
+    lastWheelEventAt = performance.now();
+
+    if (wheelBurstLocked) {
+      queueWheelBurstRelease();
+      return;
+    }
+
+    if (isScrollLocked || isLinkJumpAnimating || siteHeader.classList.contains('is-menu-open')) {
+      return;
+    }
+
+    if (!stepByWheelGesture(step.direction)) {
+      return;
+    }
+
+    wheelBurstLocked = true;
+    queueWheelBurstRelease();
+  };
+
+  window.onmousewheel = null;
+  document.onmousewheel = null;
+  window.addEventListener('wheel', handleWheel, { passive: false, capture: true });
+  document.addEventListener('DOMMouseScroll', handleWheel, { passive: false, capture: true });
+}
+
+function resolveTouchStep(touchX, touchY) {
+  const deltaX = touchGestureStartX - touchX;
+  const deltaY = touchGestureStartY - touchY;
+  const absDeltaX = Math.abs(deltaX);
+  const absDeltaY = Math.abs(deltaY);
+
+  if (absDeltaX < touchGestureThreshold && absDeltaY < touchGestureThreshold) {
+    return null;
+  }
+
+  const useHorizontal = getActiveSectionIndex() === 1 && absDeltaX > absDeltaY;
+  const primaryDelta = useHorizontal ? deltaX : deltaY;
+
+  if (Math.abs(primaryDelta) < touchGestureThreshold) {
     return null;
   }
 
   return primaryDelta > 0 ? 1 : -1;
 }
 
-function handleDirectionalGesture(primaryDelta, secondaryDelta = 0, source = 'wheel', threshold = 0) {
-  const direction = resolveDirectionalGesture(primaryDelta, secondaryDelta, threshold);
-
-  if (!direction) {
-    return false;
-  }
-
-  return handleScrollStepIntent(direction, source);
-}
-
-function completeScrollStep() {
-  unlockScrollStep();
-
-  if (lastWheelWasTrackpad) {
-    return;
-  }
-
-  queueWheelGestureUnlock(mouseWheelGestureUnlockDelay);
-}
-
-function setupWheelGestures() {
-  fullpageApi.setMouseWheelScrolling(false);
-
-  window.addEventListener(
-    'wheel',
-    (event) => {
-      const isTrackpad = isLikelyTrackpadWheel(event);
-
-      if (isTrackpad && shouldSuppressTrackpadWheel()) {
-        registerTrackpadActivity();
-        event.preventDefault();
-        return;
-      }
-
-      if (!canStepSlides()) {
-        return;
-      }
-
-      lastWheelWasTrackpad = isTrackpad;
-      const step = resolveWheelStep(event, isTrackpad);
-
-      if (!step) {
-        return;
-      }
-
-      event.preventDefault();
-
-      const gestureResetDelay = isTrackpad
-        ? mouseWheelGestureResetDelay
-        : mouseWheelGestureResetDelay;
-      const gestureUnlockDelay = mouseWheelGestureUnlockDelay;
-      const gestureThreshold = isTrackpad
-        ? mouseWheelGestureThreshold
-        : mouseWheelGestureThreshold;
-
-      if (isWheelGestureLocked) {
-        if (!isTrackpad) {
-          queueWheelGestureUnlock(gestureUnlockDelay);
-        }
-        return;
-      }
-
-      const { magnitude, direction } = step;
-
-      if (isTrackpad) {
-        if (!isIntentionalTrackpadStep(step)) {
-          return;
-        }
-
-        handleScrollStepIntent(direction, 'trackpad');
-        return;
-      }
-
-      if (direction !== wheelGestureDirection) {
-        wheelGestureDelta = 0;
-        wheelGestureDirection = direction;
-      }
-
-      wheelGestureDelta += magnitude;
-      window.clearTimeout(wheelGestureResetTimer);
-
-      if (wheelGestureDelta >= gestureThreshold) {
-        wheelGestureDelta = 0;
-        wheelGestureDirection = 0;
-
-        handleScrollStepIntent(direction, 'wheel');
-        return;
-      }
-
-      wheelGestureResetTimer = window.setTimeout(() => {
-        wheelGestureDelta = 0;
-        wheelGestureDirection = 0;
-      }, gestureResetDelay);
-    },
-    { passive: false }
-  );
-
+function setupTouchGestureLock() {
   window.addEventListener(
     'touchstart',
     (event) => {
+      if (event.touches.length !== 1) {
+        touchGestureHandled = false;
+        return;
+      }
+
       touchGestureStartX = event.touches[0].clientX;
       touchGestureStartY = event.touches[0].clientY;
       touchGestureHandled = false;
@@ -1166,53 +1018,34 @@ function setupWheelGestures() {
   window.addEventListener(
     'touchmove',
     (event) => {
-      if (!loaderHidden || !fullpageApi) {
+      if (event.touches.length !== 1 || !loaderHidden || !sectionSlider) {
         return;
       }
 
-      const deltaX = Math.abs(touchGestureStartX - event.touches[0].clientX);
-      const deltaY = Math.abs(touchGestureStartY - event.touches[0].clientY);
+      const direction = resolveTouchStep(event.touches[0].clientX, event.touches[0].clientY);
 
-      if (touchGestureHandled) {
-        if (deltaY >= deltaX && (deltaX > 8 || deltaY > 8)) {
-          event.preventDefault();
-        }
+      if (!direction) {
         return;
       }
 
-      if (Math.abs(touchGestureStartY - event.touches[0].clientY) >= touchGestureThreshold) {
+      if (event.cancelable) {
         event.preventDefault();
-
-        if (
-          handleDirectionalGesture(
-            touchGestureStartY - event.touches[0].clientY,
-            touchGestureStartX - event.touches[0].clientX,
-            'touch',
-            touchGestureThreshold
-          )
-        ) {
-          touchGestureHandled = true;
-        }
       }
+
+      if (touchGestureHandled || isScrollLocked || isLinkJumpAnimating) {
+        touchGestureHandled = true;
+        return;
+      }
+
+      touchGestureHandled = stepByWheelGesture(direction);
     },
-    { passive: false }
+    { passive: false, capture: true }
   );
 
   window.addEventListener(
     'touchend',
-    (event) => {
-      if (!canStepSlides()) {
-        return;
-      }
-
-      if (touchGestureHandled) {
-        touchGestureHandled = false;
-        return;
-      }
-
-      const deltaX = touchGestureStartX - event.changedTouches[0].clientX;
-      const deltaY = touchGestureStartY - event.changedTouches[0].clientY;
-      handleDirectionalGesture(deltaY, deltaX, 'touch', touchGestureThreshold);
+    () => {
+      touchGestureHandled = false;
     },
     { passive: true }
   );
@@ -1226,29 +1059,60 @@ function setupWheelGestures() {
   );
 }
 
-function setupSmoothScroll() {
-  fullpage('#fullpage', {
-    autoScrolling: true,
-    css3: true,
-    scrollingSpeed: 700,
-    easingcss3: 'cubic-bezier(0.76, 0, 0.24, 1)',
-    fitToSection: false,
-    controlArrows: false,
-    navigation: false,
-    scrollOverflow: false,
-    animateAnchor: true,
-    recordHistory: false,
-    fixedElements: '#site-header, #site-header-hover-zone',
-    credits: { enabled: false },
-    onLeave: (_origin, destination) => {
-      isScrollLocked = true;
-      document.body.classList.add('is-page-scrolling');
-      setHeaderCompact(destination.index === 1);
-    },
-    afterLoad: (_origin, destination, direction) => {
-      updateHeaderForSection(destination.index);
+function handleSectionBeforeSlide(prevIndex, nextIndex) {
+  if (prevIndex === nextIndex) {
+    return 'stop';
+  }
 
-      if (destination.index === 1) {
+  if ((!loaderHidden && !isProgrammaticSectionMove) || isScrollLocked) {
+    return 'stop';
+  }
+
+  if (siteHeader.classList.contains('is-menu-open')) {
+    return 'stop';
+  }
+
+  if (!isProgrammaticSectionMove && prevIndex === 1) {
+    if (nextIndex > prevIndex && activeSlideIndex < presentationSlideCount - 1) {
+      animatePresentationSlide(activeSlideIndex + 1);
+      return 'stop';
+    }
+
+    if (nextIndex < prevIndex && activeSlideIndex > 0) {
+      animatePresentationSlide(activeSlideIndex - 1);
+      return 'stop';
+    }
+  }
+
+  if (
+    !isProgrammaticSectionMove &&
+    prevIndex === 2 &&
+    nextIndex === 1 &&
+    pendingPresentationSlide === null
+  ) {
+    pendingPresentationSlide = presentationSlideCount - 1;
+    setPresentationSlide(pendingPresentationSlide, false);
+  }
+
+  beginSectionScroll(nextIndex);
+  return undefined;
+}
+
+function setupSmoothScroll() {
+  sectionSlider = new SlideJS({
+    parentSelector: '#fullpage',
+    itemSelector: '.section',
+    transitionDuration: 700,
+    transitionTimingFunction: 'cubic-bezier(0.76, 0, 0.24, 1)',
+    activeIndex: 0,
+    loop: false,
+    beforeSlide: (prevIndex, nextIndex) => handleSectionBeforeSlide(prevIndex, nextIndex),
+    afterSlide: (prevIndex, nextIndex) => {
+      const direction = nextIndex > prevIndex ? 'down' : 'up';
+
+      updateHeaderForSection(nextIndex);
+
+      if (nextIndex === 1) {
         let slideIndex = pendingPresentationSlide;
 
         if (slideIndex === null) {
@@ -1282,38 +1146,23 @@ function setupSmoothScroll() {
       }
 
       completeScrollStep();
-    },
-    afterRender: () => {
-      const api = window.fullpage_api;
-      setPresentationSlide(0, false);
-      updateHeaderForSection(0);
-      api.setAllowScrolling(false);
-
-      const initialHash = window.location.hash;
-      const initialDestination = new Map([
-        ['#top', { section: 1 }],
-        ['#about', { section: 2, slide: 0 }],
-        ['#services', { section: 2, slide: 1 }],
-        ['#portfolio', { section: 2, slide: 2 }],
-        ['#links', { section: 3 }]
-      ]).get(initialHash);
-
-      if (initialDestination) {
-        if (initialDestination.slide !== undefined) {
-          pendingPresentationSlide = initialDestination.slide;
-        }
-
-        api.moveTo(initialDestination.section);
-      }
-    },
-    afterResize: () => {
-      setPresentationSlide(activeSlideIndex, false);
-      startBackground();
     }
   });
 
-  fullpageApi = window.fullpage_api;
-  setupWheelGestures();
+  setupWheelGestureLock();
+  setupTouchGestureLock();
+  setPresentationSlide(0, false);
+  updateHeaderForSection(0);
+
+  const initialDestination = pageByHash.get(window.location.hash);
+
+  if (initialDestination) {
+    if (initialDestination.slide !== undefined) {
+      pendingPresentationSlide = initialDestination.slide;
+    }
+
+    moveToSection(initialDestination.section);
+  }
 }
 
 window.addEventListener('resize', () => {
@@ -1321,7 +1170,7 @@ window.addEventListener('resize', () => {
   resizeTimer = window.setTimeout(() => {
     startBackground();
     setPresentationSlide(activeSlideIndex, false);
-    fullpageApi?.reBuild();
+    sectionSlider?.adapt();
   }, 180);
 });
 

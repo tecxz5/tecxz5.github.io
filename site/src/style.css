@@ -212,10 +212,6 @@ body.is-loading {
   overflow: hidden;
 }
 
-.fp-controlArrow {
-  display: none;
-}
-
 .symbols-bg {
   position: absolute;
   inset: 0;
@@ -842,9 +838,4 @@ body.is-loaded .loader__section--top {
   .site-footer__links a:first-child img {
     max-width: min(24vw, 170px);
   }
-}
-
-.fp-watermark, 
-.fp-warning {
-    display: none !important;
 }
