@@ -38,6 +38,7 @@ let presentationAngle = -8;
 let sectionSlider;
 let activeSlideIndex = 0;
 let menuRestoreTimer;
+let menuRestoreEndHandler;
 let isLinkJumpAnimating = false;
 let pendingNavHash = null;
 let pendingPresentationSlide = null;
@@ -224,13 +225,56 @@ function setupSectionLinks() {
   });
 }
 
-function setMenuOpen(isOpen) {
+function getClosedMenuLabel() {
+  return window.innerWidth <= 720 ? 'Открыть меню' : 'tecxz5';
+}
+
+function clearMenuRestoreState() {
   window.clearTimeout(menuRestoreTimer);
+
+  if (menuRestoreEndHandler) {
+    siteHeader.removeEventListener('transitionend', menuRestoreEndHandler);
+    menuRestoreEndHandler = null;
+  }
+}
+
+function setMenuOpen(isOpen) {
+  clearMenuRestoreState();
+
+  if (
+    !isOpen &&
+    window.innerWidth <= 720 &&
+    siteHeader.classList.contains('is-menu-open') &&
+    siteHeader.classList.contains('is-compact')
+  ) {
+    const finishRestore = () => {
+      clearMenuRestoreState();
+      siteHeader.classList.remove('is-menu-restoring');
+      siteLogo.setAttribute('aria-expanded', 'false');
+      siteLogo.setAttribute('aria-label', getClosedMenuLabel());
+    };
+
+    menuRestoreEndHandler = (event) => {
+      if (event.target === siteHeader && event.propertyName === 'height') {
+        finishRestore();
+      }
+    };
+
+    siteHeader.classList.add('is-menu-restoring');
+    siteHeader.classList.remove('is-menu-open');
+    siteHeader.classList.remove('is-hovered');
+    siteLogo.setAttribute('aria-expanded', 'false');
+    siteLogo.setAttribute('aria-label', getClosedMenuLabel());
+    siteHeader.addEventListener('transitionend', menuRestoreEndHandler);
+    menuRestoreTimer = window.setTimeout(finishRestore, 520);
+    return;
+  }
+
   siteHeader.classList.remove('is-menu-restoring');
   siteHeader.classList.toggle('is-menu-open', isOpen);
   siteHeader.classList.remove('is-hovered');
   siteLogo.setAttribute('aria-expanded', String(isOpen));
-  siteLogo.setAttribute('aria-label', isOpen ? 'Закрыть меню' : 'tecxz5');
+  siteLogo.setAttribute('aria-label', isOpen ? 'Закрыть меню' : getClosedMenuLabel());
 }
 
 function setupMobileMenu() {
@@ -243,21 +287,21 @@ function setupMobileMenu() {
       }
 
       isRestored = true;
-      window.clearTimeout(menuRestoreTimer);
-      siteHeader.removeEventListener('transitionend', handleRestoreEnd);
+      clearMenuRestoreState();
       setMenuOpen(true);
     };
 
-    const handleRestoreEnd = (event) => {
+    menuRestoreEndHandler = (event) => {
       if (event.target === siteHeader && event.propertyName === 'height') {
         finishRestore();
       }
     };
 
+    clearMenuRestoreState();
     siteHeader.classList.add('is-menu-restoring');
     siteLogo.setAttribute('aria-expanded', 'false');
-    siteLogo.setAttribute('aria-label', 'Открыть меню');
-    siteHeader.addEventListener('transitionend', handleRestoreEnd);
+    siteLogo.setAttribute('aria-label', getClosedMenuLabel());
+    siteHeader.addEventListener('transitionend', menuRestoreEndHandler);
     menuRestoreTimer = window.setTimeout(finishRestore, 520);
   }
 
