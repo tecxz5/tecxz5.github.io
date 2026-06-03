@@ -2,6 +2,11 @@
   color-scheme: dark;
   --accent: #cedb1a;
   --loader-wave: #fbff9c;
+  --app-height: 100vh;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
 }
 
 @font-face {
@@ -32,6 +37,7 @@ html {
 body {
   min-width: 320px;
   min-height: 100vh;
+  min-height: var(--app-height, 100vh);
   margin: 0;
   overflow-x: hidden;
   background: #000;
@@ -170,6 +176,7 @@ body.is-loading {
   z-index: 1;
   display: grid;
   min-height: 100vh;
+  min-height: var(--app-height, 100vh);
   place-items: center;
   padding: 24px;
   overflow: hidden;
@@ -209,6 +216,7 @@ body.is-loading {
   position: sticky;
   top: 0;
   height: 100vh;
+  height: var(--app-height, 100vh);
   overflow: hidden;
 }
 
@@ -325,6 +333,7 @@ body.is-track-instant .presentation-track {
   flex: 0 0 100vw;
   min-width: 0;
   min-height: 100vh;
+  min-height: var(--app-height, 100vh);
   padding: clamp(128px, 16vw, 176px) 28px clamp(44px, 7vh, 88px);
   overflow: hidden;
 }
@@ -432,6 +441,7 @@ body.is-track-instant .presentation-track {
   z-index: 1;
   display: grid;
   min-height: 100vh;
+  min-height: var(--app-height, 100vh);
   align-items: end;
   justify-items: center;
   padding: 24px 0 0;
@@ -635,8 +645,8 @@ body.is-loaded .loader__section--top {
     justify-content: center;
     gap: 16px;
     height: 48px;
-    margin-top: 16px;
-    padding: 0 18px 0 20px;
+    margin-top: calc(16px + var(--safe-top));
+    padding: 0 calc(18px + var(--safe-right)) 0 calc(20px + var(--safe-left));
     transition:
       height 0.32s cubic-bezier(0.76, 0, 0.24, 1),
       margin-top 0.32s cubic-bezier(0.76, 0, 0.24, 1),
@@ -840,7 +850,8 @@ body.is-loaded .loader__section--top {
     align-items: center;
     flex-direction: row;
     gap: 14px;
-    padding-block: 18px;
+    padding-top: 18px;
+    padding-bottom: calc(18px + var(--safe-bottom));
   }
 
   .site-footer__links {

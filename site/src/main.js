@@ -137,6 +137,14 @@ const loadingState = {
   background: false
 };
 
+function getViewportHeight() {
+  return Math.max(1, Math.round(window.visualViewport?.height || window.innerHeight));
+}
+
+function syncViewportMetrics() {
+  document.documentElement.style.setProperty('--app-height', `${getViewportHeight()}px`);
+}
+
 function randomBetween(min, max) {
   const values = new Uint32Array(1);
 
@@ -383,7 +391,7 @@ function resizeCanvas() {
 function resizeSymbolsCanvas() {
   const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
   const width = presentationTrack.scrollWidth;
-  const height = window.innerHeight;
+  const height = getViewportHeight();
 
   symbolsCanvas.width = Math.floor(width * pixelRatio);
   symbolsCanvas.height = Math.floor(height * pixelRatio);
@@ -633,7 +641,7 @@ function resetSymbols() {
 
   const atlas = createSymbolsAtlas();
   const width = symbolGrid.width || window.innerWidth;
-  const height = symbolGrid.height || window.innerHeight;
+  const height = symbolGrid.height || getViewportHeight();
   const cell = window.innerWidth <= 720 ? 46 : 58;
   const span = Math.hypot(width, height) + cell * 10;
   const columns = Math.ceil(span / cell);
@@ -677,7 +685,7 @@ function drawSymbols(now) {
 
   const { cell } = symbolGrid;
   const width = symbolGrid.width || window.innerWidth;
-  const height = symbolGrid.height || window.innerHeight;
+  const height = symbolGrid.height || getViewportHeight();
   const drift = now / 1000;
   const offsetX = Math.sin(drift * 0.18) * cell * 0.34;
   const offsetY = Math.cos(drift * 0.14) * cell * 0.28;
@@ -891,7 +899,7 @@ function normalizeWheelDelta(value, deltaMode = 0) {
   }
 
   if (deltaMode === 2) {
-    return Math.abs(value) * window.innerHeight;
+    return Math.abs(value) * getViewportHeight();
   }
 
   return Math.abs(value);
@@ -1146,6 +1154,7 @@ function setupSmoothScroll() {
   sectionSlider = new SlideJS({
     parentSelector: '#fullpage',
     itemSelector: '.section',
+    height: getViewportHeight,
     transitionDuration: 700,
     transitionTimingFunction: 'cubic-bezier(0.76, 0, 0.24, 1)',
     activeIndex: 0,
@@ -1212,18 +1221,33 @@ function setupSmoothScroll() {
 window.addEventListener('resize', () => {
   window.clearTimeout(resizeTimer);
   resizeTimer = window.setTimeout(() => {
+    syncViewportMetrics();
     startBackground();
     setPresentationSlide(activeSlideIndex, false);
     sectionSlider?.adapt();
   }, 180);
 });
 
+window.visualViewport?.addEventListener('resize', () => {
+  window.clearTimeout(resizeTimer);
+  resizeTimer = window.setTimeout(() => {
+    syncViewportMetrics();
+    startBackground();
+    setPresentationSlide(activeSlideIndex, false);
+    sectionSlider?.adapt();
+  }, 120);
+});
+
+window.visualViewport?.addEventListener('scroll', syncViewportMetrics, { passive: true });
+
 window.addEventListener('pageshow', () => {
+  syncViewportMetrics();
   setupHeaderAngles();
   setPresentationSlide(activeSlideIndex, false);
 });
 
 document.body.classList.add('is-loading');
+syncViewportMetrics();
 setupHeaderAngles();
 setupFooterShape();
 setupMobileMenu();

@@ -68,8 +68,16 @@ class SlideJS {
     });
   }
 
+  resolveDimension(value, fallback) {
+    if (typeof value === 'function') {
+      return value();
+    }
+
+    return value ?? fallback;
+  }
+
   animateItem(dom, index, activeIndex) {
-    const innerHeight = this.opts.height || window.innerHeight;
+    const innerHeight = this.resolveDimension(this.opts.height, window.innerHeight);
 
     if (index < activeIndex) {
       dom.style.top = `${-innerHeight}px`;
@@ -89,8 +97,8 @@ class SlideJS {
   }
 
   adapt() {
-    const innerWidth = this.opts.width || window.innerWidth;
-    const innerHeight = this.opts.height || window.innerHeight;
+    const innerWidth = this.resolveDimension(this.opts.width, window.innerWidth);
+    const innerHeight = this.resolveDimension(this.opts.height, window.innerHeight);
     const transitionStyle = `all ${this.opts.transitionDuration}ms ${this.opts.transitionTimingFunction} ${this.opts.transitionDelay}ms`;
 
     this.domSlidBox.style.position = 'fixed';
