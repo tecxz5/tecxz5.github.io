@@ -27,6 +27,8 @@
 
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
 }
 
 html {
@@ -129,7 +131,7 @@ body.is-loading {
   font-weight: 500;
   line-height: 1;
   text-decoration: none;
-  transition: color 0.22s ease, text-shadow 0.22s ease;
+  transition: color 0.22s ease;
 }
 
 .site-header__close {
@@ -147,7 +149,11 @@ body.is-loading {
   font-size: clamp(12px, 1.2vw, 16px);
   line-height: 1;
   text-decoration: none;
-  transition: color 0.22s ease, text-shadow 0.22s ease;
+  transition: color 0.22s ease;
+}
+
+.site-header a:hover {
+  color: #fff;
 }
 
 .site-header-hover-zone {
@@ -182,7 +188,11 @@ body.is-loading {
 .site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring):not(:hover):not(.is-hovered) .site-header__logo,
 .site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring):not(:hover):not(.is-hovered) .site-header__nav a {
   color: #fff;
-  text-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+}
+
+.site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring) a:hover,
+.site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring) a:active {
+  color: #fff;
 }
 
 .empty-page {
@@ -526,10 +536,21 @@ body.is-track-instant .presentation-track {
 .site-footer__links img {
   max-width: min(43vw, 430px);
   height: auto;
+  transition: transform 0.2s ease, filter 0.2s ease;
 }
 
 .site-footer__links a:first-child img {
   max-width: min(22vw, 170px);
+}
+
+.site-footer__links a:hover img {
+  transform: scale(1.06);
+  filter: brightness(1.15);
+}
+
+.site-footer__links a:active img {
+  transform: scale(0.96);
+  filter: brightness(1.25);
 }
 
 .loader {
@@ -719,7 +740,6 @@ body.is-loaded .loader__section--top {
     transition:
       color 0.22s ease,
       opacity 0.24s ease,
-      text-shadow 0.22s ease,
       transform 0.32s cubic-bezier(0.76, 0, 0.24, 1);
   }
 
@@ -804,7 +824,11 @@ body.is-loaded .loader__section--top {
   .site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring) .site-header__logo,
   .site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring) .site-header__nav a {
     color: #fff;
-    text-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+  }
+
+  .site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring) .site-header__nav a:hover,
+  .site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring) .site-header__nav a:active {
+    color: #fff;
   }
 
   .site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring) .site-header__close span {
@@ -844,6 +868,10 @@ body.is-loaded .loader__section--top {
     padding: 12px 0;
     font-size: 14px;
     text-align: center;
+  }
+
+  .site-header__nav a:active {
+    color: #fff;
   }
 
   .presentation-slide {
