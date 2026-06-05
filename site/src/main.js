@@ -211,6 +211,7 @@ function setupSectionLinks() {
 
       const destination = pageByHash.get(hash);
       pendingNavHash = hash;
+      window.history.replaceState(null, '', hash);
       isLinkJumpAnimating = true;
       setHeaderCompact(destination.section === 2);
       document.body.classList.add('is-page-scrolling');
@@ -959,6 +960,7 @@ function animatePresentationSlide(slideIndex, onComplete) {
   isScrollLocked = true;
   setHeaderCompact(true);
   setPresentationSlide(clampedIndex, true);
+  syncCurrentHash();
   window.clearTimeout(presentationSlideTimer);
 
   function handleTransitionEnd(event) {
@@ -997,14 +999,9 @@ function updateHeaderForSection(sectionIndex) {
 }
 
 function finishNavigation() {
-  const hash = pendingNavHash;
   isLinkJumpAnimating = false;
   pendingNavHash = null;
   unlockScrollStep();
-
-  if (hash) {
-    window.history.replaceState(null, '', hash);
-  }
 }
 
 function withProgrammaticSectionMove(action) {
@@ -1055,6 +1052,27 @@ function beginSectionScroll(destinationSectionIndex) {
 
 function completeScrollStep() {
   unlockScrollStep();
+}
+
+function syncCurrentHash() {
+  if (!isLinkJumpAnimating) {
+    window.history.replaceState(null, '', resolveCurrentHash());
+  }
+}
+
+function resolveCurrentHash() {
+  const section = getActiveSectionIndex();
+
+  if (section === 0) {
+    return '#top';
+  }
+
+  if (section >= 2) {
+    return '#links';
+  }
+
+  const slides = ['#about', '#services', '#portfolio'];
+  return slides[activeSlideIndex] || '#about';
 }
 
 function normalizeWheelDelta(value, deltaMode = 0) {
@@ -1312,6 +1330,7 @@ function handleSectionBeforeSlide(prevIndex, nextIndex) {
 
   if (!isProgrammaticSectionMove) {
     beginSectionScroll(nextIndex);
+    window.setTimeout(() => syncCurrentHash(), 16);
   }
 
   return undefined;
@@ -1334,6 +1353,7 @@ function setupSmoothScroll() {
       const direction = nextIndex > prevIndex ? 'down' : 'up';
 
       updateHeaderForSection(nextIndex);
+      syncCurrentHash();
 
       if (nextIndex === 1) {
         let slideIndex = pendingPresentationSlide;
