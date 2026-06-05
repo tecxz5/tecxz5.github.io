@@ -131,7 +131,7 @@ body.is-loading {
   font-weight: 500;
   line-height: 1;
   text-decoration: none;
-  transition: color 0.22s ease;
+  transition: color 0.22s ease, background 0.22s ease, padding 0.22s ease;
 }
 
 .site-header__nav {
@@ -145,7 +145,7 @@ body.is-loading {
   font-size: clamp(12px, 1.2vw, 16px);
   line-height: 1;
   text-decoration: none;
-  transition: color 0.22s ease;
+  transition: color 0.22s ease, background 0.22s ease, padding 0.22s ease;
 }
 
 .site-header-hover-zone {
@@ -183,32 +183,46 @@ body.is-loading {
 }
 
 .site-header__nav a.is-touch-active {
-  color: #fff;
+  background: #000;
+  color: var(--accent);
+  padding: 8px 12px;
 }
 
 .site-header__logo.is-hovered {
-  color: #fff;
+  background: #000;
+  color: var(--accent);
+  padding: 8px 12px;
 }
 
 .site-header__nav a.is-hovered {
-  color: #fff;
+  background: #000;
+  color: var(--accent);
+  padding: 8px 12px;
 }
 
 .site-header__logo.is-hovered {
-  color: #fff;
+  background: #000;
+  color: var(--accent);
+  padding: 8px 12px;
 }
 
 .site-header__logo.is-touch-active {
-  color: #fff;
+  background: #000;
+  color: var(--accent);
+  padding: 8px 12px;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .site-header a:hover {
-    color: #fff;
+    background: #000;
+    color: var(--accent);
+    padding: 8px 12px;
   }
 
   .site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring) .site-header__nav a:hover {
-    color: #fff;
+    background: #000;
+    color: var(--accent);
+    padding: 8px 12px;
   }
 }
 
@@ -810,7 +824,9 @@ body.is-loaded .loader__section--top {
   }
 
   .site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring) .site-header__nav a:hover {
-    color: #fff;
+    background: #000;
+    color: var(--accent);
+    padding: 8px 12px;
   }
 
   .site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring) .site-header__logo {
@@ -840,7 +856,9 @@ body.is-loaded .loader__section--top {
 
   .site-header__nav a.is-hovered,
   .site-header__nav a.is-touch-active {
-    color: #fff;
+    background: #000;
+    color: var(--accent);
+    padding: 8px 12px;
     text-shadow: 0 0 0.01px currentColor;
   }
 
