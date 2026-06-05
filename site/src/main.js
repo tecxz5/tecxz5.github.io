@@ -958,23 +958,23 @@ function animatePresentationSlide(slideIndex, onComplete) {
   setPresentationSlide(clampedIndex, true);
   window.clearTimeout(presentationSlideTimer);
 
-  const finish = () => {
-    presentationTrack.removeEventListener('transitionend', handleTransitionEnd);
-    window.clearTimeout(presentationSlideTimer);
-    onComplete?.();
-    completeScrollStep();
-  };
-
   function handleTransitionEnd(event) {
     if (event.target !== presentationTrack || event.propertyName !== 'transform') {
       return;
     }
 
-    finish();
+    presentationTrack.removeEventListener('transitionend', handleTransitionEnd);
+    window.clearTimeout(presentationSlideTimer);
+    onComplete?.();
+    completeScrollStep();
   }
 
   presentationTrack.addEventListener('transitionend', handleTransitionEnd);
-  presentationSlideTimer = window.setTimeout(finish, 580);
+  presentationSlideTimer = window.setTimeout(() => {
+    presentationTrack.removeEventListener('transitionend', handleTransitionEnd);
+    onComplete?.();
+    completeScrollStep();
+  }, 580);
 }
 
 function setHeaderCompact(isCompact) {
@@ -1307,18 +1307,24 @@ function handleSectionBeforeSlide(prevIndex, nextIndex) {
     setPresentationSlide(pendingPresentationSlide, false);
   }
 
-  beginSectionScroll(nextIndex);
+  if (!isProgrammaticSectionMove) {
+    beginSectionScroll(nextIndex);
+  }
+
   return undefined;
 }
 
 function setupSmoothScroll() {
+  const initialDestination = pageByHash.get(window.location.hash);
+  const startSection = initialDestination ? initialDestination.section - 1 : 0;
+
   sectionSlider = new SlideJS({
     parentSelector: '#fullpage',
     itemSelector: '.section',
     height: getViewportHeight,
     transitionDuration: 700,
     transitionTimingFunction: 'cubic-bezier(0.76, 0, 0.24, 1)',
-    activeIndex: 0,
+    activeIndex: startSection,
     loop: false,
     beforeSlide: (prevIndex, nextIndex) => handleSectionBeforeSlide(prevIndex, nextIndex),
     afterSlide: (prevIndex, nextIndex) => {
@@ -1365,18 +1371,14 @@ function setupSmoothScroll() {
 
   setupWheelGestureLock();
   setupTouchGestureLock();
-  setPresentationSlide(0, false);
-  updateHeaderForSection(0);
 
-  const initialDestination = pageByHash.get(window.location.hash);
-
-  if (initialDestination) {
-    if (initialDestination.slide !== undefined) {
-      pendingPresentationSlide = initialDestination.slide;
-    }
-
-    moveToSection(initialDestination.section);
+  if (initialDestination && initialDestination.slide !== undefined) {
+    setPresentationSlide(initialDestination.slide, false);
+  } else {
+    setPresentationSlide(0, false);
   }
+
+  updateHeaderForSection(startSection);
 }
 
 window.addEventListener('resize', () => {
@@ -1401,10 +1403,31 @@ window.visualViewport?.addEventListener('resize', () => {
 
 window.visualViewport?.addEventListener('scroll', syncViewportMetrics, { passive: true });
 
-window.addEventListener('pageshow', () => {
+window.addEventListener('pageshow', (event) => {
+  if (!event.persisted) {
+    return;
+  }
+
+  isScrollLocked = false;
+  isLinkJumpAnimating = false;
+  document.body.classList.remove('is-page-scrolling');
   syncViewportMetrics();
   setupHeaderAngles();
+  sectionSlider?.adapt();
   setPresentationSlide(activeSlideIndex, false);
+  updateHeaderForSection(getActiveSectionIndex());
+
+  const destination = pageByHash.get(window.location.hash);
+
+  if (destination && sectionSlider.activeIndex !== destination.section - 1) {
+    if (destination.slide !== undefined) {
+      pendingPresentationSlide = destination.slide;
+    }
+
+    withProgrammaticSectionMove(() => {
+      moveToSection(destination.section);
+    });
+  }
 });
 
 document.body.classList.add('is-loading');
