@@ -212,6 +212,7 @@ function setupSectionLinks() {
       const destination = pageByHash.get(hash);
       pendingNavHash = hash;
       window.history.replaceState(null, '', hash);
+      setCurrentNavLink(hash);
       isLinkJumpAnimating = true;
       setHeaderCompact(destination.section === 2);
       document.body.classList.add('is-page-scrolling');
@@ -1056,8 +1057,16 @@ function completeScrollStep() {
 
 function syncCurrentHash() {
   if (!isLinkJumpAnimating) {
-    window.history.replaceState(null, '', resolveCurrentHash());
+    const hash = resolveCurrentHash();
+    window.history.replaceState(null, '', hash);
+    setCurrentNavLink(hash);
   }
+}
+
+function setCurrentNavLink(hash) {
+  siteNavigation.querySelectorAll('a').forEach((link) => {
+    link.classList.toggle('is-current', link.getAttribute('href') === hash);
+  });
 }
 
 function resolveCurrentHash() {
@@ -1402,6 +1411,7 @@ function setupSmoothScroll() {
   }
 
   updateHeaderForSection(startSection);
+  setCurrentNavLink(resolveCurrentHash());
 }
 
 window.addEventListener('resize', () => {
@@ -1439,6 +1449,7 @@ window.addEventListener('pageshow', (event) => {
   sectionSlider?.adapt();
   setPresentationSlide(activeSlideIndex, false);
   updateHeaderForSection(getActiveSectionIndex());
+  setCurrentNavLink(resolveCurrentHash());
 
   const destination = pageByHash.get(window.location.hash);
 

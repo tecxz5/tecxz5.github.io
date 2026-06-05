@@ -206,6 +206,26 @@ body.is-loading {
   padding: 8px 12px;
 }
 
+@media (min-width: 721px) {
+  .site-header__nav a.is-current {
+    background: #fff;
+    color: #000;
+    padding: 2px 8px;
+  }
+
+  .site-header.is-compact:not(.is-hovered) .site-header__nav a.is-current {
+    background: #fff;
+    color: #000;
+    padding: 2px 8px;
+  }
+
+  .site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring):not(.is-hovered) .site-header__nav a.is-current {
+    background: #fff;
+    color: #000;
+    padding: 2px 8px;
+  }
+}
+
 .site-header__logo.is-touch-active {
   background: #000;
   color: var(--accent);
@@ -852,6 +872,8 @@ body.is-loaded .loader__section--top {
     padding: 12px 0;
     font-size: 14px;
     text-align: center;
+    width: fit-content;
+    justify-self: center;
   }
 
   .site-header__nav a.is-hovered,
