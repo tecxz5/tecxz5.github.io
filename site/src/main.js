@@ -212,7 +212,6 @@ function setupSectionLinks() {
       const destination = pageByHash.get(hash);
       pendingNavHash = hash;
       isLinkJumpAnimating = true;
-      siteHeader.classList.remove('is-hovered');
       setHeaderCompact(destination.section === 2);
       document.body.classList.add('is-page-scrolling');
 
@@ -294,7 +293,11 @@ function setMenuOpen(isOpen) {
 
   siteHeader.classList.remove('is-menu-restoring');
   siteHeader.classList.toggle('is-menu-open', isOpen);
-  siteHeader.classList.remove('is-hovered');
+
+  if (window.innerWidth <= 720) {
+    siteHeader.classList.remove('is-hovered');
+  }
+
   syncMenuControls(isOpen);
 }
 
