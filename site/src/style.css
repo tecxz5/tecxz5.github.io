@@ -874,24 +874,28 @@ body.is-loaded .loader__section--top {
     top: 16vh;
     left: 12vw;
     width: min(34vw, 162px);
+    transform: rotate(18deg);
   }
 
   .presentation-strips__item:nth-child(4) {
     top: 15vh;
     left: 101vw;
     width: min(36vw, 176px);
+    transform: rotate(-15deg);
   }
 
   .presentation-strips__item:nth-child(6) {
     top: 16vh;
     left: 194vw;
     width: min(34vw, 164px);
+    transform: rotate(22deg);
   }
 
   .presentation-strips__item:nth-child(8) {
     top: 15vh;
     left: 272vw;
     width: min(28vw, 136px);
+    transform: rotate(-10deg);
   }
 
   .presentation-strips__item:nth-child(1),
