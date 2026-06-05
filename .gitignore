@@ -6,3 +6,4 @@ npm-debug.log*
 /.vscode/
 index.js
 node_modules
+.opencode
