@@ -1106,7 +1106,7 @@ function resolveWheelStep(event) {
     return null;
   }
 
-  const useHorizontal = getActiveSectionIndex() === 1 && absDeltaX > absDeltaY;
+  const useHorizontal = absDeltaX > absDeltaY;
   const rawDelta = useHorizontal ? deltaX : deltaY;
   const magnitude = normalizeWheelDelta(rawDelta, event.deltaMode ?? 0);
 
@@ -1232,7 +1232,7 @@ function resolveTouchStep(touchX, touchY) {
     return null;
   }
 
-  const useHorizontal = getActiveSectionIndex() === 1 && absDeltaX > absDeltaY;
+  const useHorizontal = absDeltaX > absDeltaY;
   const primaryDelta = useHorizontal ? deltaX : deltaY;
 
   if (Math.abs(primaryDelta) < touchGestureThreshold) {
