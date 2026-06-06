@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Генератор фона из Material-иконок">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@500&display=swap"
+      rel="stylesheet"
+    >
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=block"
+      rel="stylesheet"
+    >
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      rel="stylesheet"
+    >
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+      rel="stylesheet"
+    >
+    <link rel="stylesheet" href="./src/generator.css">
+    <title>Генератор фона — tecxz5</title>
+  </head>
+  <body>
+    <main class="generator-page">
+      <a class="generator-back" href="./">← назад</a>
+      <h1>Генератор фона</h1>
+      <div class="generator-layout">
+        <form id="bg-generator-form" class="generator-form">
+          <section class="settings-group">
+            <h2>Стиль иконок</h2>
+            <label>
+              <select id="bg-icon-style" class="icon-style-native" multiple size="6">
+                <option value="outlined" selected>Outlined</option>
+                <option value="rounded" selected>Rounded</option>
+                <option value="sharp" selected>Sharp</option>
+                <option value="outlined-filled" selected>Outlined Filled</option>
+                <option value="rounded-filled" selected>Rounded Filled</option>
+                <option value="sharp-filled" selected>Sharp Filled</option>
+              </select>
+              <div class="icon-preview-picker">
+                <span>Иконка примера</span>
+                <select id="icon-preview-glyph">
+                  <option value="star" selected>star</option>
+                  <option value="favorite">favorite</option>
+                  <option value="rocket_launch">rocket_launch</option>
+                  <option value="bolt">bolt</option>
+                  <option value="lock">lock</option>
+                  <option value="code">code</option>
+                  <option value="terminal">terminal</option>
+                  <option value="cloud">cloud</option>
+                </select>
+              </div>
+              <div id="icon-style-preview" class="icon-style-preview"></div>
+              <small>Выбирай стили кликом по карточкам (можно несколько).</small>
+            </label>
+          </section>
+          <section class="settings-group">
+            <h2>Размер и угол</h2>
+            <div class="settings-grid">
+              <label>
+                <span>Размер сетки и иконок</span>
+                <input type="number" id="bg-cell" min="16" max="96" step="1" value="36">
+              </label>
+              <label>
+                <span>Угол</span>
+                <input type="number" id="bg-angle" min="-90" max="90" step="1" value="0">
+              </label>
+            </div>
+          </section>
+          <section class="settings-group">
+            <h2>Размер изображения</h2>
+            <div class="settings-grid">
+              <label>
+                <span>Ширина</span>
+                <input type="number" id="bg-width" min="512" max="5000" step="1" value="2000">
+              </label>
+              <label>
+                <span>Высота</span>
+                <input type="number" id="bg-height" min="512" max="5000" step="1" value="2000">
+              </label>
+            </div>
+          </section>
+          <section class="settings-group">
+            <h2>Цвета и прозрачность</h2>
+            <div class="settings-grid">
+              <label>
+                <span>Цвет фона (HEX)</span>
+                <div class="color-input">
+                  <div class="color-swatch" id="bg-swatch"></div>
+                  <input type="text" id="bg-color" value="#000000" maxlength="7" spellcheck="false">
+                </div>
+              </label>
+              <label>
+                <span>Цвет иконок (HEX)</span>
+                <div class="color-input">
+                  <div class="color-swatch" id="fg-swatch"></div>
+                  <input type="text" id="fg-color" value="#ffffff" maxlength="7" spellcheck="false">
+                </div>
+              </label>
+              <label class="full-width">
+                <span>Прозрачность</span>
+                <input type="number" id="bg-opacity" min="0.05" max="1" step="0.05" value="0.30">
+              </label>
+            </div>
+          </section>
+          <section class="picker-box hidden" id="picker-box">
+            <div class="picker-header">
+              <p>Колорпикер</p>
+              <button type="button" id="close-picker-btn" aria-label="Закрыть">&times;</button>
+            </div>
+            <div class="picker-area">
+              <canvas id="picker-sv" width="220" height="160"></canvas>
+              <canvas id="picker-hue-strip" width="24" height="160"></canvas>
+            </div>
+            <div class="picker-actions">
+              <button type="button" id="random-color-btn">Случайный</button>
+              <label class="extractor-upload">
+                <span>Экстрактор</span>
+                <input type="file" id="palette-image" accept="image/*">
+              </label>
+            </div>
+            <div id="extracted-palette" class="extracted-palette"></div>
+          </section>
+          <label>
+            <span>Seed (опц.)</span>
+            <input type="number" id="bg-seed" min="1" step="1" placeholder="случайно">
+          </label>
+          <div class="form-actions">
+            <button type="button" id="reset-form-btn">Сбросить</button>
+          </div>
+        </form>
+        <aside class="tools-panel">
+          <section class="preview-box">
+            <p>Превью</p>
+            <canvas id="bg-preview" width="150" height="150"></canvas>
+          </section>
+        </aside>
+      </div>
+      <a href="#" id="download-bg-jpeg" class="generate-btn">Сгенерировать и скачать</a>
+    </main>
+    <script type="module" src="./src/generator.js"></script>
+  </body>
+</html>

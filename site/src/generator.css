@@ -1,0 +1,358 @@
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #000;
+  color: #fff;
+  font-family: "Fira Mono", monospace;
+  font-weight: 500;
+  overflow-x: hidden;
+}
+
+.generator-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+}
+
+.generator-back {
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.generator-back:hover {
+  color: var(--accent, #cedb1a);
+}
+
+h1 {
+  margin: 24px 0 32px;
+  font-family: "Pixeloid Mono", monospace;
+  font-size: clamp(24px, 5vw, 40px);
+  font-weight: 500;
+  text-align: center;
+}
+
+.generator-layout {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.generator-form {
+  display: grid;
+  gap: 24px;
+}
+
+.settings-group {
+  border: 2px solid #fff;
+  padding: 20px;
+}
+
+.settings-group h2 {
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #fff;
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.settings-grid .full-width {
+  grid-column: 1 / -1;
+}
+
+.generator-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.generator-form label span {
+  font-size: 13px;
+}
+
+.generator-form input,
+.generator-form select {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-family: "Fira Mono", monospace;
+  font-size: 14px;
+  padding: 10px 12px;
+  height: 44px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.generator-form input:focus,
+.generator-form select:focus {
+  border-color: var(--accent, #cedb1a);
+}
+
+.generator-form small {
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.color-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-swatch {
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
+}
+
+.icon-style-native {
+  display: none;
+}
+
+.icon-style-preview {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.icon-preview-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.icon-preview-picker select {
+  width: auto;
+}
+
+.icon-style-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 2px solid #fff;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: "Fira Mono", monospace;
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.icon-style-item.is-active {
+  border-color: var(--accent, #cedb1a);
+  color: var(--accent, #cedb1a);
+}
+
+.icon-style-glyph {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.icon-style-label {
+  font-size: 11px;
+  text-align: center;
+}
+
+.picker-box {
+  border: 2px solid #fff;
+  padding: 16px;
+  z-index: 10;
+}
+
+.picker-box.hidden {
+  display: none;
+}
+
+.picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.picker-header p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.picker-header button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.picker-area {
+  display: flex;
+  gap: 8px;
+}
+
+#picker-sv {
+  cursor: crosshair;
+}
+
+#picker-hue-strip {
+  cursor: pointer;
+}
+
+.picker-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.picker-actions button,
+.extractor-upload {
+  flex: 1;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid #fff;
+  color: #fff;
+  font-family: "Fira Mono", monospace;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color 0.2s ease;
+}
+
+.picker-actions button:hover,
+.extractor-upload:hover {
+  border-color: #fff;
+}
+
+.extractor-upload input {
+  display: none;
+}
+
+.extracted-palette {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.swatch {
+  width: 26px;
+  height: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  background: var(--swatch);
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.form-actions button {
+  padding: 10px 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 2px solid #fff;
+  color: #fff;
+  font-family: "Fira Mono", monospace;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.form-actions button:hover {
+  border-color: #fff;
+  color: #fff;
+}
+
+.tools-panel {
+  position: sticky;
+  top: 24px;
+}
+
+.preview-box {
+  border: 2px solid #fff;
+  padding: 20px;
+  text-align: center;
+}
+
+.preview-box p {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: #fff;
+}
+
+#bg-preview {
+  width: 100%;
+  height: auto;
+}
+
+.generate-btn {
+  display: block;
+  width: 100%;
+  margin-top: 28px;
+  padding: 16px;
+  background: var(--accent, #cedb1a);
+  color: #000;
+  font-family: "Fira Mono", monospace;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.generate-btn:hover {
+  background: #fff;
+  color: #000;
+}
+
+@media (max-width: 900px) {
+  .generator-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .tools-panel {
+    position: static;
+    order: -1;
+  }
+
+  .preview-box {
+    max-width: 320px;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .generator-page {
+    padding: 24px 16px 40px;
+  }
+
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .generate-btn {
+    font-size: 14px;
+    padding: 14px;
+  }
+}
