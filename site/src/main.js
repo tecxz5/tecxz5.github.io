@@ -230,11 +230,8 @@ function setupSectionLinks() {
         return;
       }
 
-      if (getActiveSectionIndex() === 2) {
-        setPresentationSlide(presentationSlideCount - 1, false);
-      }
-
       pendingPresentationSlide = destination.slide;
+      setPresentationSlide(destination.slide, false);
       moveToSection(destination.section);
     });
   });
@@ -1374,7 +1371,8 @@ function setupSmoothScroll() {
         pendingPresentationSlide = null;
 
         if (isLinkJumpAnimating) {
-          animatePresentationSlide(slideIndex, () => finishNavigation());
+          setPresentationSlide(slideIndex, false);
+          finishNavigation();
           return;
         }
 
