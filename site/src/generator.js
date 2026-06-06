@@ -1,3 +1,16 @@
+import t5Svg from './assets/icons/t5.svg?url';
+import copyrightSvg from './assets/icons/c.svg?url';
+
+(function () {
+  const icons = [t5Svg, copyrightSvg];
+  const icon = icons[Math.floor(Math.random() * icons.length)];
+  const link = document.createElement('link');
+  link.rel = 'icon';
+  link.type = 'image/svg+xml';
+  link.href = icon;
+  document.head.appendChild(link);
+})();
+
 const DOWNLOAD_ID = 'download-bg-jpeg';
 const FORM_ID = 'bg-generator-form';
 const PREVIEW_SIZE = 150;
