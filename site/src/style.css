@@ -621,20 +621,11 @@ body.is-track-instant .presentation-track {
 .loader__section {
   position: relative;
   z-index: 1;
-  width: 100%;
+  width: calc(100% + 3px);
   background: var(--accent);
+  border-right: 3px solid rgba(0, 0, 0, 0.2);
   transform: translateX(0);
   will-change: transform;
-}
-
-.loader__section::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 6px;
-  background: linear-gradient(to left, rgba(0, 0, 0, 0.22), transparent);
 }
 
 .loader__section--middle {
