@@ -618,24 +618,26 @@ body.is-track-instant .presentation-track {
 
 .loader__section {
   position: relative;
+  z-index: 1;
   width: 100%;
   background: var(--accent);
   transform: translateX(0);
   will-change: transform;
 }
 
-.loader__section--top {
-  border-bottom: 0;
-}
-
 .loader__section--middle {
+  z-index: 2;
   display: grid;
   place-items: center;
-  border-bottom: 0;
 }
 
 .loader__section--bottom {
-  border-bottom: 0;
+  position: absolute;
+  z-index: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .loader__brand {
