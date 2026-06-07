@@ -91,6 +91,7 @@ body.is-loading {
   background: var(--accent);
   overflow: visible;
   isolation: isolate;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
   transition:
     height 0.32s cubic-bezier(0.76, 0, 0.24, 1),
     margin-top 0.32s cubic-bezier(0.76, 0, 0.24, 1),
@@ -168,6 +169,7 @@ body.is-loading {
   background: rgba(0, 0, 0, 0.22);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
+  filter: none;
 }
 
 .site-header.is-compact:not(.is-menu-open):not(.is-menu-restoring):not(.is-hovered)::before,
@@ -625,6 +627,16 @@ body.is-track-instant .presentation-track {
   will-change: transform;
 }
 
+.loader__section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 6px;
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.22), transparent);
+}
+
 .loader__section--middle {
   z-index: 2;
   display: grid;
@@ -824,6 +836,7 @@ body.is-loaded .loader__section--top {
     background: rgba(0, 0, 0, 0.22);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
+    filter: none;
     transform: translateY(-8px);
     transition:
       height 0.32s cubic-bezier(0.76, 0, 0.24, 1),
