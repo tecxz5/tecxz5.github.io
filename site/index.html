@@ -62,10 +62,71 @@
             <section class="presentation-slide" id="services">
               <h2>Услуги</h2>
               <div class="presentation-slide__body">
-                <div class="service-grid">
-                  <article><h3>Бот</h3><p>не расскажу</p></article>
-                  <article><h3>Сайт</h3><p>не расскажу</p></article>
-                  <article><h3>Плагин</h3><p>не расскажу</p></article>
+                <div class="service-grid service-grid--two">
+                  <!-- Карточка: Скрипты -->
+                  <article class="service-card" id="card-scripts">
+                    <button type="button" class="service-card__close" aria-label="Закрыть">&times;</button>
+                    <div class="service-card__badge-wrap">
+                      <span class="service-card__badge">Скрипты</span>
+                    </div>
+                    <div class="service-card__summary">
+                      <p class="service-card__sub">боты / eTG / юзерботы</p>
+                      <button type="button" class="service-card__btn">подробнее</button>
+                    </div>
+                    <div class="service-card__details" aria-hidden="true">
+                      <h2 class="service-card__details-title">Подробности об услугах</h2>
+                      <div class="service-card__items">
+                        <div class="service-card__item">
+                          <h3>Telegram & Discord Боты</h3>
+                          <p>Разработка кастомных ботов любой сложности (автоматизация, парсеры, интеграция API, модерация).</p>
+                          <div class="service-card__price-tag">100 – 3000 р.</div>
+                        </div>
+                        <div class="service-card__item">
+                          <h3>Плагины для eTG</h3>
+                          <p>Создание плагинов и модулей для easyTelegram (eTG).</p>
+                          <div class="service-card__price-tag">Бесплатно <small>(если срочно: 200 – 3500 р.)</small></div>
+                        </div>
+                        <div class="service-card__item">
+                          <h3>Модули для юзерботов</h3>
+                          <p>Пользовательские модули и скрипты автоматизации действий в Telegram.</p>
+                          <div class="service-card__price-tag">Договорная</div>
+                        </div>
+                      </div>
+                      <div class="service-card__footer">
+                        <a href="https://t.me/tecxz5" target="_blank" rel="noopener" class="service-card__action-btn">Связаться в Telegram</a>
+                      </div>
+                    </div>
+                  </article>
+
+                  <!-- Карточка: Сайты -->
+                  <article class="service-card" id="card-sites">
+                    <button type="button" class="service-card__close" aria-label="Закрыть">&times;</button>
+                    <div class="service-card__badge-wrap">
+                      <span class="service-card__badge">Сайты</span>
+                    </div>
+                    <div class="service-card__summary">
+                      <p class="service-card__sub">веб-приложения / лендинги</p>
+                      <button type="button" class="service-card__btn">подробнее</button>
+                    </div>
+                    <div class="service-card__details" aria-hidden="true">
+                      <h2 class="service-card__details-title">Подробности об услугах</h2>
+                      <div class="service-card__items">
+                        <div class="service-card__item">
+                          <h3>Веб-сайты & Лендинги</h3>
+                          <p>Создание стильных, современных и быстрых сайтов, лендингов и веб-приложений.</p>
+                          <div class="service-card__price-tag">200 – 2000 р.</div>
+                        </div>
+                        <div class="service-card__item">
+                          <h3>Интерактивные сервисы</h3>
+                          <p>Разработка веб-инструментов, кастомных генераторов, интерактивных плашек и утилит.</p>
+                          <div class="service-card__price-tag">Договорная</div>
+                        </div>
+                      </div>
+                      <div class="service-card__footer">
+                        <a href="https://t.me/tecxz5" target="_blank" rel="noopener" class="service-card__action-btn">Связаться в Telegram</a>
+                      </div>
+                    </div>
+                  </article>
                 </div>
               </div>
             </section>
@@ -90,10 +151,10 @@
               alt="Copyright"
             >
             <div class="site-footer__links" aria-label="Ссылки">
-              <a href="https://t.me/tecxz5" aria-label="Telegram">
+              <a href="https://t.me/tecxz5" aria-label="Telegram" target="_blank" rel="noopener">
                 <img src="./src/assets/images/Group 4.svg" alt="">
               </a>
-              <a href="https://github.com/tecxz5" aria-label="GitHub">
+              <a href="https://github.com/tecxz5" aria-label="GitHub" target="_blank" rel="noopener">
                 <img src="./src/assets/images/Group 3.svg" alt="">
               </a>
             </div>
@@ -101,6 +162,10 @@
         </footer>
       </section>
     </div>
+
+    <!-- Задний затемняющий фон для развернутой карточки -->
+    <div class="service-backdrop" id="service-backdrop" aria-hidden="true"></div>
+
     <div class="loader" id="loader" aria-label="Загрузка">
       <section class="loader__section loader__section--top" aria-hidden="true"></section>
       <section class="loader__section loader__section--middle">

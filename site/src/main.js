@@ -1483,6 +1483,373 @@ setupHeaderHoverZone();
 setupMobileHeaderHover();
 setupSmoothScroll();
 setupSectionLinks();
+setupServiceModals();
+setupKeyboardNav();
 waitForPageLoad();
 waitForFonts();
 startBackground();
+
+function setupServiceModals() {
+  const backdrop = document.getElementById('service-backdrop');
+  let expandedCardState = null;
+
+  function expandCard(card) {
+    if (expandedCardState) return;
+
+    const badge = card.querySelector('.service-card__badge');
+    const summary = card.querySelector('.service-card__summary');
+    const sub = card.querySelector('.service-card__sub');
+    const btn = card.querySelector('.service-card__btn');
+    const details = card.querySelector('.service-card__details');
+    const detailsTitle = card.querySelector('.service-card__details-title');
+    const items = card.querySelectorAll('.service-card__item');
+    const footerBtn = card.querySelector('.service-card__action-btn');
+    const closeBtn = card.querySelector('.service-card__close');
+
+    const badgeFirstRect = badge ? badge.getBoundingClientRect() : null;
+    const firstRect = card.getBoundingClientRect();
+    const parent = card.parentNode;
+    const nextSibling = card.nextSibling;
+
+    const placeholder = document.createElement('div');
+    placeholder.className = 'service-card-placeholder';
+    placeholder.style.width = firstRect.width + 'px';
+    placeholder.style.height = firstRect.height + 'px';
+    parent.insertBefore(placeholder, card);
+
+    document.body.appendChild(card);
+    card.classList.add('is-expanded');
+    if (backdrop) backdrop.classList.add('is-active');
+
+    const tw = Math.min(680, window.innerWidth * 0.92);
+    const tmh = window.innerHeight * 0.85;
+
+    card.style.position = 'fixed';
+    card.style.zIndex = '1000';
+    card.style.width = tw + 'px';
+    card.style.height = 'auto';
+    card.style.maxHeight = tmh + 'px';
+
+    const badgeLastRect = badge ? badge.getBoundingClientRect() : null;
+    const cardLastRect = card.getBoundingClientRect();
+
+    let startBdx = 0, startBdy = 0;
+    if (badgeFirstRect && badgeLastRect && cardLastRect) {
+      startBdx = (badgeFirstRect.left - firstRect.left) - (badgeLastRect.left - cardLastRect.left);
+      startBdy = (badgeFirstRect.top - firstRect.top) - (badgeLastRect.top - cardLastRect.top);
+    }
+
+    card.style.left = firstRect.left + 'px';
+    card.style.top = firstRect.top + 'px';
+    card.style.width = firstRect.width + 'px';
+    card.style.height = firstRect.height + 'px';
+    card.style.backgroundColor = '#000';
+    card.style.borderColor = '#ffffff';
+    card.style.overflow = 'hidden';
+    card.style.transition = 'none';
+
+    if (badge && (startBdx !== 0 || startBdy !== 0)) {
+      badge.style.transition = 'none';
+      badge.style.transform = 'translate(' + startBdx + 'px,' + startBdy + 'px)';
+    }
+    if (summary) {
+      summary.style.transition = 'none';
+      summary.style.opacity = '1';
+      summary.style.transform = 'translateY(0)';
+      if (sub) { sub.style.transition = 'none'; sub.style.opacity = '1'; sub.style.transform = 'translateY(0)'; }
+      if (btn) { btn.style.transition = 'none'; btn.style.opacity = '1'; btn.style.transform = 'translateY(0)'; }
+    }
+    if (details) {
+      details.style.display = 'block';
+      details.style.transition = 'none';
+      details.style.opacity = '0';
+      details.style.transform = 'translateY(18px)';
+
+      if (detailsTitle) {
+        detailsTitle.style.transition = 'none';
+        detailsTitle.style.opacity = '0';
+        detailsTitle.style.transform = 'translateY(10px)';
+      }
+
+      items.forEach(function(item) {
+        item.style.transition = 'none';
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(12px)';
+      });
+
+      if (footerBtn) {
+        footerBtn.style.transition = 'none';
+        footerBtn.style.opacity = '0';
+        footerBtn.style.transform = 'translateY(12px)';
+      }
+    }
+
+    void card.offsetWidth;
+    const th = Math.min(card.scrollHeight, tmh);
+    const tl = (window.innerWidth - tw) / 2;
+    const tt = (window.innerHeight - th) / 2;
+
+    card.style.width = firstRect.width + 'px';
+    card.style.height = firstRect.height + 'px';
+    void card.offsetWidth;
+
+    expandedCardState = { card, parent, nextSibling, placeholder };
+
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        card.style.transition = 'left .42s cubic-bezier(.76,0,.24,1), top .42s cubic-bezier(.76,0,.24,1), width .42s cubic-bezier(.76,0,.24,1), height .42s cubic-bezier(.76,0,.24,1)';
+        card.style.left = tl + 'px';
+        card.style.top = tt + 'px';
+        card.style.width = tw + 'px';
+        card.style.height = th + 'px';
+
+        if (badge) {
+          badge.style.transition = 'transform .42s cubic-bezier(.76,0,.24,1)';
+          badge.style.transform = 'translate(0,0)';
+        }
+        if (summary) {
+          summary.style.transition = 'opacity .2s ease, transform .2s ease';
+          summary.style.opacity = '0';
+          summary.style.transform = 'translateY(-12px)';
+          if (sub) { sub.style.transition = 'opacity .18s ease, transform .18s ease'; sub.style.opacity = '0'; sub.style.transform = 'translateY(-8px)'; }
+          if (btn) { btn.style.transition = 'opacity .18s ease, transform .18s ease'; btn.style.opacity = '0'; btn.style.transform = 'translateY(-10px)'; }
+        }
+        if (details) {
+          details.style.transition = 'opacity .32s ease .14s, transform .32s cubic-bezier(.16,1,.3,1) .14s';
+          details.style.opacity = '1';
+          details.style.transform = 'translateY(0)';
+
+          if (detailsTitle) {
+            detailsTitle.style.transition = 'opacity .32s ease .14s, transform .32s cubic-bezier(.16,1,.3,1) .14s';
+            detailsTitle.style.opacity = '1';
+            detailsTitle.style.transform = 'translateY(0)';
+          }
+
+          items.forEach(function(item, idx) {
+            const delay = 0.18 + idx * 0.07;
+            item.style.transition = 'opacity .32s ease ' + delay + 's, transform .32s cubic-bezier(.16,1,.3,1) ' + delay + 's';
+            item.style.opacity = '1';
+            item.style.transform = 'translateY(0)';
+          });
+
+          if (footerBtn) {
+            const footerDelay = 0.18 + items.length * 0.07;
+            footerBtn.style.transition = 'opacity .32s ease ' + footerDelay + 's, transform .32s cubic-bezier(.16,1,.3,1) ' + footerDelay + 's';
+            footerBtn.style.opacity = '1';
+            footerBtn.style.transform = 'translateY(0)';
+          }
+        }
+
+        setTimeout(function() {
+          if (expandedCardState && expandedCardState.card === card) {
+            card.style.overflowY = 'auto';
+          }
+        }, 430);
+      });
+    });
+
+    isScrollLocked = true;
+  }
+
+  function collapseCard(card) {
+    if (!card || !expandedCardState) return;
+    var state = expandedCardState;
+    var parent = state.parent;
+    var nextSibling = state.nextSibling;
+    var placeholder = state.placeholder;
+
+    var details = card.querySelector('.service-card__details');
+    var detailsTitle = card.querySelector('.service-card__details-title');
+    var summary = card.querySelector('.service-card__summary');
+    var sub = card.querySelector('.service-card__sub');
+    var btn = card.querySelector('.service-card__btn');
+    var badge = card.querySelector('.service-card__badge');
+    var closeBtn = card.querySelector('.service-card__close');
+    var items = card.querySelectorAll('.service-card__item');
+    var footerBtn = card.querySelector('.service-card__action-btn');
+    var targetRect = placeholder.getBoundingClientRect();
+
+    if (closeBtn) {
+      closeBtn.style.transition = 'opacity .18s ease';
+      closeBtn.style.opacity = '0';
+    }
+
+    if (badge) {
+      var badgeCurrent = badge.getBoundingClientRect();
+      var cardCurrent = card.getBoundingClientRect();
+      var localRbdx = (targetRect.width - badgeCurrent.width) / 2 - (badgeCurrent.left - cardCurrent.left);
+      var localRbdy = 20 - (badgeCurrent.top - cardCurrent.top);
+      badge.style.transition = 'transform .4s cubic-bezier(.76,0,.24,1)';
+      badge.style.transform = 'translate(' + localRbdx + 'px,' + localRbdy + 'px)';
+    }
+
+    card.style.position = 'fixed';
+    card.style.zIndex = '1000';
+    card.style.backgroundColor = '#000';
+    card.style.borderColor = '#ffffff';
+    card.style.borderWidth = '2px';
+    card.style.borderStyle = 'solid';
+    card.style.overflow = 'hidden';
+
+    if (details) {
+      details.style.transition = 'opacity .15s ease, transform .15s ease';
+      details.style.opacity = '0';
+      details.style.transform = 'translateY(18px)';
+
+      if (detailsTitle) {
+        detailsTitle.style.transition = 'opacity .15s ease, transform .15s ease';
+        detailsTitle.style.opacity = '0';
+        detailsTitle.style.transform = 'translateY(10px)';
+      }
+
+      items.forEach(function(item) {
+        item.style.transition = 'opacity .15s ease, transform .15s ease';
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(12px)';
+      });
+
+      if (footerBtn) {
+        footerBtn.style.transition = 'opacity .15s ease, transform .15s ease';
+        footerBtn.style.opacity = '0';
+        footerBtn.style.transform = 'translateY(12px)';
+      }
+    }
+
+    if (summary) {
+      summary.style.transition = 'none';
+      summary.style.opacity = '0';
+      summary.style.transform = 'translateY(14px)';
+      if (sub) { sub.style.transition = 'none'; sub.style.opacity = '0'; sub.style.transform = 'translateY(8px)'; }
+      if (btn) { btn.style.transition = 'none'; btn.style.opacity = '0'; btn.style.transform = 'translateY(12px)'; }
+
+      void summary.offsetWidth;
+
+      summary.style.transition = 'opacity .32s ease .1s, transform .32s cubic-bezier(.16,1,.3,1) .1s';
+      summary.style.opacity = '1';
+      summary.style.transform = 'translateY(0)';
+
+      if (sub) {
+        sub.style.transition = 'opacity .32s ease .12s, transform .32s cubic-bezier(.16,1,.3,1) .12s';
+        sub.style.opacity = '1';
+        sub.style.transform = 'translateY(0)';
+      }
+      if (btn) {
+        btn.style.transition = 'opacity .32s ease .16s, transform .32s cubic-bezier(.16,1,.3,1) .16s';
+        btn.style.opacity = '1';
+        btn.style.transform = 'translateY(0)';
+      }
+    }
+
+    if (backdrop) backdrop.classList.remove('is-active');
+
+    card.style.transition = 'left .4s cubic-bezier(.76,0,.24,1), top .4s cubic-bezier(.76,0,.24,1), width .4s cubic-bezier(.76,0,.24,1), height .4s cubic-bezier(.76,0,.24,1)';
+    card.style.left = targetRect.left + 'px';
+    card.style.top = targetRect.top + 'px';
+    card.style.width = targetRect.width + 'px';
+    card.style.height = targetRect.height + 'px';
+
+    var done = false;
+    function finish() {
+      if (done) return;
+      done = true;
+      card.removeEventListener('transitionend', onEnd);
+
+      card.classList.remove('is-expanded');
+
+      card.style.position = '';
+      card.style.zIndex = '';
+      card.style.left = '';
+      card.style.top = '';
+      card.style.width = '';
+      card.style.height = '';
+      card.style.maxHeight = '';
+      card.style.transition = '';
+      card.style.backgroundColor = '';
+      card.style.border = '';
+      card.style.borderColor = '';
+      card.style.borderWidth = '';
+      card.style.borderStyle = '';
+      card.style.overflow = '';
+      card.style.overflowY = '';
+
+      if (badge) { badge.style.transform = ''; badge.style.transition = ''; }
+      if (closeBtn) { closeBtn.style.opacity = ''; closeBtn.style.transition = ''; }
+      if (details) {
+        details.style.display = ''; details.style.opacity = ''; details.style.transform = ''; details.style.transition = '';
+        if (detailsTitle) { detailsTitle.style.opacity = ''; detailsTitle.style.transform = ''; detailsTitle.style.transition = ''; }
+        items.forEach(function(item) { item.style.opacity = ''; item.style.transform = ''; item.style.transition = ''; });
+        if (footerBtn) { footerBtn.style.opacity = ''; footerBtn.style.transform = ''; footerBtn.style.transition = ''; }
+      }
+      if (summary) {
+        summary.style.opacity = ''; summary.style.transform = ''; summary.style.transition = '';
+        if (sub) { sub.style.opacity = ''; sub.style.transform = ''; sub.style.transition = ''; }
+        if (btn) { btn.style.opacity = ''; btn.style.transform = ''; btn.style.transition = ''; }
+      }
+
+      if (nextSibling && nextSibling.parentNode === parent) {
+        parent.insertBefore(card, nextSibling);
+      } else {
+        parent.appendChild(card);
+      }
+      if (placeholder && placeholder.parentNode) {
+        placeholder.parentNode.removeChild(placeholder);
+      }
+
+      isScrollLocked = false;
+      expandedCardState = null;
+    }
+
+    function onEnd(e) {
+      if (e.target === card && (e.propertyName === 'width' || e.propertyName === 'left')) finish();
+    }
+    card.addEventListener('transitionend', onEnd);
+    setTimeout(finish, 450);
+  }
+
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('.service-card__btn');
+    if (btn) {
+      e.preventDefault();
+      e.stopPropagation();
+      var card = btn.closest('.service-card');
+      if (card) expandCard(card);
+      return;
+    }
+    var close = e.target.closest('.service-card__close');
+    if (close) {
+      e.preventDefault();
+      e.stopPropagation();
+      var card2 = close.closest('.service-card');
+      if (card2) collapseCard(card2);
+      return;
+    }
+  });
+
+  if (backdrop) {
+    backdrop.addEventListener('click', function() {
+      if (expandedCardState) collapseCard(expandedCardState.card);
+    });
+  }
+
+  window.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && expandedCardState) collapseCard(expandedCardState.card);
+  });
+}
+
+function setupKeyboardNav() {
+  window.addEventListener('keydown', function(e) {
+    const activeEl = document.activeElement;
+    const isInput = activeEl && (['INPUT', 'TEXTAREA', 'SELECT'].includes(activeEl.tagName) || activeEl.isContentEditable);
+    if (isInput) return;
+
+    if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'PageDown') {
+      if (stepByWheelGesture(1)) {
+        e.preventDefault();
+      }
+    } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      if (stepByWheelGesture(-1)) {
+        e.preventDefault();
+      }
+    }
+  });
+}
