@@ -481,9 +481,9 @@ body.is-track-instant .presentation-track {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   min-height: 180px;
-  padding: 20px;
+  padding: 20px 20px 90px;
   border: 2px solid #fff;
   background: #000 !important;
   backdrop-filter: blur(4px);
@@ -550,11 +550,18 @@ body.is-track-instant .presentation-track {
 }
 
 .service-card__summary {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
   width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
+  will-change: opacity, transform;
 }
 
 .service-card.is-expanded .service-card__summary {
@@ -611,6 +618,29 @@ body.is-track-instant .presentation-track {
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
   padding-bottom: 12px;
   will-change: opacity, transform;
+}
+
+.service-card__notice {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: -6px 0 18px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  color: #aaa;
+  font-family: "Fira Mono", monospace;
+  font-size: 13px;
+  text-align: center;
+  letter-spacing: 0.02em;
+  will-change: opacity, transform;
+}
+
+.service-card__notice .material-symbols-outlined {
+  font-size: 18px;
+  color: var(--accent);
+  line-height: 1;
 }
 
 .service-card__items {
@@ -718,6 +748,25 @@ body.is-track-instant .presentation-track {
   align-items: flex-start !important;
   justify-content: flex-start !important;
   margin: 0 !important;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.service-card.is-expanded::-webkit-scrollbar {
+  width: 4px;
+}
+
+.service-card.is-expanded::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.service-card.is-expanded::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+}
+
+.service-card.is-expanded::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35);
 }
 
 .service-card-placeholder {

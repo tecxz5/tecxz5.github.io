@@ -1608,10 +1608,10 @@ function setupServiceModals() {
           badge.style.transform = 'translate(0,0)';
         }
         if (summary) {
-          summary.style.transition = 'opacity .2s ease, transform .2s ease';
+          summary.style.transition = 'opacity .22s ease, transform .22s cubic-bezier(.76,0,.24,1)';
           summary.style.opacity = '0';
-          summary.style.transform = 'translateY(-12px)';
-          if (sub) { sub.style.transition = 'opacity .18s ease, transform .18s ease'; sub.style.opacity = '0'; sub.style.transform = 'translateY(-8px)'; }
+          summary.style.transform = 'translateY(20px)';
+          if (sub) { sub.style.transition = 'opacity .18s ease, transform .18s ease'; sub.style.opacity = '0'; sub.style.transform = 'translateY(10px)'; }
           if (btn) { btn.style.transition = 'opacity .18s ease, transform .18s ease'; btn.style.opacity = '0'; btn.style.transform = 'translateY(-10px)'; }
         }
         if (details) {
