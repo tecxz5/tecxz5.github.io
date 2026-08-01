@@ -1610,9 +1610,9 @@ function setupServiceModals() {
         if (summary) {
           summary.style.transition = 'opacity .22s ease, transform .22s cubic-bezier(.76,0,.24,1)';
           summary.style.opacity = '0';
-          summary.style.transform = 'translateY(20px)';
-          if (sub) { sub.style.transition = 'opacity .18s ease, transform .18s ease'; sub.style.opacity = '0'; sub.style.transform = 'translateY(10px)'; }
-          if (btn) { btn.style.transition = 'opacity .18s ease, transform .18s ease'; btn.style.opacity = '0'; btn.style.transform = 'translateY(-10px)'; }
+          summary.style.transform = 'translateY(24px)';
+          if (sub) { sub.style.transition = 'opacity .18s ease'; sub.style.opacity = '0'; }
+          if (btn) { btn.style.transition = 'opacity .18s ease'; btn.style.opacity = '0'; }
         }
         if (details) {
           details.style.transition = 'opacity .32s ease .14s, transform .32s cubic-bezier(.16,1,.3,1) .14s';
@@ -1718,25 +1718,23 @@ function setupServiceModals() {
     if (summary) {
       summary.style.transition = 'none';
       summary.style.opacity = '0';
-      summary.style.transform = 'translateY(14px)';
-      if (sub) { sub.style.transition = 'none'; sub.style.opacity = '0'; sub.style.transform = 'translateY(8px)'; }
-      if (btn) { btn.style.transition = 'none'; btn.style.opacity = '0'; btn.style.transform = 'translateY(12px)'; }
+      summary.style.transform = 'translateY(28px)';
+      if (sub) { sub.style.transition = 'none'; sub.style.opacity = '0'; }
+      if (btn) { btn.style.transition = 'none'; btn.style.opacity = '0'; }
 
       void summary.offsetWidth;
 
-      summary.style.transition = 'opacity .32s ease .1s, transform .32s cubic-bezier(.16,1,.3,1) .1s';
+      summary.style.transition = 'opacity .38s ease .18s, transform .38s cubic-bezier(.16,1,.3,1) .18s';
       summary.style.opacity = '1';
       summary.style.transform = 'translateY(0)';
 
       if (sub) {
-        sub.style.transition = 'opacity .32s ease .12s, transform .32s cubic-bezier(.16,1,.3,1) .12s';
+        sub.style.transition = 'opacity .32s ease .22s';
         sub.style.opacity = '1';
-        sub.style.transform = 'translateY(0)';
       }
       if (btn) {
-        btn.style.transition = 'opacity .32s ease .16s, transform .32s cubic-bezier(.16,1,.3,1) .16s';
+        btn.style.transition = 'opacity .32s ease .26s';
         btn.style.opacity = '1';
-        btn.style.transform = 'translateY(0)';
       }
     }
 
@@ -1782,8 +1780,8 @@ function setupServiceModals() {
       }
       if (summary) {
         summary.style.opacity = ''; summary.style.transform = ''; summary.style.transition = '';
-        if (sub) { sub.style.opacity = ''; sub.style.transform = ''; sub.style.transition = ''; }
-        if (btn) { btn.style.opacity = ''; btn.style.transform = ''; btn.style.transition = ''; }
+        if (sub) { sub.style.opacity = ''; sub.style.transition = ''; }
+        if (btn) { btn.style.opacity = ''; btn.style.transition = ''; }
       }
 
       if (nextSibling && nextSibling.parentNode === parent) {
