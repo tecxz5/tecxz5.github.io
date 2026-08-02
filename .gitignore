@@ -7,3 +7,4 @@ npm-debug.log*
 index.js
 node_modules
 .opencode
+scratch/

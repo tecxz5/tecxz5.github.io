@@ -105,6 +105,105 @@ h1 {
   border-color: var(--accent, #cedb1a);
 }
 
+.range-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2px;
+}
+
+.range-value {
+  color: var(--accent, #cedb1a);
+  font-family: "Fira Mono", monospace;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.generator-form input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(to right, var(--accent, #cedb1a) 0%, var(--accent, #cedb1a) var(--range-progress, 26%), rgba(255, 255, 255, 0.15) var(--range-progress, 26%), rgba(255, 255, 255, 0.15) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 0;
+  padding: 0;
+  margin: 8px 0;
+  outline: none;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.generator-form input[type="range"]:focus {
+  border-color: var(--accent, #cedb1a);
+}
+
+.generator-form input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 22px;
+  border-radius: 0;
+  background-color: #ffffff;
+  background-image: linear-gradient(
+    90deg,
+    #111111 0px, #111111 2px,
+    transparent 2px, transparent 4px,
+    #111111 4px, #111111 6px,
+    transparent 6px, transparent 8px,
+    #111111 8px, #111111 10px,
+    transparent 10px
+  );
+  background-size: 10px 10px;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 1px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+  cursor: grab;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.generator-form input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  border-color: var(--accent, #cedb1a);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+.generator-form input[type="range"]::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.25);
+  border-color: var(--accent, #cedb1a);
+}
+
+.generator-form input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 22px;
+  border-radius: 0;
+  background-color: #ffffff;
+  background-image: linear-gradient(
+    90deg,
+    #111111 0px, #111111 2px,
+    transparent 2px, transparent 4px,
+    #111111 4px, #111111 6px,
+    transparent 6px, transparent 8px,
+    #111111 8px, #111111 10px,
+    transparent 10px
+  );
+  background-size: 10px 10px;
+  background-position: center;
+  background-repeat: no-repeat;
+  border: 1px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+  cursor: grab;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.generator-form input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.15);
+  border-color: var(--accent, #cedb1a);
+}
+
 .generator-form small {
   color: rgba(255, 255, 255, 0.4);
   font-size: 12px;
@@ -134,15 +233,120 @@ h1 {
   gap: 8px;
 }
 
+.hidden-native-select {
+  display: none !important;
+}
+
 .icon-preview-picker {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   margin-top: 8px;
 }
 
-.icon-preview-picker select {
-  width: auto;
+.custom-icon-dropdown {
+  position: relative;
+  flex: 1;
+}
+
+.custom-icon-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 10px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid #fff;
+  border-radius: 0;
+  color: #fff;
+  font-family: "Fira Mono", monospace;
+  font-size: 13px;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.custom-icon-trigger:hover {
+  border-color: var(--accent, #cedb1a);
+}
+
+.custom-icon-glyph {
+  font-family: "Material Symbols Outlined", sans-serif;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--accent, #cedb1a);
+}
+
+.custom-icon-name {
+  flex: 1;
+  text-align: left;
+}
+
+.custom-icon-arrow {
+  font-size: 10px;
+  color: #888;
+  transition: transform 0.2s ease;
+}
+
+.custom-icon-dropdown.is-open .custom-icon-arrow {
+  transform: rotate(180deg);
+}
+
+.custom-icon-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 100%;
+  min-width: 240px;
+  z-index: 120;
+  background: #0a0a0a;
+  border: 2px solid #fff;
+  border-radius: 0;
+  padding: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.custom-icon-menu.hidden {
+  display: none !important;
+}
+
+.custom-icon-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  background: #141414;
+  border: 1px solid #333;
+  border-radius: 0;
+  color: #aaa;
+  font-family: "Fira Mono", monospace;
+  font-size: 10px;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.custom-icon-option .custom-icon-glyph {
+  font-size: 24px;
+  color: #fff;
+}
+
+.custom-icon-option:hover,
+.custom-icon-option.is-active {
+  border-color: var(--accent, #cedb1a);
+  color: var(--accent, #cedb1a);
+  background: #000;
+}
+
+.custom-icon-option.is-active .custom-icon-glyph {
+  color: var(--accent, #cedb1a);
 }
 
 .icon-style-item {
@@ -176,13 +380,19 @@ h1 {
 }
 
 .picker-box {
+  position: fixed;
+  z-index: 9999;
+  background: #090909;
   border: 2px solid #fff;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.15);
   padding: 16px;
-  z-index: 10;
+  width: 284px;
+  border-radius: 0;
+  backdrop-filter: blur(12px);
 }
 
 .picker-box.hidden {
-  display: none;
+  display: none !important;
 }
 
 .picker-header {
@@ -213,10 +423,14 @@ h1 {
 
 #picker-sv {
   cursor: crosshair;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0;
 }
 
 #picker-hue-strip {
   cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0;
 }
 
 .picker-actions {
@@ -231,6 +445,7 @@ h1 {
   padding: 8px 12px;
   background: rgba(255, 255, 255, 0.08);
   border: 2px solid #fff;
+  border-radius: 0;
   color: #fff;
   font-family: "Fira Mono", monospace;
   font-size: 12px;
@@ -259,6 +474,7 @@ h1 {
   width: 26px;
   height: 26px;
   border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0;
   cursor: pointer;
   background: var(--swatch);
 }
@@ -355,4 +571,60 @@ h1 {
     font-size: 14px;
     padding: 14px;
   }
+}
+
+/* Экран загрузки */
+.generator-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.94);
+  backdrop-filter: blur(16px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.generator-loader.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loader-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.loader-spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(255, 255, 255, 0.12);
+  border-top-color: #ffffff;
+  border-right-color: #ffffff;
+  animation: loaderSpin 0.75s linear infinite;
+}
+
+@keyframes loaderSpin {
+  to { transform: rotate(360deg); }
+}
+
+.loader-title {
+  font-family: var(--font-primary, monospace);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
+.loader-sub {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
 }

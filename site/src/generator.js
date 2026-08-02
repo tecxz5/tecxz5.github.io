@@ -39,192 +39,7 @@ const ICON_STYLE_VARIANTS = [
   { key: 'sharp-filled', family: 'Material Symbols Sharp', fill: 1, weight: 400 }
 ];
 
-const ICONS = [
-  'grid_view', 'memory', 'cpu', 'router', 'dns', 'settings',
-  'code', 'terminal', 'data_object', 'webhook', 'link',
-  'lock', 'security', 'fingerprint', 'verified_user',
-  'visibility', 'language', 'schedule', 'build', 'extension',
-  'dashboard', 'integration_instructions', 'password', 'api',
-  'cloud', 'storage', 'public', 'domain', 'hub',
-  'bolt', 'bug_report', 'engineering', 'smart_toy', 'science',
-  'rocket_launch', 'precision_manufacturing', 'model_training', 'dataset',
-  'insights', 'monitoring', 'analytics', 'query_stats', 'troubleshoot',
-  'lan', 'device_hub', 'devices', 'memory_alt', 'developer_board',
-  'computer', 'laptop', 'phone_android', 'tablet_android', 'desktop_windows',
-  'terminal', 'schema', 'token', 'key', 'vpn_key',
-  'shield', 'admin_panel_settings', 'gpp_good', 'verified', 'fact_check',
-  'cloud_done', 'cloud_sync', 'cloud_queue', 'backup', 'sync',
-  'dns', 'http', 'language', 'travel_explore', 'explore',
-  'code_blocks', 'polyline', 'account_tree', 'fork_right', 'join_full',
-  'build_circle', 'extension', 'widgets', 'apps', 'tune',
-  'auto_awesome', 'flare', 'stars', 'lightbulb', 'psychology',
-  'assistant', 'robot_2', 'neurology', 'biotech', 'mediation',
-  'psychology_alt', 'tips_and_updates', 'emoji_objects', 'architecture', 'construction',
-  'handyman', 'rule', 'square_foot', 'design_services', 'brush',
-  'palette', 'format_paint', 'draw', 'edit', 'edit_note',
-  'developer_mode', 'data_thresholding', 'lan', 'settings_ethernet',
-  'settings_input_antenna', 'settings_remote', 'settings_suggest', 'settings_applications', 'settings_system_daydream',
-  'bluetooth', 'wifi', 'signal_cellular_alt', 'network_check', 'network_ping',
-  'sensors', 'sensors_off', 'radar', 'satellite_alt', 'gps_fixed',
-  'my_location', 'location_searching', 'route', 'map', 'map_search',
-  'pin_drop', 'place', 'travel_explore', 'explore_off', 'near_me',
-  'flight', 'directions_boat', 'directions_bus', 'directions_car', 'directions_transit',
-  'electric_bolt', 'battery_charging_full', 'power', 'power_settings_new', 'offline_bolt',
-  'electric_meter', 'monitor_heart', 'speed', 'timer', 'hourglass_top',
-  'alarm', 'watch_later', 'today', 'event', 'event_available',
-  'event_note', 'calendar_month', 'history', 'update', 'autorenew',
-  'sync_alt', 'cloud_upload', 'cloud_download', 'downloading', 'upload_file',
-  'download_done', 'folder', 'folder_open', 'drive_folder_upload', 'topic',
-  'description', 'article', 'snippet_folder', 'request_quote', 'feed',
-  'inventory_2', 'fact_check', 'check_circle', 'task_alt', 'done_all',
-  'pending', 'error', 'warning', 'notification_important', 'report_problem',
-  'shield_moon', 'policy', 'privacy_tip', 'lock_person', 'no_encryption',
-  'encrypted', 'enhanced_encryption', 'passkey', 'key_off', 'password',
-  'badge', 'verified', 'verified_user', 'how_to_reg', 'person',
-  'groups', 'hub', 'share', 'ios_share', 'forward_to_inbox',
-  'send', 'outbox', 'mark_email_read', 'alternate_email', 'contact_support',
-  'support_agent', 'help', 'help_center', 'forum', 'chat',
-  'question_answer', 'smart_button', 'ads_click', 'touch_app', 'swipe',
-  'gesture', 'pan_tool', 'mouse', 'keyboard', 'keyboard_command_key',
-  'keyboard_option_key', 'space_bar', 'backspace', 'subdirectory_arrow_left', 'subdirectory_arrow_right',
-  'open_in_new', 'open_in_browser', 'launch', 'link_off', 'qr_code',
-  'qr_code_scanner', 'document_scanner', 'scanner', 'print', 'receipt_long',
-  'storefront', 'shopping_cart', 'shopping_bag', 'payments', 'account_balance_wallet',
-  'credit_card', 'savings', 'trending_up', 'trending_down', 'show_chart',
-  'stacked_line_chart', 'pie_chart', 'bar_chart', 'leaderboard', 'timeline',
-  'monitor', 'tv', 'videocam', 'photo_camera', 'camera',
-  'image', 'imagesearch_roller', 'filter_center_focus', 'crop_free', 'center_focus_strong',
-  'mic', 'mic_none', 'graphic_eq', 'hearing', 'record_voice_over',
-  'podcasts', 'radio', 'album', 'library_music', 'music_note',
-  'movie', 'theaters', 'live_tv', 'subscriptions', 'slow_motion_video',
-  'web', 'web_asset', 'html', 'javascript', 'css',
-  'database', 'storage', 'table_chart', 'view_quilt', 'view_sidebar',
-  'view_agenda', 'view_compact', 'view_stream', 'apps_outage', 'deployed_code',
-  'ac_unit', 'access_alarm', 'access_alarms', 'access_time', 'accessibility',
-  'accessible', 'account_balance', 'account_balance_wallet', 'account_box', 'account_circle',
-  'adb', 'add_alert', 'add_box', 'add_circle', 'add_circle_outline',
-  'add_location', 'add_photo_alternate', 'add_reaction', 'add_task', 'add_to_home_screen',
-  'add_to_photos', 'add_to_queue', 'air', 'airline_seat_flat', 'airline_seat_individual_suite',
-  'airline_stops', 'airplanemode_active', 'airplanemode_inactive', 'airport_shuttle', 'alarm_add',
-  'alarm_off', 'alarm_on', 'all_inbox', 'all_inclusive', 'all_out',
-  'alt_route', 'amp_stories', 'analytics', 'anchor', 'android',
-  'animation', 'announcement', 'aod', 'apartment', 'app_blocking',
-  'app_registration', 'approval', 'apps', 'architecture', 'archive',
-  'arrow_back', 'arrow_back_ios', 'arrow_circle_down', 'arrow_circle_left', 'arrow_circle_right',
-  'arrow_circle_up', 'arrow_downward', 'arrow_drop_down', 'arrow_drop_up', 'arrow_forward',
-  'arrow_outward', 'arrow_right_alt', 'arrow_upward', 'article', 'aspect_ratio',
-  'assessment', 'assignment', 'assignment_ind', 'assignment_late', 'assignment_return',
-  'assignment_turned_in', 'assistant_direction', 'assistant_navigation', 'assistant_photo', 'atm',
-  'attach_email', 'attach_file', 'attach_money', 'attachment', 'audiotrack',
-  'auto_delete', 'auto_fix_high', 'auto_fix_normal', 'auto_graph', 'auto_stories',
-  'autofps_select', 'autorenew', 'av_timer', 'baby_changing_station', 'back_hand',
-  'backpack', 'backup_table', 'badge', 'bakery_dining', 'balance',
-  'ballot', 'bar_chart', 'batch_prediction', 'bathroom', 'bathtub',
-  'battery_0_bar', 'battery_1_bar', 'battery_2_bar', 'battery_3_bar', 'battery_4_bar',
-  'battery_5_bar', 'battery_6_bar', 'battery_alert', 'battery_full', 'battery_saver',
-  'beach_access', 'bed', 'bedroom_baby', 'bedroom_child', 'bedroom_parent',
-  'beenhere', 'bento', 'bike_scooter', 'biotech', 'blender',
-  'blind', 'block', 'bloodtype', 'bluetooth_audio', 'bluetooth_connected',
-  'bluetooth_disabled', 'bluetooth_drive', 'bolt', 'book', 'book_online',
-  'bookmark', 'bookmark_add', 'bookmark_border', 'bookmark_remove', 'bookmarks',
-  'border_all', 'border_bottom', 'border_clear', 'border_color', 'border_horizontal',
-  'border_inner', 'border_left', 'border_outer', 'border_right', 'border_style',
-  'border_top', 'border_vertical', 'boy', 'branding_watermark', 'breakfast_dining',
-  'brightness_1', 'brightness_2', 'brightness_3', 'brightness_4', 'brightness_5',
-  'brightness_6', 'brightness_7', 'brightness_auto', 'brightness_high', 'brightness_low',
-  'broadcast_on_home', 'broadcast_on_personal', 'browser_not_supported', 'brunch_dining', 'bubble_chart',
-  'bug_report', 'build', 'build_circle', 'bungalow', 'burst_mode',
-  'bus_alert', 'business', 'business_center', 'cabin', 'cable',
-  'cached', 'cake', 'calculate', 'calendar_today', 'call',
-  'call_end', 'call_made', 'call_merge', 'call_missed', 'call_missed_outgoing',
-  'call_received', 'call_split', 'call_to_action', 'camera_alt', 'camera_enhance',
-  'camera_front', 'camera_indoor', 'camera_outdoor', 'camera_rear', 'camera_roll',
-  'campaign', 'cancel', 'cancel_presentation', 'cancel_schedule_send', 'candlestick_chart',
-  'car_crash', 'card_giftcard', 'card_membership', 'card_travel', 'carpenter',
-  'cases', 'casino', 'cast', 'cast_connected', 'castle',
-  'catching_pokemon', 'category', 'celebration', 'cell_tower', 'center_focus_weak',
-  'chair', 'chair_alt', 'chalet', 'change_circle', 'change_history',
-  'charging_station', 'chat_bubble', 'chat_bubble_outline', 'check', 'check_box',
-  'check_box_outline_blank', 'checkroom', 'chevron_left', 'chevron_right', 'child_care',
-  'child_friendly', 'chrome_reader_mode', 'church', 'circle_notifications', 'class',
-  'clean_hands', 'cleaning_services', 'clear', 'clear_all', 'close',
-  'close_fullscreen', 'closed_caption', 'cloud_circle', 'cloud_off', 'cloudy_snowing',
-  'co2', 'code', 'code_off', 'coffee', 'coffee_maker',
-  'collections', 'collections_bookmark', 'color_lens', 'colorize', 'comment',
-  'comment_bank', 'comments_disabled', 'commit', 'commute', 'compare',
-  'compare_arrows', 'compass_calibration', 'compost', 'compress', 'computer',
-  'confirmation_num', 'connect_without_contact', 'construction', 'contact_mail', 'contact_page',
-  'contact_phone', 'contactless', 'contacts', 'content_copy', 'content_cut',
-  'content_paste', 'content_paste_go', 'content_paste_search', 'contrast', 'control_camera',
-  'control_point', 'control_point_duplicate', 'cookie', 'copy_all', 'copyright',
-  'coronavirus', 'corporate_fare', 'cottage', 'countertops', 'create',
-  'create_new_folder', 'credit_card_off', 'credit_score', 'crib', 'crisis_alert',
-  'crop', 'crop_16_9', 'crop_3_2', 'crop_5_4', 'crop_7_5',
-  'crop_din', 'crop_landscape', 'crop_original', 'crop_portrait', 'crop_rotate',
-  'crop_square', 'cruelty_free', 'css', 'currency_bitcoin', 'currency_exchange',
-  'currency_pound', 'currency_ruble', 'currency_rupee', 'currency_yen', 'curtains',
-  'cycle', 'dangerous', 'dark_mode', 'dashboard_customize', 'data_array',
-  'data_exploration', 'data_object', 'data_saver_off', 'data_saver_on', 'data_usage',
-  'dataset_linked', 'deblur', 'deck', 'dehaze', 'delete',
-  'delete_forever', 'delete_outline', 'delete_sweep', 'delivery_dining', 'density_large',
-  'density_medium', 'density_small', 'departure_board', 'description', 'deselect',
-  'design_services', 'desk', 'desktop_access_disabled', 'desktop_mac', 'desktop_windows',
-  'details', 'developer_board_off', 'developer_mode', 'device_hub', 'device_thermostat',
-  'devices_fold', 'devices_other', 'dialer_sip', 'dialpad', 'diamond',
-  'difference', 'dining', 'dinner_dining', 'directions', 'directions_bike',
-  'directions_railway', 'directions_run', 'directions_subway', 'directions_walk', 'dirty_lens',
-  'disabled_by_default', 'disabled_visible', 'disc_full', 'discount', 'display_settings',
-  'diversity_1', 'diversity_2', 'diversity_3', 'dnd_forwardslash', 'dns',
-  'do_disturb', 'do_disturb_alt', 'do_disturb_off', 'do_not_disturb', 'do_not_disturb_alt',
-  'do_not_disturb_off', 'do_not_disturb_on', 'do_not_step', 'do_not_touch', 'dock',
-  'document_scanner', 'domain_add', 'domain_disabled', 'domain_verification', 'done',
-  'done_outline', 'donut_large', 'donut_small', 'door_back', 'door_front',
-  'door_sliding', 'doorbell', 'double_arrow', 'downhill_skiing', 'download',
-  'download_for_offline', 'downloading', 'drafts', 'drag_handle', 'drag_indicator',
-  'draw', 'drive_eta', 'drive_file_move', 'drive_file_rename_outline', 'drive_folder_upload',
-  'dry', 'dry_cleaning', 'duo', 'dynamic_feed', 'dynamic_form',
-  'e_mobiledata', 'earbuds', 'earbuds_battery', 'east', 'eco',
-  'edgesensor_high', 'edgesensor_low', 'edit_attributes', 'edit_calendar', 'edit_location',
-  'edit_location_alt', 'edit_road', 'egg', 'egg_alt', 'eject',
-  'elderly', 'elderly_woman', 'electric_bike', 'electric_car', 'electric_moped',
-  'electric_rickshaw', 'electric_scooter', 'electrical_services', 'elevator', 'email',
-  'emergency', 'emergency_recording', 'emergency_share', 'emoji_emotions', 'emoji_food_beverage',
-  'emoji_nature', 'emoji_people', 'emoji_symbols', 'emoji_transportation', 'engineering',
-  'enhanced_encryption', 'equalizer', 'error_outline', 'escalator', 'escalator_warning',
-  'euro', 'euro_symbol', 'ev_station', 'event_busy', 'event_repeat',
-  'event_seat', 'exit_to_app', 'expand', 'expand_circle_down', 'expand_less',
-  'expand_more', 'explicit', 'explore', 'explore_off', 'exposure',
-  'exposure_neg_1', 'exposure_neg_2', 'exposure_plus_1', 'exposure_plus_2', 'exposure_zero',
-  'extension_off', 'face', 'face_retouching_natural', 'fact_check', 'factory',
-  'family_restroom', 'fast_forward', 'fast_rewind', 'fastfood', 'favorite',
-  'favorite_border', 'fax', 'featured_play_list', 'featured_video', 'feed',
-  'feedback', 'female', 'fence', 'festival', 'fiber_dvr',
-  'fiber_manual_record', 'fiber_new', 'fiber_pin', 'fiber_smart_record', 'file_copy',
-  'file_download', 'file_download_done', 'file_open', 'file_present', 'file_upload',
-  'filter', 'filter_1', 'filter_2', 'filter_3', 'filter_4',
-  'filter_5', 'filter_6', 'filter_7', 'filter_8', 'filter_9',
-  'filter_9_plus', 'filter_alt', 'filter_alt_off', 'filter_b_and_w', 'filter_drama',
-  'filter_frames', 'filter_hdr', 'filter_list', 'filter_none', 'filter_tilt_shift',
-  'filter_vintage', 'find_in_page', 'find_replace', 'fingerprint', 'fire_extinguisher',
-  'fire_hydrant', 'fire_truck', 'fireplace', 'first_page', 'fit_screen',
-  'fitbit', 'fitness_center', 'flag', 'flag_circle', 'flaky',
-  'flare', 'flash_auto', 'flash_off', 'flash_on', 'flashlight_off',
-  'flashlight_on', 'flatware', 'flight_class', 'flight_land', 'flight_takeoff',
-  'flip', 'flip_camera_android', 'flip_camera_ios', 'flip_to_back', 'flip_to_front',
-  'flood', 'floor', 'floor_lamp', 'flutter_dash', 'fmd_bad',
-  'fmd_good', 'folder_copy', 'folder_delete', 'folder_off', 'folder_shared',
-  'folder_zip', 'follow_the_signs', 'font_download', 'font_download_off', 'food_bank',
-  'forest', 'fork_left', 'fork_right', 'format_align_center', 'format_align_justify',
-  'format_align_left', 'format_align_right', 'format_bold', 'format_clear', 'format_color_fill',
-  'format_color_reset', 'format_color_text', 'format_indent_decrease', 'format_indent_increase', 'format_italic',
-  'format_line_spacing', 'format_list_bulleted', 'format_list_numbered', 'format_list_numbered_rtl', 'format_overline',
-  'format_paint', 'format_quote', 'format_shapes', 'format_size', 'format_strikethrough',
-  'format_textdirection_l_to_r', 'format_textdirection_r_to_l', 'format_underlined', 'fort', 'forum',
-  'forward', 'forward_10', 'forward_30', 'forward_5', 'forward_to_inbox',
-  'foundation', 'free_breakfast', 'fullscreen', 'fullscreen_exit', 'functions',
-  'g_mobiledata', 'g_translate', 'gamepad', 'games', 'garage',
-  'gas_meter', 'gavel', 'generating_tokens', 'gesture', 'get_app'
-];
+import { ICONS, fetchLiveIcons, getLoadedIcons } from './icons.js';
 
 let currentConfig = { ...DEFAULT_CONFIG };
 let previewCtx = null;
@@ -259,59 +74,46 @@ function loadSymbolFonts(fontSize) {
   return Promise.all(Array.from(unique, (font) => document.fonts.load(font)));
 }
 
+const glyphCache = new Map();
+
 function glyphExists(checkCtx, iconName, variant, fontSize) {
-  const size = Math.max(48, fontSize + 16);
-  const maxLigatureWidth = fontSize * 1.42;
-  checkCtx.canvas.width = size;
-  checkCtx.canvas.height = size;
-  checkCtx.clearRect(0, 0, size, size);
-  checkCtx.font = getIconFont(variant, fontSize);
-  checkCtx.fontVariationSettings = `'FILL' ${Number.isFinite(variant.fill) ? variant.fill : 0}, 'wght' ${variant.weight}, 'GRAD' 0, 'opsz' 48`;
+  const fontSpec = getIconFont(variant, fontSize);
+  if (document.fonts && !document.fonts.check(fontSpec)) {
+    return true;
+  }
+
+  const cacheKey = `${iconName}|${variant.key}|${fontSize}`;
+  if (glyphCache.has(cacheKey)) return glyphCache.get(cacheKey);
+
+  const maxLigatureWidth = fontSize * 1.45;
+  checkCtx.font = fontSpec;
   const width = checkCtx.measureText(iconName).width;
-  if (!Number.isFinite(width) || width <= 0 || width > maxLigatureWidth) {
-    return false;
-  }
-  checkCtx.fillStyle = '#fff';
-  checkCtx.textAlign = 'center';
-  checkCtx.textBaseline = 'middle';
-  checkCtx.fillText(iconName, size / 2, size / 2);
-  const sample = checkCtx.getImageData(0, 0, size, size).data;
-  for (let i = 3; i < sample.length; i += 4) {
-    if (sample[i] > 0) return true;
-  }
-  return false;
+  const isValid = Number.isFinite(width) && width > 0 && width <= maxLigatureWidth;
+  glyphCache.set(cacheKey, isValid);
+  return isValid;
 }
 
 function getRenderableIconPool(config) {
   const styleKey = Array.isArray(config.iconStyles) ? [...config.iconStyles].sort().join(',') : '';
-  const key = `${config.fontSize}|${styleKey}`;
+  const currentIcons = (typeof getLoadedIcons === 'function' ? getLoadedIcons() : null) || ICONS || [];
+  const key = `${currentIcons.length}|${styleKey}`;
   if (cachedIconPool && cachedIconPoolKey === key) return cachedIconPool;
 
   const selectedVariants = getSelectedVariants(config.iconStyles);
   const variants = selectedVariants.length > 0 ? selectedVariants : ICON_STYLE_VARIANTS;
-  const uniqueIcons = Array.from(new Set(ICONS));
-  const checkCanvas = document.createElement('canvas');
-  const checkCtx = checkCanvas.getContext('2d');
-  if (!checkCtx) return [{ id: 'circle|outlined', icon: 'circle', styleId: 'outlined', variant: ICON_STYLE_VARIANTS[0] }];
+  const uniqueIcons = Array.from(new Set(currentIcons));
 
   const pool = [];
   for (let i = 0; i < uniqueIcons.length; i++) {
     const iconName = uniqueIcons[i];
     for (let j = 0; j < variants.length; j++) {
-      const variant = variants[j];
-      if (glyphExists(checkCtx, iconName, variant, config.fontSize)) {
-        pool.push({
-          id: `${iconName}|${variant.key}`,
-          icon: iconName,
-          styleId: variant.key,
-          variant
-        });
-      }
+      pool.push({
+        id: `${iconName}|${variants[j].key}`,
+        icon: iconName,
+        styleId: variants[j].key,
+        variant: variants[j]
+      });
     }
-  }
-
-  if (pool.length === 0) {
-    pool.push({ id: 'circle|outlined', icon: 'circle', styleId: 'outlined', variant: ICON_STYLE_VARIANTS[0] });
   }
 
   cachedIconPoolKey = key;
@@ -420,6 +222,7 @@ function setHexFromPicker(targetId) {
   if (input instanceof HTMLInputElement) {
     input.value = hex;
   }
+  updateSwatches();
 }
 
 function setPickerFromHex(hex) {
@@ -454,15 +257,12 @@ function drawPickerSV() {
 
   const x = pickerState.s * width;
   const y = (1 - pickerState.v) * height;
-  ctx.strokeStyle = '#000';
+  ctx.strokeStyle = '#000000';
   ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.arc(x, y, 6, 0, Math.PI * 2);
-  ctx.stroke();
-  ctx.strokeStyle = '#fff';
-  ctx.beginPath();
-  ctx.arc(x, y, 4, 0, Math.PI * 2);
-  ctx.stroke();
+  ctx.strokeRect(x - 5, y - 5, 10, 10);
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(x - 4, y - 4, 8, 8);
 }
 
 function drawHueStrip() {
@@ -511,8 +311,8 @@ function handlePickerSV(event) {
   pickerState.s = x / rect.width;
   pickerState.v = 1 - y / rect.height;
   setHexFromPicker(pickerState.target);
-  updatePreview();
   drawPickerSV();
+  schedulePreviewUpdate();
 }
 
 function handleHueStrip(event) {
@@ -522,8 +322,8 @@ function handleHueStrip(event) {
   const y = clamp(event.clientY - rect.top, 0, rect.height);
   pickerState.h = (y / rect.height) * 360;
   setHexFromPicker(pickerState.target);
-  updatePreview();
   updatePickerUI();
+  schedulePreviewUpdate();
 }
 
 function mulberry32(seed) {
@@ -611,10 +411,28 @@ function initAdvancedPicker() {
   function openPicker(targetId) {
     pickerState.target = targetId;
     const input = document.getElementById(targetId);
+    if (!input || !pickerBox) return;
+
     const color = normalizeHex(input instanceof HTMLInputElement ? input.value : DEFAULT_CONFIG.bg, DEFAULT_CONFIG.bg);
     setPickerFromHex(color);
     updatePickerUI();
-    if (!pickerBox) return;
+
+    const parentEl = input.closest('.color-input') || input.closest('label') || input;
+    const rect = parentEl.getBoundingClientRect();
+
+    let left = Math.round(rect.left);
+    if (left + 300 > window.innerWidth) {
+      left = Math.max(10, window.innerWidth - 310);
+    }
+
+    let top = Math.round(rect.bottom + 6);
+    if (top + 280 > window.innerHeight) {
+      top = Math.max(10, Math.round(rect.top - 286));
+    }
+
+    pickerBox.style.position = 'fixed';
+    pickerBox.style.top = `${top}px`;
+    pickerBox.style.left = `${left}px`;
     pickerBox.classList.remove('hidden');
   }
 
@@ -622,26 +440,64 @@ function initAdvancedPicker() {
     if (pickerBox) pickerBox.classList.add('hidden');
   }
 
+  const bgSwatch = document.getElementById('bg-swatch');
+  const fgSwatch = document.getElementById('fg-swatch');
+  if (bgSwatch) {
+    bgSwatch.style.cursor = 'pointer';
+    bgSwatch.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openPicker('bg-color');
+    });
+  }
+  if (fgSwatch) {
+    fgSwatch.style.cursor = 'pointer';
+    fgSwatch.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openPicker('fg-color');
+    });
+  }
+
   if (bgInput instanceof HTMLInputElement) {
-    bgInput.addEventListener('focus', () => openPicker('bg-color'));
-    bgInput.addEventListener('click', () => openPicker('bg-color'));
+    bgInput.addEventListener('focus', (e) => { e.stopPropagation(); openPicker('bg-color'); });
+    bgInput.addEventListener('click', (e) => { e.stopPropagation(); openPicker('bg-color'); });
   }
   if (fgInput instanceof HTMLInputElement) {
-    fgInput.addEventListener('focus', () => openPicker('fg-color'));
-    fgInput.addEventListener('click', () => openPicker('fg-color'));
+    fgInput.addEventListener('focus', (e) => { e.stopPropagation(); openPicker('fg-color'); });
+    fgInput.addEventListener('click', (e) => { e.stopPropagation(); openPicker('fg-color'); });
   }
+
+  let isDraggingPicker = false;
+
+  document.addEventListener('click', (e) => {
+    if (isDraggingPicker) return;
+    if (!pickerBox || pickerBox.classList.contains('hidden')) return;
+    const target = e.target;
+    if (target instanceof Node && pickerBox.contains(target)) return;
+    if (target instanceof Element && target.closest('#bg-color, #fg-color, #bg-swatch, #fg-swatch, #picker-box')) return;
+    closePicker();
+  });
 
   if (closePickerBtn instanceof HTMLButtonElement) {
     closePickerBtn.addEventListener('click', () => closePicker());
   }
 
+
+
   if (svCanvas instanceof HTMLCanvasElement) {
     const handleDown = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      isDraggingPicker = true;
       handlePickerSV(e);
-      const moveHandler = (ev) => handlePickerSV(ev);
-      const upHandler = () => {
+      const moveHandler = (ev) => {
+        ev.preventDefault();
+        handlePickerSV(ev);
+      };
+      const upHandler = (ev) => {
+        ev.preventDefault();
         window.removeEventListener('mousemove', moveHandler);
         window.removeEventListener('mouseup', upHandler);
+        setTimeout(() => { isDraggingPicker = false; }, 50);
       };
       window.addEventListener('mousemove', moveHandler);
       window.addEventListener('mouseup', upHandler, { once: true });
@@ -657,6 +513,7 @@ function initAdvancedPicker() {
       const p = getTouchPoint(ev);
       if (!p) return;
       ev.preventDefault();
+      isDraggingPicker = true;
       handlePickerSV(p);
     }, { passive: false });
     svCanvas.addEventListener('touchmove', (ev) => {
@@ -665,15 +522,26 @@ function initAdvancedPicker() {
       ev.preventDefault();
       handlePickerSV(p);
     }, { passive: false });
+    svCanvas.addEventListener('touchend', () => {
+      setTimeout(() => { isDraggingPicker = false; }, 50);
+    });
   }
 
   if (hueCanvas instanceof HTMLCanvasElement) {
     const handleDown = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      isDraggingPicker = true;
       handleHueStrip(e);
-      const moveHandler = (ev) => handleHueStrip(ev);
-      const upHandler = () => {
+      const moveHandler = (ev) => {
+        ev.preventDefault();
+        handleHueStrip(ev);
+      };
+      const upHandler = (ev) => {
+        ev.preventDefault();
         window.removeEventListener('mousemove', moveHandler);
         window.removeEventListener('mouseup', upHandler);
+        setTimeout(() => { isDraggingPicker = false; }, 50);
       };
       window.addEventListener('mousemove', moveHandler);
       window.addEventListener('mouseup', upHandler, { once: true });
@@ -689,6 +557,7 @@ function initAdvancedPicker() {
       const p = getTouchPoint(ev);
       if (!p) return;
       ev.preventDefault();
+      isDraggingPicker = true;
       handleHueStrip(p);
     }, { passive: false });
     hueCanvas.addEventListener('touchmove', (ev) => {
@@ -697,6 +566,9 @@ function initAdvancedPicker() {
       ev.preventDefault();
       handleHueStrip(p);
     }, { passive: false });
+    hueCanvas.addEventListener('touchend', () => {
+      setTimeout(() => { isDraggingPicker = false; }, 50);
+    });
   }
 
   if (paletteInput instanceof HTMLInputElement) {
@@ -841,6 +713,67 @@ function initIconStyleSelect() {
     previewSelect.addEventListener('change', drawStylePreview);
   }
   drawStylePreview();
+
+  // Custom Icon Preview Dropdown Grid
+  const customDropdown = document.getElementById('custom-icon-dropdown');
+  const customTrigger = document.getElementById('custom-icon-trigger');
+  const customMenu = document.getElementById('custom-icon-menu');
+  const customCurrent = document.getElementById('custom-icon-current');
+  const customName = document.getElementById('custom-icon-name');
+
+  if (previewSelect instanceof HTMLSelectElement && customMenu && customTrigger) {
+    const renderCustomMenu = () => {
+      customMenu.innerHTML = '';
+      const currentVal = previewSelect.value || 'star';
+      if (customCurrent) customCurrent.textContent = currentVal;
+      if (customName) customName.textContent = currentVal;
+
+      Array.from(previewSelect.options).forEach((opt) => {
+        const val = opt.value;
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = `custom-icon-option${val === currentVal ? ' is-active' : ''}`;
+        btn.innerHTML = `<span class="custom-icon-glyph">${val}</span><span>${val}</span>`;
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          previewSelect.value = val;
+          if (customCurrent) customCurrent.textContent = val;
+          if (customName) customName.textContent = val;
+          previewSelect.dispatchEvent(new Event('change', { bubbles: true }));
+          customMenu.classList.add('hidden');
+          if (customDropdown) customDropdown.classList.remove('is-open');
+          renderCustomMenu();
+        });
+        customMenu.appendChild(btn);
+      });
+    };
+
+    renderCustomMenu();
+
+    if (!customTrigger.dataset.initialized) {
+      customTrigger.dataset.initialized = 'true';
+      customTrigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const isOpen = customDropdown.classList.contains('is-open');
+        if (isOpen) {
+          customMenu.classList.add('hidden');
+          customDropdown.classList.remove('is-open');
+        } else {
+          customMenu.classList.remove('hidden');
+          customDropdown.classList.add('is-open');
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!customDropdown || !customMenu) return;
+        const target = e.target;
+        if (target instanceof Node && customDropdown.contains(target)) return;
+        customMenu.classList.add('hidden');
+        customDropdown.classList.remove('is-open');
+      });
+    }
+  }
 }
 
 function renderExtractedPalette(colors) {
@@ -957,14 +890,15 @@ function renderBackgroundToCanvas(config, canvas, ctx) {
   canvas.width = config.width;
   canvas.height = config.height;
 
-  ctx.fillStyle = config.bg;
+  ctx.fillStyle = config.bg || '#000000';
   ctx.fillRect(0, 0, config.width, config.height);
 
-  const diag = Math.hypot(config.width, config.height);
+  const diag = Math.hypot(canvas.width, canvas.height);
   const cols = Math.ceil(diag / config.cell) + 8;
   const rows = Math.ceil(diag / config.cell) + 8;
 
   const iconPool = getRenderableIconPool(config);
+  if (!iconPool || iconPool.length === 0) return;
 
   ctx.save();
   ctx.translate(config.width / 2, config.height / 2);
@@ -972,12 +906,11 @@ function renderBackgroundToCanvas(config, canvas, ctx) {
   ctx.translate(-diag / 2, -diag / 2);
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillStyle = config.fg;
-  ctx.globalAlpha = config.opacity;
+  ctx.fillStyle = config.fg || '#ffffff';
+  ctx.globalAlpha = Number.isFinite(config.opacity) ? config.opacity : 0.3;
   let activeFont = '';
 
   const rand = mulberry32(config.seed);
-  const chunkRows = rowsPerChunk(config);
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       const iconEntry = pickIcon(rand, iconPool);
@@ -988,11 +921,7 @@ function renderBackgroundToCanvas(config, canvas, ctx) {
         activeFont = font;
         ctx.font = font;
       }
-      ctx.fontVariationSettings = `'FILL' ${Number.isFinite(iconEntry.variant.fill) ? iconEntry.variant.fill : 0}, 'wght' ${iconEntry.variant.weight}, 'GRAD' 0, 'opsz' 48`;
       ctx.fillText(iconEntry.icon, x, y);
-    }
-    if (r % chunkRows === 0 && config.width * config.height > 10000) {
-      // yield lightly on larger preview sizes
     }
   }
   ctx.restore();
@@ -1019,25 +948,66 @@ function updatePreview() {
   );
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const renderSize = Math.max(PREVIEW_SIZE, Math.round(cssSize * dpr));
-  const cfg = { ...currentConfig, width: renderSize, height: renderSize, quality: 0.8 };
+
+  const previewScale = renderSize / (currentConfig.width || 2000);
+  const previewCell = Math.max(22, Math.round(currentConfig.cell * previewScale * 3.8));
+  const previewFontSize = Math.max(22, Math.round(currentConfig.fontSize * previewScale * 3.8));
+
+  const cfg = {
+    ...currentConfig,
+    width: renderSize,
+    height: renderSize,
+    cell: previewCell,
+    fontSize: previewFontSize,
+    quality: 0.8
+  };
   renderBackgroundToCanvas(cfg, previewCtx.canvas, previewCtx);
   updateSwatches();
+}
+
+function updateOpacityDisplay() {
+  const opacityInput = document.getElementById('bg-opacity');
+  const opacityVal = document.getElementById('bg-opacity-val');
+  if (opacityInput instanceof HTMLInputElement) {
+    const min = parseFloat(opacityInput.min) || 0.05;
+    const max = parseFloat(opacityInput.max) || 1;
+    const val = parseFloat(opacityInput.value) || 0.3;
+    const percent = Math.min(100, Math.max(0, ((val - min) / (max - min)) * 100));
+    opacityInput.style.setProperty('--range-progress', `${percent}%`);
+
+    if (opacityVal instanceof HTMLElement) {
+      opacityVal.textContent = val.toFixed(2);
+    }
+  }
+}
+
+let previewRaf = 0;
+function schedulePreviewUpdate() {
+  updateOpacityDisplay();
+  if (previewRaf) return;
+  previewRaf = requestAnimationFrame(() => {
+    previewRaf = 0;
+    updatePreview();
+  });
 }
 
 function initBackgroundDownloader() {
   const link = document.getElementById(DOWNLOAD_ID);
   if (!link) return;
+
+  const loader = document.getElementById('generator-loader');
+
   initAdvancedPicker();
   const form = document.getElementById(FORM_ID);
   if (form instanceof HTMLFormElement) {
     form.addEventListener('submit', (e) => e.preventDefault());
-    form.addEventListener('input', () => updatePreview());
-    form.addEventListener('change', () => updatePreview());
+    form.addEventListener('input', schedulePreviewUpdate);
+    form.addEventListener('change', schedulePreviewUpdate);
     const seedInput = document.getElementById('bg-seed');
     if (seedInput instanceof HTMLInputElement) {
       const onSeedChange = () => {
         resetPreviewSeed();
-        updatePreview();
+        schedulePreviewUpdate();
       };
       seedInput.addEventListener('input', onSeedChange);
       seedInput.addEventListener('change', onSeedChange);
@@ -1048,7 +1018,48 @@ function initBackgroundDownloader() {
       resetBtn.addEventListener('click', () => applyDefaults());
     }
   }
-  updatePreview();
+
+  const setupIconsAndFonts = async () => {
+    try {
+      const [_, icons] = await Promise.all([
+        loadSymbolFonts(24),
+        fetchLiveIcons()
+      ]);
+
+      const previewSelect = document.getElementById('icon-preview-glyph');
+      if (previewSelect instanceof HTMLSelectElement) {
+        const top16 = icons.slice(0, 16);
+        const curVal = previewSelect.value || top16[0];
+        previewSelect.innerHTML = '';
+        top16.forEach((name) => {
+          const opt = document.createElement('option');
+          opt.value = name;
+          opt.textContent = name;
+          if (name === curVal) opt.selected = true;
+          previewSelect.appendChild(opt);
+        });
+        if (previewSelect.options.length > 0 && !top16.includes(curVal)) {
+          previewSelect.options[0].selected = true;
+        }
+        initIconStyleSelect();
+      }
+
+      cachedIconPoolKey = '';
+      cachedIconPool = null;
+      glyphCache.clear();
+      updatePreview();
+    } catch (err) {
+      console.warn('Initialization error:', err);
+    } finally {
+      if (loader) {
+        setTimeout(() => {
+          loader.classList.add('is-hidden');
+        }, 120);
+      }
+    }
+  };
+
+  setupIconsAndFonts();
 
   link.addEventListener('click', async (event) => {
     event.preventDefault();
