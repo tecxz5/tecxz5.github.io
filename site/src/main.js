@@ -2156,7 +2156,7 @@ function setupPortfolioDemos() {
           if (isWin) {
             outcomeText = `<span class="slot-icon">casino</span> [ <span class="slot-icon">${s1}</span> | <span class="slot-icon">${s2}</span> | <span class="slot-icon">${s3}</span> ] ДЖЕКПОТ!`;
           } else {
-            outcomeText = `<span class="slot-icon">casino</span> [ <span class="slot-icon">${s1}</span> | <span class="slot-icon">${s2}</span> | <span class="slot-icon">${s3}</span> ] Увы! Попробуй ещё <span class="slot-icon">casino</span>`;
+            outcomeText = `<span class="slot-icon">casino</span> [ <span class="slot-icon">${s1}</span> | <span class="slot-icon">${s2}</span> | <span class="slot-icon">${s3}</span> ] Увы! Попробуй ещё`;
           }
 
           spinMsgEl.querySelector('.chat-msg__text').innerHTML = outcomeText;
