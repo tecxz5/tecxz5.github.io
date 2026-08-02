@@ -1805,20 +1805,20 @@ function setupServiceModals() {
   }
 
   document.addEventListener('click', function(e) {
-    var btn = e.target.closest('.service-card__btn');
-    if (btn) {
-      e.preventDefault();
-      e.stopPropagation();
-      var card = btn.closest('.service-card');
-      if (card) expandCard(card);
-      return;
-    }
     var close = e.target.closest('.service-card__close');
     if (close) {
       e.preventDefault();
       e.stopPropagation();
       var card2 = close.closest('.service-card');
       if (card2) collapseCard(card2);
+      return;
+    }
+
+    var card = e.target.closest('.service-card');
+    if (card && !card.classList.contains('is-expanded') && !expandedCardState) {
+      e.preventDefault();
+      e.stopPropagation();
+      expandCard(card);
       return;
     }
   });
