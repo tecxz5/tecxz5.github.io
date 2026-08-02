@@ -545,31 +545,97 @@ h1 {
 @media (max-width: 900px) {
   .generator-layout {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 
   .tools-panel {
-    position: static;
+    position: sticky;
+    top: 12px;
+    z-index: 90;
     order: -1;
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(12px);
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
   }
 
   .preview-box {
-    max-width: 320px;
+    max-width: 240px;
     margin: 0 auto;
+    padding: 10px;
+    border-width: 1px;
+  }
+
+  .preview-box p {
+    font-size: 12px;
+    margin-bottom: 6px;
   }
 }
 
 @media (max-width: 480px) {
   .generator-page {
-    padding: 24px 16px 40px;
+    padding: 16px 12px 90px;
+  }
+
+  .generator-page h1 {
+    font-size: 22px;
+    margin-bottom: 16px;
+  }
+
+  .settings-group {
+    padding: 14px;
+  }
+
+  .settings-group h2 {
+    font-size: 14px;
+    margin-bottom: 12px;
   }
 
   .settings-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .icon-style-preview {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .icon-style-item {
+    padding: 8px 4px;
+  }
+
+  .icon-style-glyph {
+    font-size: 36px;
+  }
+
+  .color-swatch {
+    width: 42px;
+    height: 42px;
+  }
+
+  .color-input input[type="text"] {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .picker-box {
+    width: calc(100vw - 24px);
+    max-width: 290px;
+    padding: 12px;
   }
 
   .generate-btn {
-    font-size: 14px;
+    position: fixed;
+    bottom: 16px;
+    left: 12px;
+    right: 12px;
+    width: calc(100vw - 24px);
+    z-index: 95;
+    font-size: 15px;
     padding: 14px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.95), 0 0 0 1px rgba(255, 255, 255, 0.2);
   }
 }
 

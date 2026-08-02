@@ -74,20 +74,31 @@ function loadSymbolFonts(fontSize) {
   return Promise.all(Array.from(unique, (font) => document.fonts.load(font)));
 }
 
+let checkCanvas = null;
+let checkCtx = null;
+
+function getCheckContext() {
+  if (!checkCtx) {
+    checkCanvas = document.createElement('canvas');
+    checkCanvas.width = 100;
+    checkCanvas.height = 100;
+    checkCtx = checkCanvas.getContext('2d');
+  }
+  return checkCtx;
+}
+
 const glyphCache = new Map();
 
-function glyphExists(checkCtx, iconName, variant, fontSize) {
+function glyphExists(checkCtx, iconName, variant, fontSize = 24) {
+  if (!checkCtx) return true;
   const fontSpec = getIconFont(variant, fontSize);
-  if (document.fonts && !document.fonts.check(fontSpec)) {
-    return true;
-  }
-
   const cacheKey = `${iconName}|${variant.key}|${fontSize}`;
   if (glyphCache.has(cacheKey)) return glyphCache.get(cacheKey);
 
-  const maxLigatureWidth = fontSize * 1.45;
   checkCtx.font = fontSpec;
   const width = checkCtx.measureText(iconName).width;
+
+  const maxLigatureWidth = fontSize * 1.4;
   const isValid = Number.isFinite(width) && width > 0 && width <= maxLigatureWidth;
   glyphCache.set(cacheKey, isValid);
   return isValid;
@@ -102,17 +113,36 @@ function getRenderableIconPool(config) {
   const selectedVariants = getSelectedVariants(config.iconStyles);
   const variants = selectedVariants.length > 0 ? selectedVariants : ICON_STYLE_VARIANTS;
   const uniqueIcons = Array.from(new Set(currentIcons));
+  const checkContext = getCheckContext();
+  const checkFontSize = config.fontSize || 24;
 
   const pool = [];
   for (let i = 0; i < uniqueIcons.length; i++) {
     const iconName = uniqueIcons[i];
     for (let j = 0; j < variants.length; j++) {
+      if (checkContext && !glyphExists(checkContext, iconName, variants[j], checkFontSize)) {
+        continue;
+      }
       pool.push({
         id: `${iconName}|${variants[j].key}`,
         icon: iconName,
         styleId: variants[j].key,
         variant: variants[j]
       });
+    }
+  }
+
+  if (pool.length === 0) {
+    const fallbackIcons = ['star', 'favorite', 'settings', 'code', 'lock', 'home', 'check_circle', 'search'];
+    for (let i = 0; i < fallbackIcons.length; i++) {
+      for (let j = 0; j < variants.length; j++) {
+        pool.push({
+          id: `${fallbackIcons[i]}|${variants[j].key}`,
+          icon: fallbackIcons[i],
+          styleId: variants[j].key,
+          variant: variants[j]
+        });
+      }
     }
   }
 
@@ -420,14 +450,12 @@ function initAdvancedPicker() {
     const parentEl = input.closest('.color-input') || input.closest('label') || input;
     const rect = parentEl.getBoundingClientRect();
 
-    let left = Math.round(rect.left);
-    if (left + 300 > window.innerWidth) {
-      left = Math.max(10, window.innerWidth - 310);
-    }
-
+    const boxWidth = pickerBox.offsetWidth || 284;
+    const boxHeight = pickerBox.offsetHeight || 280;
+    let left = Math.max(12, Math.min(Math.round(rect.left), window.innerWidth - boxWidth - 12));
     let top = Math.round(rect.bottom + 6);
-    if (top + 280 > window.innerHeight) {
-      top = Math.max(10, Math.round(rect.top - 286));
+    if (top + boxHeight > window.innerHeight) {
+      top = Math.max(12, Math.round(rect.top - boxHeight - 6));
     }
 
     pickerBox.style.position = 'fixed';
