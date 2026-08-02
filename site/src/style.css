@@ -849,6 +849,24 @@ body.is-track-instant .presentation-track {
   line-height: 1;
 }
 
+/* Slot machine icons in chat */
+.chat-msg__text .material-symbols-outlined {
+  font-size: 16px;
+  vertical-align: middle;
+  margin: 0 2px;
+  line-height: 1;
+}
+
+.slot-icon {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  display: inline-block;
+  font-size: 16px;
+  vertical-align: middle;
+  line-height: 1;
+}
+
 .service-card__items {
   display: flex;
   flex-direction: column;

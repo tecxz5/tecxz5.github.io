@@ -2118,7 +2118,7 @@ function setupPortfolioDemos() {
   // 3. Telegram Casino Bot Slot Machine Simulator
   const chatMessages = document.getElementById('bot-chat-messages');
   const cmdBtns = document.querySelectorAll('.chat-cmd-btn');
-  const slotSymbols = ['💎', '7️⃣', '🍒', '🍋', '🔔', '🍇'];
+  const slotSymbols = ['diamond', 'looks_3', 'nutrition', 'local_pizza', 'notifications', 'bakery_dining'];
   let isSpinning = false;
 
   if (chatMessages && cmdBtns.length > 0) {
@@ -2136,7 +2136,7 @@ function setupPortfolioDemos() {
 
         const spinMsgEl = document.createElement('div');
         spinMsgEl.className = 'chat-msg bot';
-        spinMsgEl.innerHTML = `<span class="chat-msg__author">CasinoBot</span><span class="chat-msg__text">🎰 [ 🍋 | 🍒 | 🍇 ] Крутим...</span>`;
+        spinMsgEl.innerHTML = `<span class="chat-msg__author">CasinoBot</span><span class="chat-msg__text"><span class="slot-icon">casino</span> [ <span class="slot-icon">bakery_dining</span> | <span class="slot-icon">local_pizza</span> | <span class="slot-icon">nutrition</span> ] Крутим...</span>`;
         chatMessages.appendChild(spinMsgEl);
         chatMessages.scrollTop = chatMessages.scrollHeight;
 
@@ -2154,12 +2154,12 @@ function setupPortfolioDemos() {
 
           let outcomeText = '';
           if (isWin) {
-            outcomeText = `🎰 [ ${s1} | ${s2} | ${s3} ] 🔥 ДЖЕКПОТ! +500$ 💎`;
+            outcomeText = `<span class="slot-icon">casino</span> [ <span class="slot-icon">${s1}</span> | <span class="slot-icon">${s2}</span> | <span class="slot-icon">${s3}</span> ] ДЖЕКПОТ!`;
           } else {
-            outcomeText = `🎰 [ ${s1} | ${s2} | ${s3} ] Увы! Попробуй ещё 🎲`;
+            outcomeText = `<span class="slot-icon">casino</span> [ <span class="slot-icon">${s1}</span> | <span class="slot-icon">${s2}</span> | <span class="slot-icon">${s3}</span> ] Увы! Попробуй ещё <span class="slot-icon">casino</span>`;
           }
 
-          spinMsgEl.querySelector('.chat-msg__text').textContent = outcomeText;
+          spinMsgEl.querySelector('.chat-msg__text').innerHTML = outcomeText;
           chatMessages.scrollTop = chatMessages.scrollHeight;
           isSpinning = false;
         }, 400);
