@@ -693,18 +693,30 @@ function spawnPaths(now, count) {
 }
 
 function draw(now) {
-  const width = canvas.parentElement.clientWidth;
-  const height = canvas.parentElement.clientHeight;
-
-  ctx.clearRect(0, 0, width, height);
-  drawSymbols(now);
-
-  if (now - lastSpawn > randomBetween(900, 1600)) {
-    spawnPaths(now, Math.floor(randomBetween(4, 9)));
-    lastSpawn = now;
+  if (document.hidden) {
+    animationFrame = window.requestAnimationFrame(draw);
+    return;
   }
 
-  paths = paths.filter((path) => drawPath(path, now));
+  const sectionIndex = getActiveSectionIndex();
+
+  if (sectionIndex === 0) {
+    const width = canvas.parentElement.clientWidth;
+    const height = canvas.parentElement.clientHeight;
+
+    ctx.clearRect(0, 0, width, height);
+
+    if (now - lastSpawn > randomBetween(900, 1600)) {
+      spawnPaths(now, Math.floor(randomBetween(4, 9)));
+      lastSpawn = now;
+    }
+
+    paths = paths.filter((path) => drawPath(path, now));
+  }
+
+  if (sectionIndex === 1) {
+    drawSymbols(now);
+  }
 
   if (!backgroundReady) {
     backgroundReady = true;
@@ -714,13 +726,13 @@ function draw(now) {
   animationFrame = window.requestAnimationFrame(draw);
 }
 
-function compileSymbolsShader(type, source) {
-  const shader = symbolsGl.createShader(type);
-  symbolsGl.shaderSource(shader, source);
-  symbolsGl.compileShader(shader);
+function compileSymbolsShader(type, source, context = symbolsGl) {
+  const shader = context.createShader(type);
+  context.shaderSource(shader, source);
+  context.compileShader(shader);
 
-  if (!symbolsGl.getShaderParameter(shader, symbolsGl.COMPILE_STATUS)) {
-    throw new Error(symbolsGl.getShaderInfoLog(shader));
+  if (!context.getShaderParameter(shader, context.COMPILE_STATUS)) {
+    throw new Error(context.getShaderInfoLog(shader));
   }
 
   return shader;
@@ -853,10 +865,23 @@ function resetSymbols() {
   symbolsGl.bufferData(symbolsGl.ARRAY_BUFFER, new Float32Array(vertices), symbolsGl.STATIC_DRAW);
 }
 
+let cachedURes = null, cachedUOff = null, cachedAPos = -1, cachedATex = -1, cachedACol = -1;
+
+function initSymbolsLocations() {
+  if (cachedURes !== null || !symbolsGl || !symbolsProgram) return;
+  cachedURes = symbolsGl.getUniformLocation(symbolsProgram, 'u_resolution');
+  cachedUOff = symbolsGl.getUniformLocation(symbolsProgram, 'u_offset');
+  cachedAPos = symbolsGl.getAttribLocation(symbolsProgram, 'a_position');
+  cachedATex = symbolsGl.getAttribLocation(symbolsProgram, 'a_texCoord');
+  cachedACol = symbolsGl.getAttribLocation(symbolsProgram, 'a_color');
+}
+
 function drawSymbols(now) {
   if (!symbolsGl || !symbolsProgram || !symbolsVertexCount) {
     return;
   }
+
+  initSymbolsLocations();
 
   const { cell } = symbolGrid;
   const width = symbolGrid.width || window.innerWidth;
@@ -869,24 +894,20 @@ function drawSymbols(now) {
   symbolsGl.clearColor(0, 0, 0, 0);
   symbolsGl.clear(symbolsGl.COLOR_BUFFER_BIT);
   symbolsGl.useProgram(symbolsProgram);
-  symbolsGl.uniform2f(symbolsGl.getUniformLocation(symbolsProgram, 'u_resolution'), width, height);
-  symbolsGl.uniform2f(symbolsGl.getUniformLocation(symbolsProgram, 'u_offset'), offsetX, offsetY);
+  symbolsGl.uniform2f(cachedURes, width, height);
+  symbolsGl.uniform2f(cachedUOff, offsetX, offsetY);
   symbolsGl.bindTexture(symbolsGl.TEXTURE_2D, symbolsTexture);
   symbolsGl.bindBuffer(symbolsGl.ARRAY_BUFFER, symbolsBuffer);
   symbolsGl.enable(symbolsGl.BLEND);
   symbolsGl.blendFunc(symbolsGl.SRC_ALPHA, symbolsGl.ONE_MINUS_SRC_ALPHA);
 
   const stride = 8 * 4;
-  const positionLocation = symbolsGl.getAttribLocation(symbolsProgram, 'a_position');
-  const texCoordLocation = symbolsGl.getAttribLocation(symbolsProgram, 'a_texCoord');
-  const colorLocation = symbolsGl.getAttribLocation(symbolsProgram, 'a_color');
-
-  symbolsGl.enableVertexAttribArray(positionLocation);
-  symbolsGl.vertexAttribPointer(positionLocation, 2, symbolsGl.FLOAT, false, stride, 0);
-  symbolsGl.enableVertexAttribArray(texCoordLocation);
-  symbolsGl.vertexAttribPointer(texCoordLocation, 2, symbolsGl.FLOAT, false, stride, 2 * 4);
-  symbolsGl.enableVertexAttribArray(colorLocation);
-  symbolsGl.vertexAttribPointer(colorLocation, 4, symbolsGl.FLOAT, false, stride, 4 * 4);
+  symbolsGl.enableVertexAttribArray(cachedAPos);
+  symbolsGl.vertexAttribPointer(cachedAPos, 2, symbolsGl.FLOAT, false, stride, 0);
+  symbolsGl.enableVertexAttribArray(cachedATex);
+  symbolsGl.vertexAttribPointer(cachedATex, 2, symbolsGl.FLOAT, false, stride, 2 * 4);
+  symbolsGl.enableVertexAttribArray(cachedACol);
+  symbolsGl.vertexAttribPointer(cachedACol, 4, symbolsGl.FLOAT, false, stride, 4 * 4);
   symbolsGl.drawArrays(symbolsGl.TRIANGLES, 0, symbolsVertexCount);
 }
 
@@ -1190,6 +1211,10 @@ function stepByWheelGesture(direction) {
 
 function setupWheelGestureLock() {
   const handleWheel = (event) => {
+    if (event.target && event.target.closest && event.target.closest('.portfolio-card, .portfolio-demo, .chat-widget__messages, .cli-body, .service-card')) {
+      return;
+    }
+
     const step = resolveWheelStep(event);
 
     if (!step) {
@@ -1270,6 +1295,9 @@ function setupTouchGestureLock() {
   window.addEventListener(
     'touchmove',
     (event) => {
+      if (event.target && event.target.closest && event.target.closest('.portfolio-card, .portfolio-demo, .chat-widget__messages, .cli-body, .service-card')) {
+        return;
+      }
       if (event.touches.length !== 1 || !loaderHidden || !sectionSlider) {
         return;
       }
@@ -1445,6 +1473,13 @@ window.visualViewport?.addEventListener('resize', () => {
 });
 
 window.visualViewport?.addEventListener('scroll', syncViewportMetrics, { passive: true });
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    window.cancelAnimationFrame(animationFrame);
+    animationFrame = window.requestAnimationFrame(draw);
+  }
+});
 
 window.addEventListener('pageshow', (event) => {
   if (!event.persisted) {
@@ -1867,3 +1902,318 @@ function setupKeyboardNav() {
     }
   });
 }
+
+function setupPortfolioDemos() {
+  // 1. WebGL generator demo animation with dense Material Symbols on pure #000
+  const miniCanvas = document.getElementById('portfolio-mini-canvas');
+  if (miniCanvas) {
+    const gl = miniCanvas.getContext('webgl', { alpha: false, antialias: true });
+    
+    if (gl) {
+      gl.clearColor(0.0, 0.0, 0.0, 1.0);
+      
+      const miniIcons = [
+        'grid_view', 'memory', 'dns', 'settings', 'code',
+        'terminal', 'data_object', 'webhook', 'lock', 'security',
+        'api', 'cloud', 'storage', 'hub', 'bolt',
+        'bug_report', 'rocket_launch', 'extension', 'deployed_code', 'architecture'
+      ];
+      
+      const vertShader = compileSymbolsShader(gl.VERTEX_SHADER, symbolsVertexShader, gl);
+      const fragShader = compileSymbolsShader(gl.FRAGMENT_SHADER, symbolsFragmentShader, gl);
+      const miniProgram = gl.createProgram();
+      gl.attachShader(miniProgram, vertShader);
+      gl.attachShader(miniProgram, fragShader);
+      gl.linkProgram(miniProgram);
+
+      const atlasCell = 64;
+      const atlasCols = 5;
+      const atlasRows = Math.ceil(miniIcons.length / atlasCols);
+      const atlasCanvas = document.createElement('canvas');
+      const atlasCtx = atlasCanvas.getContext('2d');
+      atlasCanvas.width = atlasCols * atlasCell;
+      atlasCanvas.height = atlasRows * atlasCell;
+
+      const miniTexture = gl.createTexture();
+      gl.bindTexture(gl.TEXTURE_2D, miniTexture);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+      function updateMiniAtlas() {
+        if (!gl || !miniTexture) return;
+        atlasCtx.clearRect(0, 0, atlasCanvas.width, atlasCanvas.height);
+        atlasCtx.fillStyle = '#ffffff';
+        atlasCtx.textAlign = 'center';
+        atlasCtx.textBaseline = 'middle';
+        atlasCtx.font = '400 40px "Material Symbols Outlined"';
+
+        if ('fontKerning' in atlasCtx) {
+          atlasCtx.fontKerning = 'none';
+        }
+        if ('fontVariantLigatures' in atlasCtx) {
+          atlasCtx.fontVariantLigatures = 'normal';
+        }
+
+        miniIcons.forEach((icon, idx) => {
+          const col = idx % atlasCols;
+          const row = Math.floor(idx / atlasCols);
+          atlasCtx.fillText(icon, col * atlasCell + atlasCell / 2, row * atlasCell + atlasCell / 2);
+        });
+
+        gl.bindTexture(gl.TEXTURE_2D, miniTexture);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, atlasCanvas);
+      }
+
+      updateMiniAtlas();
+      if (document.fonts) {
+        document.fonts.ready.then(() => {
+          updateMiniAtlas();
+        });
+      }
+
+      const uResLoc = gl.getUniformLocation(miniProgram, 'u_resolution');
+      const uOffLoc = gl.getUniformLocation(miniProgram, 'u_offset');
+      const aPosLoc = gl.getAttribLocation(miniProgram, 'a_position');
+      const aTexLoc = gl.getAttribLocation(miniProgram, 'a_texCoord');
+      const aColLoc = gl.getAttribLocation(miniProgram, 'a_color');
+
+      const miniBuffer = gl.createBuffer();
+      let miniVertexCount = 0;
+      let gridCellSize = 24;
+
+      function rebuildMiniBuffer(width, height) {
+        const vertices = [];
+        const cols = Math.ceil(width / gridCellSize) + 2;
+        const rows = Math.ceil(height / gridCellSize) + 2;
+        
+        let iconIdx = 0;
+        for (let r = -1; r < rows; r++) {
+          for (let c = -1; c < cols; c++) {
+            const x = c * gridCellSize;
+            const y = r * gridCellSize;
+            const iconIndex = iconIdx % miniIcons.length;
+            const col = iconIndex % atlasCols;
+            const row = Math.floor(iconIndex / atlasCols);
+            const u0 = (col * atlasCell) / atlasCanvas.width;
+            const v0 = (row * atlasCell) / atlasCanvas.height;
+            const u1 = ((col + 1) * atlasCell) / atlasCanvas.width;
+            const v1 = ((row + 1) * atlasCell) / atlasCanvas.height;
+            
+            const alpha = 0.22 + 0.16 * Math.sin(c * 0.5 + r * 0.5);
+            const rgb = [0.0, 1.0, 0.4];
+
+            const x0 = x, y0 = y, x1 = x + gridCellSize, y1 = y + gridCellSize;
+            vertices.push(
+              x0, y0, u0, v0, ...rgb, alpha,
+              x1, y0, u1, v0, ...rgb, alpha,
+              x0, y1, u0, v1, ...rgb, alpha,
+              x0, y1, u0, v1, ...rgb, alpha,
+              x1, y0, u1, v0, ...rgb, alpha,
+              x1, y1, u1, v1, ...rgb, alpha
+            );
+            iconIdx++;
+          }
+        }
+
+        miniVertexCount = vertices.length / 8;
+        gl.bindBuffer(gl.ARRAY_BUFFER, miniBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+      }
+
+      let lastMiniDraw = 0;
+      let driftTime = 0;
+
+      function drawMiniCanvas(now) {
+        if (!miniCanvas || !gl) return;
+
+        if (document.hidden || getActiveSectionIndex() !== 1 || activeSlideIndex !== 2) {
+          requestAnimationFrame(drawMiniCanvas);
+          return;
+        }
+
+        if (now - lastMiniDraw < 30) {
+          requestAnimationFrame(drawMiniCanvas);
+          return;
+        }
+        lastMiniDraw = now;
+
+        const width = miniCanvas.clientWidth || 280;
+        const height = miniCanvas.clientHeight || 110;
+        if (miniCanvas.width !== width || miniCanvas.height !== height) {
+          miniCanvas.width = width;
+          miniCanvas.height = height;
+          rebuildMiniBuffer(width, height);
+        }
+
+        driftTime += 0.015;
+        const offsetX = Math.sin(driftTime * 0.2) * 6;
+        const offsetY = Math.cos(driftTime * 0.15) * 5;
+
+        gl.viewport(0, 0, width, height);
+        gl.clearColor(0.0, 0.0, 0.0, 1.0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        gl.useProgram(miniProgram);
+        gl.uniform2f(uResLoc, width, height);
+        gl.uniform2f(uOffLoc, offsetX, offsetY);
+        gl.bindTexture(gl.TEXTURE_2D, miniTexture);
+        gl.bindBuffer(gl.ARRAY_BUFFER, miniBuffer);
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+        const stride = 8 * 4;
+        gl.enableVertexAttribArray(aPosLoc);
+        gl.vertexAttribPointer(aPosLoc, 2, gl.FLOAT, false, stride, 0);
+        gl.enableVertexAttribArray(aTexLoc);
+        gl.vertexAttribPointer(aTexLoc, 2, gl.FLOAT, false, stride, 2 * 4);
+        gl.enableVertexAttribArray(aColLoc);
+        gl.vertexAttribPointer(aColLoc, 4, gl.FLOAT, false, stride, 4 * 4);
+
+        gl.drawArrays(gl.TRIANGLES, 0, miniVertexCount);
+        requestAnimationFrame(drawMiniCanvas);
+      }
+
+      requestAnimationFrame(drawMiniCanvas);
+    }
+  }
+
+  // 2. Real mus-downloader Music Downloader CLI Simulator
+  const musCliDemo = document.getElementById('mus-cli-demo');
+  const musCliBody = document.getElementById('mus-cli-body');
+  let isDownloading = false;
+
+  if (musCliDemo && musCliBody) {
+    musCliDemo.style.cursor = 'pointer';
+    musCliDemo.addEventListener('click', function() {
+      if (isDownloading) return;
+      isDownloading = true;
+
+      const dynamicLines = musCliBody.querySelectorAll('.cli-line.dynamic');
+      dynamicLines.forEach(line => line.remove());
+
+      const steps = [
+        { text: '[+] Fetching metadata...', delay: 300 },
+        { text: '[>] Downloading FLAC...', delay: 850 },
+        { text: '[✓] Saved to ./downloads/track.flac', delay: 1450 }
+      ];
+
+      steps.forEach(function(step) {
+        setTimeout(function() {
+          const logLine = document.createElement('div');
+          logLine.className = 'cli-line status dynamic';
+          logLine.textContent = step.text;
+          musCliBody.appendChild(logLine);
+          musCliBody.scrollTop = musCliBody.scrollHeight;
+
+          if (step.text.includes('[✓]')) {
+            isDownloading = false;
+          }
+        }, step.delay);
+      });
+    });
+  }
+
+  // 3. Telegram Casino Bot Slot Machine Simulator
+  const chatMessages = document.getElementById('bot-chat-messages');
+  const cmdBtns = document.querySelectorAll('.chat-cmd-btn');
+  const slotSymbols = ['💎', '7️⃣', '🍒', '🍋', '🔔', '🍇'];
+  let isSpinning = false;
+
+  if (chatMessages && cmdBtns.length > 0) {
+    cmdBtns.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const cmd = btn.getAttribute('data-cmd');
+        if (!cmd || isSpinning) return;
+
+        isSpinning = true;
+
+        const userMsgEl = document.createElement('div');
+        userMsgEl.className = 'chat-msg user';
+        userMsgEl.innerHTML = `<span class="chat-msg__author">You</span><span class="chat-msg__text">${cmd}</span>`;
+        chatMessages.appendChild(userMsgEl);
+
+        const spinMsgEl = document.createElement('div');
+        spinMsgEl.className = 'chat-msg bot';
+        spinMsgEl.innerHTML = `<span class="chat-msg__author">CasinoBot</span><span class="chat-msg__text">🎰 [ 🍋 | 🍒 | 🍇 ] Крутим...</span>`;
+        chatMessages.appendChild(spinMsgEl);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+
+        setTimeout(function() {
+          const isWin = Math.random() < 0.35;
+          let s1, s2, s3;
+          if (isWin) {
+            s1 = s2 = s3 = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+          } else {
+            s1 = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+            s2 = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+            s3 = slotSymbols[Math.floor(Math.random() * slotSymbols.length)];
+            if (s1 === s2 && s2 === s3) s3 = slotSymbols[(slotSymbols.indexOf(s3) + 1) % slotSymbols.length];
+          }
+
+          let outcomeText = '';
+          if (isWin) {
+            outcomeText = `🎰 [ ${s1} | ${s2} | ${s3} ] 🔥 ДЖЕКПОТ! +500$ 💎`;
+          } else {
+            outcomeText = `🎰 [ ${s1} | ${s2} | ${s3} ] Увы! Попробуй ещё 🎲`;
+          }
+
+          spinMsgEl.querySelector('.chat-msg__text').textContent = outcomeText;
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+          isSpinning = false;
+        }, 400);
+      });
+    });
+  }
+
+  // 4. Mobile Portfolio Slider & Pagination Dots
+  const portfolioGrid = document.getElementById('portfolio-grid');
+  const portfolioDots = document.querySelectorAll('.portfolio-dot');
+
+  if (portfolioGrid && portfolioDots.length > 0) {
+    portfolioDots.forEach(function(dot) {
+      dot.addEventListener('click', function() {
+        const index = parseInt(dot.getAttribute('data-index') || '0', 10);
+        const cardWidth = portfolioGrid.clientWidth;
+        portfolioGrid.scrollTo({
+          left: index * cardWidth,
+          behavior: 'smooth'
+        });
+      });
+    });
+
+    portfolioGrid.addEventListener('scroll', function() {
+      const cardWidth = portfolioGrid.clientWidth;
+      if (cardWidth <= 0) return;
+      const activeIdx = Math.round(portfolioGrid.scrollLeft / cardWidth);
+      portfolioDots.forEach(function(dot, idx) {
+        dot.classList.toggle('is-active', idx === activeIdx);
+      });
+    }, { passive: true });
+
+    portfolioGrid.addEventListener('touchstart', function(e) {
+      e.stopPropagation();
+    }, { passive: true });
+
+    portfolioGrid.addEventListener('touchmove', function(e) {
+      e.stopPropagation();
+    }, { passive: true });
+  }
+
+  // Stop scroll propagation on portfolio scrollable elements
+  const scrollableElements = document.querySelectorAll('.portfolio-grid, .portfolio-card, .portfolio-demo, .chat-widget__messages, .cli-body');
+  scrollableElements.forEach(function(el) {
+    el.addEventListener('wheel', function(e) {
+      e.stopPropagation();
+    }, { passive: true });
+
+    el.addEventListener('touchmove', function(e) {
+      e.stopPropagation();
+    }, { passive: true });
+  });
+}
+
+setupKeyboardNav();
+setupPortfolioDemos();
+

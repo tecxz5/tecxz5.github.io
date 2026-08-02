@@ -129,9 +129,73 @@
             <section class="presentation-slide" id="portfolio">
               <h2>Портфолио</h2>
               <div class="presentation-slide__body">
-                <div class="portfolio-placeholders">
-                  <div></div>
-                  <div></div>
+                <div class="portfolio-grid" id="portfolio-grid">
+                  <!-- Карточка 1: Генератор фона -->
+                  <article class="portfolio-card" id="portfolio-card-generator">
+                    <div class="portfolio-card__header">
+                      <div class="portfolio-card__badges">
+                        <span class="portfolio-card__badge">WebGL</span>
+                        <span class="portfolio-card__badge portfolio-card__badge--tag">Tool</span>
+                      </div>
+                      <h3 class="portfolio-card__title">Генератор фона</h3>
+                      <p class="portfolio-card__desc">Генерация фонов из Material-иконок с настройкой углов, цвета и сетки.</p>
+                    </div>
+                    <div class="portfolio-card__demo portfolio-demo--canvas">
+                      <canvas id="portfolio-mini-canvas" width="280" height="110" aria-hidden="true"></canvas>
+                    </div>
+                    <div class="portfolio-card__footer">
+                      <a href="./generator.html" class="portfolio-card__action-btn">Открыть генератор</a>
+                    </div>
+                  </article>
+
+                  <!-- Карточка 2: mus-downloader -->
+                  <article class="portfolio-card" id="portfolio-card-mus">
+                    <div class="portfolio-card__header">
+                      <div class="portfolio-card__badges">
+                        <span class="portfolio-card__badge">Python</span>
+                        <span class="portfolio-card__badge portfolio-card__badge--tag">Tool</span>
+                      </div>
+                      <h3 class="portfolio-card__title">mus-downloader</h3>
+                      <p class="portfolio-card__desc">Multi-source FLAC/MP3 Downloader </p>
+                    </div>
+                    <div class="portfolio-card__demo portfolio-demo--cli" id="mus-cli-demo">
+                      <div class="cli-body" id="mus-cli-body">
+                        <div class="cli-line prompt">$ python main.py &lt;url&gt; -q FLAC</div>
+                        <div class="cli-line info">=== Multi-source Music Downloader ===</div>
+                      </div>
+                    </div>
+                    <div class="portfolio-card__footer">
+                      <a href="https://github.com/tecxz5/mus-downloader" target="_blank" rel="noopener" class="portfolio-card__action-btn">GitHub: mus-downloader</a>
+                    </div>
+                  </article>
+
+                  <!-- Карточка 3: Telegram & Discord Боты -->
+                  <article class="portfolio-card" id="portfolio-card-bots">
+                    <div class="portfolio-card__header">
+                      <div class="portfolio-card__badges">
+                        <span class="portfolio-card__badge">Telegram / Discord</span>
+                        <span class="portfolio-card__badge portfolio-card__badge--tag">Bot</span>
+                      </div>
+                      <h3 class="portfolio-card__title">Боты</h3>
+                      <p class="portfolio-card__desc">Боты для скачки видео, или лудки </p>
+                    </div>
+                    <div class="portfolio-card__demo portfolio-demo--chat">
+                      <div class="chat-widget">
+                        <div class="chat-widget__messages" id="bot-chat-messages">
+                          <div class="chat-msg bot"><span class="chat-msg__author">CasinoBot</span><span class="chat-msg__text">🎰 Испытай удачу! Жми /slots ниже:</span></div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="portfolio-card__footer">
+                      <button type="button" class="portfolio-card__action-btn chat-cmd-btn" data-cmd="/slots">/slots</button>
+                    </div>
+                  </article>
+                </div>
+                <!-- Мобильная пагинация портфолио -->
+                <div class="portfolio-pagination" id="portfolio-pagination" aria-label="Переключение проектов">
+                  <button type="button" class="portfolio-dot is-active" data-index="0" aria-label="Проект 1"></button>
+                  <button type="button" class="portfolio-dot" data-index="1" aria-label="Проект 2"></button>
+                  <button type="button" class="portfolio-dot" data-index="2" aria-label="Проект 3"></button>
                 </div>
               </div>
             </section>
