@@ -1549,6 +1549,12 @@ function setupServiceModals() {
     card.style.overflow = 'hidden';
     card.style.transition = 'none';
 
+    if (closeBtn) {
+      closeBtn.style.transition = 'none';
+      closeBtn.style.opacity = '0';
+      closeBtn.style.transform = 'rotate(90deg) scale(0.5)';
+    }
+
     if (badge && (startBdx !== 0 || startBdy !== 0)) {
       badge.style.transition = 'none';
       badge.style.transform = 'translate(' + startBdx + 'px,' + startBdy + 'px)';
@@ -1604,6 +1610,12 @@ function setupServiceModals() {
         card.style.width = tw + 'px';
         card.style.height = th + 'px';
 
+        if (closeBtn) {
+          closeBtn.style.transition = 'opacity .3s ease .25s, transform .35s cubic-bezier(.16,1,.3,1) .25s';
+          closeBtn.style.opacity = '1';
+          closeBtn.style.transform = 'rotate(0deg) scale(1)';
+        }
+
         if (badge) {
           badge.style.transition = 'transform .42s cubic-bezier(.76,0,.24,1)';
           badge.style.transform = 'translate(0,0)';
@@ -1635,7 +1647,7 @@ function setupServiceModals() {
 
           if (footerBtn) {
             const footerDelay = 0.18 + items.length * 0.07;
-            footerBtn.style.transition = 'opacity .32s ease ' + footerDelay + 's, transform .32s cubic-bezier(.16,1,.3,1) ' + footerDelay + 's';
+            footerBtn.style.transition = 'opacity .32s ease ' + footerDelay + 's, transform .32s cubic-bezier(.16,1,.3,1) ' + footerDelay + 's, background-color .25s ease, color .25s ease, border-color .25s ease';
             footerBtn.style.opacity = '1';
             footerBtn.style.transform = 'translateY(0)';
           }
@@ -1644,6 +1656,9 @@ function setupServiceModals() {
         setTimeout(function() {
           if (expandedCardState && expandedCardState.card === card) {
             card.style.overflowY = 'auto';
+            if (footerBtn) {
+              footerBtn.style.transition = '';
+            }
           }
         }, 430);
       });
