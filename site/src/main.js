@@ -65,9 +65,9 @@ let touchGestureStartY = 0;
 let touchGestureHandled = false;
 const symbolPatternSeed = 5185;
 const presentationSlideCount = 3;
-const wheelIntentThreshold = 16;
-const wheelBurstQuietDelay = 260;
-const touchGestureThreshold = 24;
+const wheelIntentThreshold = 10;
+const wheelBurstQuietDelay = 180;
+const touchGestureThreshold = 18;
 const pageByHash = new Map([
   ['#top', { section: 1 }],
   ['#about', { section: 2, slide: 0 }],
@@ -1483,6 +1483,7 @@ setupHeaderHoverZone();
 setupMobileHeaderHover();
 setupSmoothScroll();
 setupSectionLinks();
+setupKeyboardNav();
 setupServiceModals();
 setupKeyboardNav();
 waitForPageLoad();
