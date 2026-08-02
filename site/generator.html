@@ -136,15 +136,16 @@
             <span>Seed (опц.)</span>
             <input type="number" id="bg-seed" min="1" step="1" placeholder="случайно">
           </label>
-          <div class="form-actions">
-            <button type="button" id="reset-form-btn">Сбросить</button>
-          </div>
         </form>
         <aside class="tools-panel">
           <section class="preview-box">
             <p>Превью</p>
             <canvas id="bg-preview" width="150" height="150"></canvas>
           </section>
+          <div class="panel-actions">
+            <a href="#" id="download-bg-jpeg" class="generate-btn">Сгенерировать и скачать</a>
+            <button type="button" id="reset-form-btn" class="reset-btn">Сбросить настройки</button>
+          </div>
         </aside>
       </div>
 
@@ -167,8 +168,6 @@
         </div>
         <div id="extracted-palette" class="extracted-palette"></div>
       </section>
-
-      <a href="#" id="download-bg-jpeg" class="generate-btn">Сгенерировать и скачать</a>
     </main>
     <script type="module" src="./src/generator.js"></script>
   </body>

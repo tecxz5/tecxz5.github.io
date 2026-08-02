@@ -2001,8 +2001,8 @@ function setupPortfolioDemos() {
             const u1 = ((col + 1) * atlasCell) / atlasCanvas.width;
             const v1 = ((row + 1) * atlasCell) / atlasCanvas.height;
             
-            const alpha = 0.22 + 0.16 * Math.sin(c * 0.5 + r * 0.5);
-            const rgb = [0.0, 1.0, 0.4];
+            const alpha = 0.3;
+            const rgb = [1.0, 1.0, 1.0];
 
             const x0 = x, y0 = y, x1 = x + gridCellSize, y1 = y + gridCellSize;
             vertices.push(
@@ -2216,4 +2216,3 @@ function setupPortfolioDemos() {
 
 setupKeyboardNav();
 setupPortfolioDemos();
-

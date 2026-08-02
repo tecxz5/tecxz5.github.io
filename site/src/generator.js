@@ -1048,6 +1048,10 @@ function initBackgroundDownloader() {
   }
 
   const setupIconsAndFonts = async () => {
+    // Блокируем скролл на время загрузки
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+
     try {
       const [_, icons] = await Promise.all([
         loadSymbolFonts(24),
@@ -1082,10 +1086,18 @@ function initBackgroundDownloader() {
       if (loader) {
         setTimeout(() => {
           loader.classList.add('is-hidden');
-        }, 120);
+          // Возвращаем скролл после скрытия лоадера
+          document.documentElement.style.overflow = '';
+          document.body.style.overflow = '';
+        }, 150);
+      } else {
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
       }
     }
   };
+
+
 
   setupIconsAndFonts();
 
