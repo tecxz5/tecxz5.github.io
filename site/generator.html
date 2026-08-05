@@ -81,15 +81,58 @@
             </label>
           </section>
           <section class="settings-group">
-            <h2>Размер и угол</h2>
+            <h2>Размер, угол и плотность</h2>
             <div class="settings-grid">
               <label>
-                <span>Размер сетки и иконок</span>
-                <input type="number" id="bg-cell" min="16" max="96" step="1" value="36">
+                <span>Размер иконок</span>
+                <input type="number" id="bg-cell" min="12" max="96" step="1" value="28">
               </label>
               <label>
-                <span>Угол</span>
+                <span>Угол поворота сетки</span>
                 <input type="number" id="bg-angle" min="-90" max="90" step="1" value="0">
+              </label>
+              <label class="full-width">
+                <div class="range-header">
+                  <span>Плотность сетки</span>
+                  <span id="bg-density-val" class="range-value">1.30x</span>
+                </div>
+                <input type="range" id="bg-density" min="0.5" max="2.5" step="0.05" value="1.3">
+              </label>
+            </div>
+          </section>
+          <section class="settings-group">
+            <h2>Расположение и вариативность</h2>
+            <div class="settings-grid">
+              <label>
+                <span>Режим расположения</span>
+                <select id="bg-layout">
+                  <option value="grid" selected>Сетка (Grid)</option>
+                  <option value="stagger">Сдвиг через ряд (Stagger)</option>
+                  <option value="scatter">Хаос / Разброс (Scatter)</option>
+                  <option value="hex">Соты (Hexagonal)</option>
+                  <option value="spiral">Спираль (Spiral)</option>
+                </select>
+              </label>
+              <label id="stagger-axis-label">
+                <span>Направление сдвига</span>
+                <select id="bg-stagger-axis">
+                  <option value="row" selected>По рядам (вертикально)</option>
+                  <option value="col">По колонкам (горизонтально)</option>
+                </select>
+              </label>
+              <label class="full-width">
+                <div class="range-header">
+                  <span>Случайный поворот иконок</span>
+                  <span id="bg-random-rotate-val" class="range-value">0°</span>
+                </div>
+                <input type="range" id="bg-random-rotate" min="0" max="180" step="5" value="0">
+              </label>
+              <label class="full-width">
+                <div class="range-header">
+                  <span>Разброс размера иконок</span>
+                  <span id="bg-random-scale-val" class="range-value">0.0</span>
+                </div>
+                <input type="range" id="bg-random-scale" min="0" max="0.8" step="0.05" value="0">
               </label>
             </div>
           </section>
@@ -107,29 +150,68 @@
             </div>
           </section>
           <section class="settings-group">
-            <h2>Цвета и прозрачность</h2>
+            <h2>Цвета и эффекты</h2>
             <div class="settings-grid">
               <label>
-                <span>Цвет фона (HEX)</span>
-                <div class="color-input">
-                  <div class="color-swatch" id="bg-swatch"></div>
-                  <input type="text" id="bg-color" value="#000000" maxlength="7" spellcheck="false">
-                </div>
+                <span>Тип фона</span>
+                <select id="bg-color-mode">
+                  <option value="solid" selected>Однотонный</option>
+                  <option value="gradient">Градиент</option>
+                </select>
               </label>
               <label>
-                <span>Цвет иконок (HEX)</span>
+                <span>Цвет фона 1 (HEX)</span>
+                <div class="color-input">
+                  <div class="color-swatch" id="bg-swatch"></div>
+                  <input type="text" id="bg-color" value="#000000" maxlength="9" spellcheck="false">
+                </div>
+              </label>
+              <label id="bg-color-2-label">
+                <span>Цвет фона 2 (HEX)</span>
+                <div class="color-input">
+                  <div class="color-swatch" id="bg2-swatch"></div>
+                  <input type="text" id="bg-color-2" value="#1a1a2e" maxlength="9" spellcheck="false">
+                </div>
+              </label>
+              <label id="bg-grad-angle-label">
+                <span>Угол градиента фона (градусы)</span>
+                <input type="number" id="bg-grad-angle" min="-180" max="180" step="5" value="45">
+              </label>
+              <label id="bg-grad-freq-label" class="full-width">
+                <div class="range-header">
+                  <span>Повторы градиента (Частота)</span>
+                  <span id="bg-grad-freq-val" class="range-value">1.0x</span>
+                </div>
+                <input type="range" id="bg-grad-freq" min="0.5" max="10" step="0.5" value="1.0">
+              </label>
+
+              <label class="full-width">
+                <span>Окраска иконок</span>
+                <select id="fg-color-mode">
+                  <option value="solid" selected>Однотонная</option>
+                  <option value="gradient">Градиент по холсту</option>
+                  <option value="palette">Разноцветные (Палитра)</option>
+                </select>
+              </label>
+              <label>
+                <span>Цвет иконок 1 (HEX)</span>
                 <div class="color-input">
                   <div class="color-swatch" id="fg-swatch"></div>
-                  <input type="text" id="fg-color" value="#ffffff" maxlength="7" spellcheck="false">
+                  <input type="text" id="fg-color" value="#ffffff4d" maxlength="9" spellcheck="false">
                 </div>
               </label>
-              <label class="full-width">
-                <div class="range-header">
-                  <span>Прозрачность</span>
-                  <span id="bg-opacity-val" class="range-value">0.30</span>
+              <label id="fg-color-2-label">
+                <span>Цвет иконок 2 (HEX)</span>
+                <div class="color-input">
+                  <div class="color-swatch" id="fg2-swatch"></div>
+                  <input type="text" id="fg-color-2" value="#cedb1a4d" maxlength="9" spellcheck="false">
                 </div>
-                <input type="range" id="bg-opacity" min="0.05" max="1" step="0.01" value="0.30">
               </label>
+              <label id="fg-grad-angle-label">
+                <span>Угол градиента иконок (градусы)</span>
+                <input type="number" id="fg-grad-angle" min="-180" max="180" step="5" value="45">
+              </label>
+
             </div>
           </section>
           <label>
@@ -156,8 +238,9 @@
           <button type="button" id="close-picker-btn" aria-label="Закрыть">&times;</button>
         </div>
         <div class="picker-area">
-          <canvas id="picker-sv" width="220" height="160"></canvas>
-          <canvas id="picker-hue-strip" width="24" height="160"></canvas>
+          <canvas id="picker-sv" width="180" height="160"></canvas>
+          <canvas id="picker-hue-strip" width="22" height="160"></canvas>
+          <canvas id="picker-alpha-strip" width="22" height="160"></canvas>
         </div>
         <div class="picker-actions">
           <button type="button" id="random-color-btn">Случайный</button>
