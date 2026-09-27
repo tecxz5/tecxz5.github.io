@@ -1,6 +1,7 @@
 import SlideJS from './vendor/slidejs.js';
 import t5Svg from './assets/icons/t5.svg?url';
 import copyrightSvg from './assets/icons/c.svg?url';
+import { BubblesEffect } from './bubbles.js';
 
 (function () {
   const icons = [t5Svg, copyrightSvg];
@@ -12,7 +13,7 @@ import copyrightSvg from './assets/icons/c.svg?url';
   document.head.appendChild(link);
 })();
 
-const canvas = document.querySelector('#scribble-bg');
+const canvas = document.querySelector('#bubbles-bg') || document.querySelector('#scribble-bg');
 const symbolsCanvas = document.querySelector('#symbols-bg');
 const loader = document.querySelector('#loader');
 const siteHeader = document.querySelector('#site-header');
@@ -21,7 +22,7 @@ const siteLogo = siteHeader.querySelector('.site-header__logo');
 const siteNavigation = siteHeader.querySelector('.site-header__nav');
 const presentationTrack = document.querySelector('#presentation-track');
 const siteFooter = document.querySelector('.site-footer');
-const ctx = canvas.getContext('2d');
+const bubblesEffect = new BubblesEffect(canvas);
 const symbolsGl = symbolsCanvas.getContext('webgl', {
   alpha: true,
   antialias: true,
@@ -33,8 +34,6 @@ let animationFrame;
 let backgroundReady = false;
 let loaderHidden = false;
 let loaderExitTimer;
-let lastSpawn = 0;
-let paths = [];
 let symbolGrid = {
   cell: 92,
   columns: 0,
@@ -77,17 +76,6 @@ const pageByHash = new Map([
 ]);
 
 const loaderExitDelay = 1500;
-const maxPaths = 72;
-const directions = [
-  [1, 0],
-  [0, 1],
-  [-1, 0],
-  [0, -1],
-  [1, 1],
-  [-1, 1],
-  [1, -1],
-  [-1, -1]
-];
 const materialSymbols = [
   'terminal',
   'code',
@@ -551,16 +539,8 @@ function smoothStep(progress) {
 }
 
 function resizeCanvas() {
-  const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
   const rect = canvas.parentElement.getBoundingClientRect();
-  const width = rect.width;
-  const height = rect.height;
-
-  canvas.width = Math.floor(width * pixelRatio);
-  canvas.height = Math.floor(height * pixelRatio);
-  canvas.style.width = `${width}px`;
-  canvas.style.height = `${height}px`;
-  ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+  bubblesEffect.resize(rect.width, rect.height);
 }
 
 function resizeSymbolsCanvas() {
@@ -580,118 +560,6 @@ function resizeSymbolsCanvas() {
   }
 }
 
-function createPath(now) {
-  const rect = canvas.parentElement.getBoundingClientRect();
-  const width = rect.width;
-  const height = rect.height;
-  const points = [
-    {
-      x: randomBetween(-width * 0.08, width * 1.08),
-      y: randomBetween(-height * 0.08, height * 1.08)
-    }
-  ];
-  const segmentCount = Math.floor(randomBetween(2, 6));
-  const segmentLength = randomBetween(34, 120);
-
-  for (let index = 0; index < segmentCount; index += 1) {
-    const previous = points[points.length - 1];
-    const [dx, dy] = randomItem(directions);
-    const length = segmentLength * randomBetween(0.65, 1.35);
-
-    points.push({
-      x: previous.x + dx * length,
-      y: previous.y + dy * length
-    });
-  }
-
-  return {
-    points,
-    bornAt: now,
-    life: randomBetween(6200, 10500),
-    delay: randomBetween(0, 900),
-    accent: Math.random() < 0.14,
-    width: Math.random() < 0.18 ? 1.4 : 1,
-    driftX: randomBetween(-7, 7),
-    driftY: randomBetween(-7, 7)
-  };
-}
-
-function getPathLength(points) {
-  return points.reduce((total, point, index) => {
-    if (index === 0) {
-      return 0;
-    }
-
-    const previous = points[index - 1];
-    return total + Math.hypot(point.x - previous.x, point.y - previous.y);
-  }, 0);
-}
-
-function drawPartialPath(path, progress, alpha) {
-  const points = path.points;
-  const totalLength = getPathLength(points);
-  let remainingLength = totalLength * progress;
-
-  ctx.beginPath();
-  ctx.moveTo(points[0].x, points[0].y);
-
-  for (let index = 1; index < points.length; index += 1) {
-    const previous = points[index - 1];
-    const current = points[index];
-    const segmentLength = Math.hypot(current.x - previous.x, current.y - previous.y);
-
-    if (remainingLength >= segmentLength) {
-      ctx.lineTo(current.x, current.y);
-      remainingLength -= segmentLength;
-      continue;
-    }
-
-    const segmentProgress = segmentLength === 0 ? 0 : remainingLength / segmentLength;
-    ctx.lineTo(
-      previous.x + (current.x - previous.x) * segmentProgress,
-      previous.y + (current.y - previous.y) * segmentProgress
-    );
-    break;
-  }
-
-  ctx.strokeStyle = path.accent
-    ? `rgba(206, 219, 26, ${alpha * 0.58})`
-    : `rgba(255, 255, 255, ${alpha * 0.12})`;
-  ctx.lineWidth = path.width;
-  ctx.lineCap = 'square';
-  ctx.lineJoin = 'miter';
-  ctx.stroke();
-}
-
-function drawPath(path, now) {
-  const elapsed = now - path.bornAt - path.delay;
-
-  if (elapsed <= 0) {
-    return true;
-  }
-
-  const progress = Math.min(elapsed / path.life, 1);
-  const drawIn = smoothStep(Math.min(progress / 0.28, 1));
-  const fadeOut = 1 - smoothStep(Math.max(0, (progress - 0.62) / 0.38));
-  const alpha = Math.max(0, fadeOut);
-  const driftProgress = smoothStep(progress);
-
-  ctx.save();
-  ctx.translate(path.driftX * driftProgress, path.driftY * driftProgress);
-  drawPartialPath(path, drawIn, alpha);
-  ctx.restore();
-
-  return progress < 1;
-}
-
-function spawnPaths(now, count) {
-  for (let index = 0; index < count; index += 1) {
-    paths.push(createPath(now));
-  }
-
-  paths = paths.slice(-maxPaths);
-}
-
 function draw(now) {
   if (document.hidden) {
     animationFrame = window.requestAnimationFrame(draw);
@@ -701,17 +569,7 @@ function draw(now) {
   const sectionIndex = getActiveSectionIndex();
 
   if (sectionIndex === 0) {
-    const width = canvas.parentElement.clientWidth;
-    const height = canvas.parentElement.clientHeight;
-
-    ctx.clearRect(0, 0, width, height);
-
-    if (now - lastSpawn > randomBetween(900, 1600)) {
-      spawnPaths(now, Math.floor(randomBetween(4, 9)));
-      lastSpawn = now;
-    }
-
-    paths = paths.filter((path) => drawPath(path, now));
+    bubblesEffect.updateAndDraw(now);
   }
 
   if (sectionIndex === 1) {
@@ -915,10 +773,7 @@ function startBackground() {
   window.cancelAnimationFrame(animationFrame);
   resizeCanvas();
   resizeSymbolsCanvas();
-  paths = [];
   resetSymbols();
-  lastSpawn = performance.now();
-  spawnPaths(lastSpawn, 18);
   animationFrame = window.requestAnimationFrame(draw);
 }
 
@@ -2216,3 +2071,16 @@ function setupPortfolioDemos() {
 
 setupKeyboardNav();
 setupPortfolioDemos();
+
+const topSection = document.querySelector('#top');
+if (topSection) {
+  topSection.addEventListener('pointermove', (event) => {
+    bubblesEffect.onPointerMove(event.clientX, event.clientY);
+  }, { passive: true });
+
+  topSection.addEventListener('pointerdown', (event) => {
+    bubblesEffect.onPointerDown(event.clientX, event.clientY);
+  }, { passive: true });
+}
+
+
