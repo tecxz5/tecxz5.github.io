@@ -27,6 +27,7 @@ const DEFAULT_CONFIG = {
   fg: '#ffffff4d',
   fg2: '#cedb1a4d',
   fgColorMode: 'solid',
+  opacity: 1.0,
   cell: 28,
   fontSize: 28,
   density: 1.3,
@@ -206,6 +207,25 @@ function applyDefaults() {
   updatePreview();
 }
 
+function triggerHaptic(pattern = 15) {
+  if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+    try {
+      navigator.vibrate(pattern);
+    } catch {
+      // Ignore if not permitted
+    }
+  }
+}
+
+let lastSliderHapticTime = 0;
+function tickSliderHaptic() {
+  const now = Date.now();
+  if (now - lastSliderHapticTime > 75) {
+    lastSliderHapticTime = now;
+    triggerHaptic(8);
+  }
+}
+
 function clamp(value, min, max) {
   return Math.min(max, Math.max(min, value));
 }
@@ -252,7 +272,7 @@ function rgbaToHex(r, g, b, a = 1.0) {
   const toHex = (v) => Math.min(255, Math.max(0, Math.round(v))).toString(16).padStart(2, '0');
   const alphaHex = toHex(a * 255);
   const rgbHex = `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-  return alphaHex === 'ff' ? rgbHex : `${rgbHex}${alphaHex}`;
+  return `${rgbHex}${alphaHex}`;
 }
 
 function rgbToHex(r, g, b) {
@@ -523,7 +543,7 @@ function readConfigFromForm() {
     fg: normalizeHex(text('fg-color', DEFAULT_CONFIG.fg), DEFAULT_CONFIG.fg),
     fg2: normalizeHex(text('fg-color-2', DEFAULT_CONFIG.fg2), DEFAULT_CONFIG.fg2),
     fgColorMode: text('fg-color-mode', DEFAULT_CONFIG.fgColorMode),
-    opacity: clamp(num('bg-opacity', DEFAULT_CONFIG.opacity), 0.05, 1),
+    opacity: Number.isFinite(num('bg-opacity', NaN)) ? clamp(num('bg-opacity', 1), 0.05, 1) : 1.0,
     cell: clamp(Math.round(num('bg-cell', DEFAULT_CONFIG.cell)), 12, 96),
     fontSize: clamp(Math.round(num('bg-cell', DEFAULT_CONFIG.fontSize)), 12, 96),
     density: clamp(num('bg-density', DEFAULT_CONFIG.density), 0.5, 2.5),
@@ -576,9 +596,18 @@ function initAdvancedPicker() {
       top = Math.max(12, Math.round(rect.top - boxHeight - 6));
     }
 
-    pickerBox.style.position = 'fixed';
-    pickerBox.style.top = `${top}px`;
-    pickerBox.style.left = `${left}px`;
+    if (window.innerWidth <= 640) {
+      pickerBox.style.position = 'fixed';
+      pickerBox.style.top = '50%';
+      pickerBox.style.left = '50%';
+      pickerBox.style.transform = 'translate(-50%, -50%)';
+      pickerBox.style.margin = '0';
+    } else {
+      pickerBox.style.transform = 'none';
+      pickerBox.style.position = 'fixed';
+      pickerBox.style.top = `${top}px`;
+      pickerBox.style.left = `${left}px`;
+    }
     pickerBox.classList.remove('hidden');
   }
 
@@ -600,6 +629,7 @@ function initAdvancedPicker() {
       swatch.style.cursor = 'pointer';
       swatch.addEventListener('click', (e) => {
         e.stopPropagation();
+        triggerHaptic(12);
         openPicker(inputId);
       });
     }
@@ -801,6 +831,7 @@ function initAdvancedPicker() {
 
   if (randomBtn instanceof HTMLButtonElement) {
     randomBtn.addEventListener('click', () => {
+      triggerHaptic(20);
       const h = Math.random() * 360;
       const s = 0.25 + Math.random() * 0.7;
       const v = 0.35 + Math.random() * 0.6;
@@ -889,6 +920,7 @@ function initIconStyleSelect() {
       };
       syncState();
       item.addEventListener('click', () => {
+        triggerHaptic(10);
         option.selected = !option.selected;
         syncState();
         select.dispatchEvent(new Event('change', { bubbles: true }));
@@ -1073,7 +1105,7 @@ function updateSwatches() {
     if (swatch instanceof HTMLElement) {
       const val = normalizeHex(input instanceof HTMLInputElement ? input.value : fallback, fallback);
       const [r, g, b, a] = hexToRgba(val, 1.0);
-      swatch.style.background = `rgba(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)}, ${a})`;
+      swatch.style.backgroundColor = `rgba(${Math.round(r * 255)}, ${Math.round(g * 255)}, ${Math.round(b * 255)}, ${a})`;
     }
   };
   setSwatch('bg-color', 'bg-swatch', DEFAULT_CONFIG.bg);
@@ -1143,18 +1175,21 @@ function renderBackgroundToCanvas(config, canvas, ctx, time = 0) {
     ctx.fillStyle = config.fg || '#ffffff4d';
   }
 
-  const baseOpacity = Number.isFinite(config.opacity) ? config.opacity : 0.3;
+  const baseOpacity = Number.isFinite(config.opacity) ? config.opacity : 1.0;
   ctx.globalAlpha = baseOpacity;
+
+  const fgRgba1 = hexToRgba(config.fg || '#ffffff4d', 1.0);
+  const iconAlpha = fgRgba1[3];
 
   let paletteColors = [];
   if (config.fgColorMode === 'palette') {
     paletteColors = [
-      config.fg || '#ffffff',
-      config.fg2 || '#cedb1a',
-      '#3a86ff',
-      '#ff006e',
-      '#8338ec',
-      '#ffbe0b'
+      config.fg || '#ffffff4d',
+      config.fg2 || '#cedb1a4d',
+      rgbaToHex(58, 134, 255, iconAlpha),
+      rgbaToHex(255, 0, 110, iconAlpha),
+      rgbaToHex(131, 56, 236, iconAlpha),
+      rgbaToHex(255, 190, 11, iconAlpha)
     ];
   }
 
@@ -1462,19 +1497,20 @@ function renderBackgroundWebGL(config, canvas, time = 0) {
   const rows = Math.ceil(diag / step) + 8;
   const rand = mulberry32(config.seed);
 
-  const baseOpacity = Number.isFinite(config.opacity) ? config.opacity : 0.3;
-  const fgRgba1 = hexToRgba(config.fg || '#ffffff', baseOpacity);
-  const fgRgba2 = hexToRgba(config.fg2 || '#cedb1a', baseOpacity);
+  const baseOpacity = Number.isFinite(config.opacity) ? config.opacity : 1.0;
+  const fgRgba1 = hexToRgba(config.fg || '#ffffff4d', 1.0);
+  const fgRgba2 = hexToRgba(config.fg2 || '#cedb1a4d', 1.0);
+  const iconAlpha = fgRgba1[3];
 
   let paletteRgbas = [];
   if (config.fgColorMode === 'palette') {
     paletteRgbas = [
-      hexToRgba(config.fg || '#ffffff', baseOpacity),
-      hexToRgba(config.fg2 || '#cedb1a', baseOpacity),
-      hexToRgba('#3a86ff', baseOpacity),
-      hexToRgba('#ff006e', baseOpacity),
-      hexToRgba('#8338ec', baseOpacity),
-      hexToRgba('#ffbe0b', baseOpacity)
+      fgRgba1,
+      fgRgba2,
+      hexToRgba('#3a86ff', iconAlpha),
+      hexToRgba('#ff006e', iconAlpha),
+      hexToRgba('#8338ec', iconAlpha),
+      hexToRgba('#ffbe0b', iconAlpha)
     ];
   }
 
@@ -1686,6 +1722,11 @@ function updatePreview() {
 
   drawPreviewFrame(cfg, canvas);
   updateSwatches();
+
+  const resBadge = document.getElementById('preview-res-badge');
+  if (resBadge) {
+    resBadge.textContent = `${currentConfig.width}×${currentConfig.height}`;
+  }
 }
 
 let previewRaf = 0;
@@ -1704,11 +1745,33 @@ function initBackgroundDownloader() {
 
   const loader = document.getElementById('generator-loader');
 
+  // ESC key navigation / close picker
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const pickerBox = document.getElementById('picker-box');
+      if (pickerBox && !pickerBox.classList.contains('hidden')) {
+        pickerBox.classList.add('hidden');
+        return;
+      }
+      const active = document.activeElement;
+      if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.tagName === 'SELECT')) {
+        active.blur();
+        return;
+      }
+      window.location.href = './';
+    }
+  });
+
   initAdvancedPicker();
   const form = document.getElementById(FORM_ID);
   if (form instanceof HTMLFormElement) {
     form.addEventListener('submit', (e) => e.preventDefault());
-    form.addEventListener('input', schedulePreviewUpdate);
+    form.addEventListener('input', (e) => {
+      if (e.target instanceof HTMLInputElement && e.target.type === 'range') {
+        tickSliderHaptic();
+      }
+      schedulePreviewUpdate();
+    });
     form.addEventListener('change', schedulePreviewUpdate);
     const seedInput = document.getElementById('bg-seed');
     if (seedInput instanceof HTMLInputElement) {
@@ -1722,7 +1785,10 @@ function initBackgroundDownloader() {
 
     const resetBtn = document.getElementById('reset-form-btn');
     if (resetBtn instanceof HTMLButtonElement) {
-      resetBtn.addEventListener('click', () => applyDefaults());
+      resetBtn.addEventListener('click', () => {
+        triggerHaptic([20, 30, 20]);
+        applyDefaults();
+      });
     }
   }
 
@@ -1778,6 +1844,14 @@ function initBackgroundDownloader() {
 
   link.addEventListener('click', async (event) => {
     event.preventDefault();
+    triggerHaptic([35, 30, 60]);
+    const viewport = document.querySelector('.preview-viewport');
+    if (viewport) {
+      viewport.classList.remove('is-vibrating');
+      void viewport.offsetWidth;
+      viewport.classList.add('is-vibrating');
+      setTimeout(() => viewport.classList.remove('is-vibrating'), 300);
+    }
     const original = link.textContent;
     link.textContent = 'Генерация...';
     link.style.pointerEvents = 'none';
@@ -1786,6 +1860,7 @@ function initBackgroundDownloader() {
       const config = readConfigFromForm();
       currentConfig = config;
       await generateBackgroundJpeg(config);
+      triggerHaptic(40);
       link.textContent = 'Сгенерировать ещё';
     } catch (error) {
       console.error(error);

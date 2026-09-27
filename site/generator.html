@@ -23,7 +23,7 @@
       rel="stylesheet"
     >
     <link rel="stylesheet" href="./src/generator.css">
-    <title>Генератор фона — tecxz5</title>
+    <title>Генератор фона</title>
   </head>
   <body>
     <!-- Экран загрузки и инициализации -->
@@ -35,8 +35,17 @@
     </div>
 
     <main class="generator-page">
-      <a class="generator-back" href="./">← назад</a>
-      <h1>Генератор фона</h1>
+      <header class="generator-header">
+        <a class="generator-header__back" href="./">
+          <span class="back-key">[ESC]</span>
+          <span class="back-text">НА ГЛАВНУЮ</span>
+        </a>
+      </header>
+
+      <div class="generator-title-wrap">
+        <h1 class="generator-title"><span class="title-accent">//</span> Генератор</h1>
+      </div>
+
       <div class="generator-layout">
         <form id="bg-generator-form" class="generator-form">
 
@@ -60,6 +69,7 @@
               </label>
             </div>
           </section>
+
           <section class="settings-group">
             <h2>Расположение и вариативность</h2>
             <div class="settings-grid">
@@ -96,19 +106,21 @@
               </label>
             </div>
           </section>
+
           <section class="settings-group">
-            <h2>Размер изображения</h2>
+            <h2>Габариты холста</h2>
             <div class="settings-grid">
               <label>
-                <span>Ширина</span>
+                <span>Ширина (px)</span>
                 <input type="number" id="bg-width" min="512" max="5000" step="1" value="2000">
               </label>
               <label>
-                <span>Высота</span>
+                <span>Высота (px)</span>
                 <input type="number" id="bg-height" min="512" max="5000" step="1" value="2000">
               </label>
             </div>
           </section>
+
           <section class="settings-group">
             <h2>Цвета и эффекты</h2>
             <div class="settings-grid">
@@ -171,18 +183,27 @@
                 <span>Угол градиента иконок (градусы)</span>
                 <input type="number" id="fg-grad-angle" min="-180" max="180" step="5" value="45">
               </label>
-
             </div>
           </section>
-          <label>
-            <span>Seed (опц.)</span>
-            <input type="number" id="bg-seed" min="1" step="1" placeholder="случайно">
-          </label>
+
+          <section class="settings-group settings-group--seed">
+            <h2>Seed</h2>
+            <label>
+              <span>Случайное зерно (опционально)</span>
+              <input type="number" id="bg-seed" min="1" step="1" placeholder="случайно при каждой генерации">
+            </label>
+          </section>
         </form>
+
         <aside class="tools-panel">
           <section class="preview-box">
-            <p>Превью</p>
-            <canvas id="bg-preview" width="150" height="150"></canvas>
+            <div class="preview-header">
+              <p>Превью</p>
+              <span id="preview-res-badge" class="preview-badge">2000×2000</span>
+            </div>
+            <div class="preview-viewport">
+              <canvas id="bg-preview" width="150" height="150"></canvas>
+            </div>
           </section>
           <div class="panel-actions">
             <a href="#" id="download-bg-jpeg" class="generate-btn">Сгенерировать и скачать</a>

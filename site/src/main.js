@@ -205,6 +205,12 @@ function setupFooterShape() {
   siteFooter.style.setProperty('--footer-right-height', `calc(var(--footer-corner-height) + max(36px, ${rightRiseVw}vw))`);
 }
 
+function triggerHaptic(pattern = 12) {
+  if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+    try { navigator.vibrate(pattern); } catch {}
+  }
+}
+
 function setupSectionLinks() {
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener('click', (event) => {
@@ -221,6 +227,7 @@ function setupSectionLinks() {
       }
 
       event.preventDefault();
+      triggerHaptic(12);
       setMenuOpen(false);
 
       const destination = pageByHash.get(hash);
@@ -305,7 +312,14 @@ function setMenuOpen(isOpen) {
   }
 
   siteHeader.classList.remove('is-menu-restoring');
+
+  const wasOpen = siteHeader.classList.contains('is-menu-open');
   siteHeader.classList.toggle('is-menu-open', isOpen);
+  const nowOpen = siteHeader.classList.contains('is-menu-open');
+
+  if (wasOpen !== nowOpen && window.innerWidth <= 720) {
+    triggerHaptic(18);
+  }
 
   if (window.innerWidth <= 720) {
     siteHeader.classList.remove('is-hovered');
@@ -871,6 +885,7 @@ function animatePresentationSlide(slideIndex, onComplete) {
 
   isScrollLocked = true;
   setHeaderCompact(true);
+  triggerHaptic(10);
   setPresentationSlide(clampedIndex, true);
   syncCurrentHash();
   window.clearTimeout(presentationSlideTimer);
@@ -1256,6 +1271,7 @@ function handleSectionBeforeSlide(prevIndex, nextIndex) {
   }
 
   if (!isProgrammaticSectionMove) {
+    triggerHaptic(12);
     beginSectionScroll(nextIndex);
     window.setTimeout(() => syncCurrentHash(), 16);
   }
@@ -1412,6 +1428,7 @@ function setupServiceModals() {
 
   function expandCard(card) {
     if (expandedCardState) return;
+    triggerHaptic(22);
 
     const badge = card.querySelector('.service-card__badge');
     const summary = card.querySelector('.service-card__summary');
@@ -1585,6 +1602,7 @@ function setupServiceModals() {
 
   function collapseCard(card) {
     if (!card || !expandedCardState) return;
+    triggerHaptic(14);
     var state = expandedCardState;
     var parent = state.parent;
     var nextSibling = state.nextSibling;
@@ -1970,6 +1988,7 @@ function setupPortfolioDemos() {
     musCliDemo.addEventListener('click', function() {
       if (isDownloading) return;
       isDownloading = true;
+      triggerHaptic(15);
 
       const dynamicLines = musCliBody.querySelectorAll('.cli-line.dynamic');
       dynamicLines.forEach(line => line.remove());
@@ -2009,6 +2028,7 @@ function setupPortfolioDemos() {
         if (!cmd || isSpinning) return;
 
         isSpinning = true;
+        triggerHaptic(20);
 
         const userMsgEl = document.createElement('div');
         userMsgEl.className = 'chat-msg user';
@@ -2042,6 +2062,11 @@ function setupPortfolioDemos() {
 
           spinMsgEl.querySelector('.chat-msg__text').innerHTML = outcomeText;
           chatMessages.scrollTop = chatMessages.scrollHeight;
+          if (isWin) {
+            triggerHaptic([40, 60, 40, 60, 80]);
+          } else {
+            triggerHaptic(8);
+          }
           isSpinning = false;
         }, 400);
       });
@@ -2055,6 +2080,7 @@ function setupPortfolioDemos() {
   if (portfolioGrid && portfolioDots.length > 0) {
     portfolioDots.forEach(function(dot) {
       dot.addEventListener('click', function() {
+        triggerHaptic(10);
         const index = parseInt(dot.getAttribute('data-index') || '0', 10);
         const cardWidth = portfolioGrid.clientWidth;
         portfolioGrid.scrollTo({
@@ -2105,6 +2131,7 @@ if (topSection) {
   }, { passive: true });
 
   topSection.addEventListener('pointerdown', (event) => {
+    triggerHaptic(6);
     bubblesEffect.onPointerDown(event.clientX, event.clientY);
   }, { passive: true });
 }
@@ -2118,6 +2145,7 @@ if (linksSection && lifeEffect) {
 
   linksSection.addEventListener('pointerdown', (event) => {
     if (event.target.closest('.site-footer__links a')) return;
+    triggerHaptic(6);
     const rect = linksSection.getBoundingClientRect();
     lifeEffect.onPointerDown(event.clientX - rect.left, event.clientY - rect.top);
   }, { passive: true });
