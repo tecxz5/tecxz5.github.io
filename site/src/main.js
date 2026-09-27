@@ -184,11 +184,22 @@ function setupHeaderAngles() {
 }
 
 function setupFooterShape() {
-  const topHeight = randomBetween(16, 22);
-  const bottomHeight = randomBetween(14, 20);
+  if (!siteFooter) return;
+  const cornerX = randomBetween(47, 53);
+  const cornerHeight = randomBetween(13, 17);
+  const leftAngle = randomBetween(6.5, 8.5);
+  const rightAngle = randomBetween(6.0, 8.0);
 
-  siteFooter.style.setProperty('--footer-top-height', `${topHeight.toFixed(1)}vh`);
-  siteFooter.style.setProperty('--footer-bottom-height', `${bottomHeight.toFixed(1)}vh`);
+  const leftTan = Math.tan((leftAngle * Math.PI) / 180);
+  const rightTan = Math.tan((rightAngle * Math.PI) / 180);
+
+  const leftRiseVw = (cornerX * leftTan).toFixed(2);
+  const rightRiseVw = ((100 - cornerX) * rightTan).toFixed(2);
+
+  siteFooter.style.setProperty('--footer-corner-x', `${cornerX.toFixed(1)}%`);
+  siteFooter.style.setProperty('--footer-corner-height', `calc(clamp(96px, ${cornerHeight.toFixed(1)}vh, 140px) + var(--safe-bottom, 0px))`);
+  siteFooter.style.setProperty('--footer-left-height', `calc(var(--footer-corner-height) + max(36px, ${leftRiseVw}vw))`);
+  siteFooter.style.setProperty('--footer-right-height', `calc(var(--footer-corner-height) + max(36px, ${rightRiseVw}vw))`);
 }
 
 function setupSectionLinks() {
