@@ -2,6 +2,7 @@ import SlideJS from './vendor/slidejs.js';
 import t5Svg from './assets/icons/t5.svg?url';
 import copyrightSvg from './assets/icons/c.svg?url';
 import { BubblesEffect } from './bubbles.js';
+import { LifeEffect } from './life.js';
 
 (function () {
   const icons = [t5Svg, copyrightSvg];
@@ -15,6 +16,7 @@ import { BubblesEffect } from './bubbles.js';
 
 const canvas = document.querySelector('#bubbles-bg') || document.querySelector('#scribble-bg');
 const symbolsCanvas = document.querySelector('#symbols-bg');
+const lifeCanvas = document.querySelector('#life-bg');
 const loader = document.querySelector('#loader');
 const siteHeader = document.querySelector('#site-header');
 const siteHeaderHoverZone = document.querySelector('#site-header-hover-zone');
@@ -23,6 +25,7 @@ const siteNavigation = siteHeader.querySelector('.site-header__nav');
 const presentationTrack = document.querySelector('#presentation-track');
 const siteFooter = document.querySelector('.site-footer');
 const bubblesEffect = new BubblesEffect(canvas);
+const lifeEffect = lifeCanvas ? new LifeEffect(lifeCanvas) : null;
 const symbolsGl = symbolsCanvas.getContext('webgl', {
   alpha: true,
   antialias: true,
@@ -554,6 +557,13 @@ function resizeCanvas() {
   bubblesEffect.resize(rect.width, rect.height);
 }
 
+function resizeLifeCanvas() {
+  if (lifeEffect && lifeCanvas) {
+    const rect = lifeCanvas.parentElement.getBoundingClientRect();
+    lifeEffect.resize(rect.width, rect.height);
+  }
+}
+
 function resizeSymbolsCanvas() {
   const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
   const width = presentationTrack.scrollWidth;
@@ -585,6 +595,10 @@ function draw(now) {
 
   if (sectionIndex === 1) {
     drawSymbols(now);
+  }
+
+  if (sectionIndex === 2 && lifeEffect) {
+    lifeEffect.updateAndDraw(now);
   }
 
   if (!backgroundReady) {
@@ -784,6 +798,7 @@ function startBackground() {
   window.cancelAnimationFrame(animationFrame);
   resizeCanvas();
   resizeSymbolsCanvas();
+  resizeLifeCanvas();
   resetSymbols();
   animationFrame = window.requestAnimationFrame(draw);
 }
@@ -2091,6 +2106,20 @@ if (topSection) {
 
   topSection.addEventListener('pointerdown', (event) => {
     bubblesEffect.onPointerDown(event.clientX, event.clientY);
+  }, { passive: true });
+}
+
+const linksSection = document.querySelector('#links');
+if (linksSection && lifeEffect) {
+  linksSection.addEventListener('pointermove', (event) => {
+    const rect = linksSection.getBoundingClientRect();
+    lifeEffect.onPointerMove(event.clientX - rect.left, event.clientY - rect.top);
+  }, { passive: true });
+
+  linksSection.addEventListener('pointerdown', (event) => {
+    if (event.target.closest('.site-footer__links a')) return;
+    const rect = linksSection.getBoundingClientRect();
+    lifeEffect.onPointerDown(event.clientX - rect.left, event.clientY - rect.top);
   }, { passive: true });
 }
 
