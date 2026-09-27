@@ -1,106 +1,372 @@
 /**
  * Conway's Game of Life
- * Cyberpunk pixel cellular automaton background effect
+ * Pure WebGL GPU Cellular Automaton
+ * Trae.ai pixel block grid aesthetic + Ping-Pong FBO
  */
+
+const QUAD_VERTEX_SHADER = `
+  attribute vec2 a_position;
+  varying vec2 vUv;
+
+  void main() {
+    vUv = (a_position + 1.0) * 0.5;
+    gl_Position = vec4(a_position, 0.0, 1.0);
+  }
+`;
+
+// 1. Simulation Shader (calculates Conway's Game of Life rules on FBO)
+const SIM_FRAGMENT_SHADER = `
+  precision highp float;
+  varying vec2 vUv;
+
+  uniform sampler2D u_texture;
+  uniform vec2 u_texelSize;
+  uniform vec2 u_mouse;
+  uniform float u_mouseActive;
+  uniform float u_time;
+
+  float rand(vec2 co) {
+    return fract(sin(dot(co.xy, vec2(12.9898, 78.233))) * 43758.5453);
+  }
+
+  void main() {
+    vec4 current = texture2D(u_texture, vUv);
+    float self = current.r > 0.5 ? 1.0 : 0.0;
+
+    // Toroidal 8-neighbor sample
+    float count = 0.0;
+    count += texture2D(u_texture, fract(vUv + vec2(-1.0, -1.0) * u_texelSize)).r > 0.5 ? 1.0 : 0.0;
+    count += texture2D(u_texture, fract(vUv + vec2( 0.0, -1.0) * u_texelSize)).r > 0.5 ? 1.0 : 0.0;
+    count += texture2D(u_texture, fract(vUv + vec2( 1.0, -1.0) * u_texelSize)).r > 0.5 ? 1.0 : 0.0;
+    count += texture2D(u_texture, fract(vUv + vec2(-1.0,  0.0) * u_texelSize)).r > 0.5 ? 1.0 : 0.0;
+    count += texture2D(u_texture, fract(vUv + vec2( 1.0,  0.0) * u_texelSize)).r > 0.5 ? 1.0 : 0.0;
+    count += texture2D(u_texture, fract(vUv + vec2(-1.0,  1.0) * u_texelSize)).r > 0.5 ? 1.0 : 0.0;
+    count += texture2D(u_texture, fract(vUv + vec2( 0.0,  1.0) * u_texelSize)).r > 0.5 ? 1.0 : 0.0;
+    count += texture2D(u_texture, fract(vUv + vec2( 1.0,  1.0) * u_texelSize)).r > 0.5 ? 1.0 : 0.0;
+
+    float nextState = 0.0;
+    float isBirth = 0.0;
+
+    if (self > 0.5) {
+      if (count == 2.0 || count == 3.0) {
+        nextState = 1.0;
+      }
+    } else {
+      if (count == 3.0) {
+        nextState = 1.0;
+        isBirth = 1.0;
+      }
+    }
+
+    // Brush input: seed life near cursor
+    if (u_mouseActive > 0.5) {
+      vec2 diff = (vUv - u_mouse) / u_texelSize;
+      if (dot(diff, diff) < 8.0) {
+        if (rand(vUv + u_time) > 0.3) {
+          nextState = 1.0;
+          isBirth = 1.0;
+        }
+      }
+    }
+
+    // Phosphor decay in G channel
+    float prevG = current.g;
+    float decay = nextState > 0.5 ? 1.0 : max(prevG - 0.065, 0.0);
+
+    gl_FragColor = vec4(nextState, decay, isBirth, 1.0);
+  }
+`;
+
+// 2. Display Shader (renders pixel grid blocks to screen)
+const DISPLAY_FRAGMENT_SHADER = `
+  precision highp float;
+  varying vec2 vUv;
+
+  uniform sampler2D u_stateTexture;
+  uniform vec2 u_resolution;
+  uniform vec2 u_gridSize;
+  uniform float u_pixelSize;
+  uniform float u_pixelGap;
+  uniform vec3 u_colorLime;
+  uniform vec3 u_colorWhite;
+  uniform vec3 u_bgColor;
+
+  void main() {
+    vec2 pixelCoord = vUv * u_resolution;
+    float totalSize = u_pixelSize + u_pixelGap;
+
+    vec2 blockId = floor(pixelCoord / totalSize);
+    vec2 blockPos = blockId * totalSize;
+    vec2 posInBlock = pixelCoord - blockPos;
+
+    // Check pixel block bounds vs grid size
+    if (blockId.x >= u_gridSize.x || blockId.y >= u_gridSize.y) {
+      gl_FragColor = vec4(u_bgColor, 1.0);
+      return;
+    }
+
+    // Empty gap between pixel blocks
+    if (posInBlock.x > u_pixelSize || posInBlock.y > u_pixelSize) {
+      gl_FragColor = vec4(u_bgColor, 1.0);
+      return;
+    }
+
+    // Sample state from cellular grid (flip Y for WebGL texture orientation)
+    vec2 cellUv = (blockId + 0.5) / u_gridSize;
+    vec4 state = texture2D(u_stateTexture, cellUv);
+
+    float alive = state.r;
+    float decay = state.g;
+    float isBirth = state.b;
+
+    vec3 finalColor = u_bgColor;
+
+    if (alive > 0.5) {
+      if (isBirth > 0.5) {
+        finalColor = u_colorWhite;
+      } else {
+        finalColor = u_colorLime;
+      }
+    } else if (decay > 0.02) {
+      finalColor = mix(u_bgColor, u_colorLime * 0.42, decay);
+    } else {
+      // Subtle background dot at center of empty pixel block
+      vec2 dCenter = abs(posInBlock - vec2(u_pixelSize * 0.5));
+      if (dCenter.x < 1.0 && dCenter.y < 1.0) {
+        finalColor = vec3(0.035);
+      }
+    }
+
+    gl_FragColor = vec4(finalColor, 1.0);
+  }
+`;
 
 export class LifeEffect {
   constructor(canvas) {
     this.canvas = canvas;
-    this.ctx = canvas?.getContext('2d', { alpha: false });
+    this.gl = null;
     this.width = 0;
     this.height = 0;
 
-    this.cellSize = 10;
-    this.cellGap = 2;
+    this.pixelSize = 10.0;
+    this.pixelGap = 2.0;
     this.cols = 0;
     this.rows = 0;
 
-    this.grid = null;
-    this.nextGrid = null;
-    this.ageGrid = null;
-    this.birthGrid = null;
+    this.fboA = null;
+    this.fboB = null;
+    this.textureA = null;
+    this.textureB = null;
+    this.currentFBO = 0; // 0: A is source, 1: B is source
 
-    this.stepInterval = 75; // ~13 gens per second
+    this.simProgram = null;
+    this.displayProgram = null;
+    this.quadBuffer = null;
+
+    this.stepInterval = 75; // ~13.3 gens per sec
     this.lastStepTime = 0;
     this.lastGliderTime = 0;
     this.activePatternIndex = 0;
 
-    this.mouse = { x: -1, y: -1, isDown: false, lastSpawnX: -1, lastSpawnY: -1 };
+    this.mouse = {
+      x: -1,
+      y: -1,
+      uvX: -1,
+      uvY: -1,
+      active: false,
+      activeTimer: 0
+    };
+
+    this.initGL();
+  }
+
+  createShader(type, source) {
+    const gl = this.gl;
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      console.error('LifeEffect shader compile error:', gl.getShaderInfoLog(shader));
+      gl.deleteShader(shader);
+      return null;
+    }
+    return shader;
+  }
+
+  createProgram(vsSource, fsSource) {
+    const gl = this.gl;
+    const vs = this.createShader(gl.VERTEX_SHADER, vsSource);
+    const fs = this.createShader(gl.FRAGMENT_SHADER, fsSource);
+    if (!vs || !fs) return null;
+
+    const program = gl.createProgram();
+    gl.attachShader(program, vs);
+    gl.attachShader(program, fs);
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      console.error('LifeEffect program link error:', gl.getProgramInfoLog(program));
+      gl.deleteProgram(program);
+      return null;
+    }
+    return program;
+  }
+
+  initGL() {
+    if (!this.canvas) return;
+    const gl = this.canvas.getContext('webgl', {
+      alpha: false,
+      antialias: false,
+      depth: false,
+      stencil: false,
+      preserveDrawingBuffer: false,
+      powerPreference: 'high-performance'
+    }) || this.canvas.getContext('experimental-webgl');
+
+    if (!gl) {
+      console.warn('WebGL is not available for LifeEffect');
+      return;
+    }
+    this.gl = gl;
+
+    // Fullscreen quad buffer
+    this.quadBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.quadBuffer);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array([
+        -1.0, -1.0,
+         1.0, -1.0,
+        -1.0,  1.0,
+        -1.0,  1.0,
+         1.0, -1.0,
+         1.0,  1.0
+      ]),
+      gl.STATIC_DRAW
+    );
+
+    // Compile programs
+    this.simProgram = this.createProgram(QUAD_VERTEX_SHADER, SIM_FRAGMENT_SHADER);
+    this.displayProgram = this.createProgram(QUAD_VERTEX_SHADER, DISPLAY_FRAGMENT_SHADER);
+  }
+
+  createFBO(width, height) {
+    const gl = this.gl;
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+
+    // Initial state data: seed lively colonies across the grid
+    const size = width * height * 4;
+    const data = new Uint8Array(size);
+    for (let i = 0; i < size; i += 4) {
+      const isAlive = Math.random() < 0.16 ? 255 : 0;
+      data[i] = isAlive;     // R: alive
+      data[i + 1] = isAlive; // G: decay
+      data[i + 2] = 0;       // B: isBirth
+      data[i + 3] = 255;     // A
+    }
+
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, width, height, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+
+    const fbo = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, texture, 0);
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.bindTexture(gl.TEXTURE_2D, null);
+
+    return { fbo, texture, data };
   }
 
   resize(width, height) {
-    if (!this.canvas || !this.ctx) return;
+    if (!this.gl) return;
     this.width = Math.floor(width);
     this.height = Math.floor(height);
 
-    // Responsive cell size
-    this.cellSize = this.width < 720 ? 8 : 10;
-    this.cellGap = 2;
+    this.pixelSize = this.width < 720 ? 8.0 : 10.0;
+    this.pixelGap = 2.0;
+    const totalSize = this.pixelSize + this.pixelGap;
+
+    this.cols = Math.max(1, Math.ceil(this.width / totalSize));
+    this.rows = Math.max(1, Math.ceil(this.height / totalSize));
 
     this.canvas.width = this.width;
     this.canvas.height = this.height;
 
-    this.cols = Math.ceil(this.width / this.cellSize);
-    this.rows = Math.ceil(this.height / this.cellSize);
+    const gl = this.gl;
+    if (this.fboA) gl.deleteFramebuffer(this.fboA);
+    if (this.fboB) gl.deleteFramebuffer(this.fboB);
+    if (this.textureA) gl.deleteTexture(this.textureA);
+    if (this.textureB) gl.deleteTexture(this.textureB);
 
-    const totalCells = this.cols * this.rows;
-    this.grid = new Uint8Array(totalCells);
-    this.nextGrid = new Uint8Array(totalCells);
-    this.ageGrid = new Float32Array(totalCells);
-    this.birthGrid = new Uint8Array(totalCells);
+    const a = this.createFBO(this.cols, this.rows);
+    const b = this.createFBO(this.cols, this.rows);
 
-    this.seedInitialLife();
+    this.fboA = a.fbo;
+    this.textureA = a.texture;
+    this.fboB = b.fbo;
+    this.textureB = b.texture;
+    this.currentFBO = 0;
+
+    // Seed some initial gliders in top half flying downwards
+    this.stampGlider(Math.floor(this.cols * 0.2), Math.floor(this.rows * 0.75), 1, -1);
+    this.stampGlider(Math.floor(this.cols * 0.75), Math.floor(this.rows * 0.7), -1, -1);
+    this.stampPulsar(Math.floor(this.cols * 0.5), Math.floor(this.rows * 0.65));
   }
 
-  seedInitialLife() {
-    if (!this.grid) return;
+  stampPixels(startX, startY, pattern) {
+    if (!this.gl || !this.textureA || !this.textureB) return;
+    const gl = this.gl;
+    const pHeight = pattern.length;
+    const pWidth = pattern[0].length;
 
-    // Sparse, organic cyber clusters
-    for (let i = 0; i < this.grid.length; i++) {
-      if (Math.random() < 0.12) {
-        this.grid[i] = 1;
-        this.ageGrid[i] = 1.0;
-      } else {
-        this.grid[i] = 0;
-        this.ageGrid[i] = 0;
+    const pData = new Uint8Array(pWidth * pHeight * 4);
+    for (let r = 0; r < pHeight; r++) {
+      for (let c = 0; c < pWidth; c++) {
+        const idx = (r * pWidth + c) * 4;
+        const val = pattern[r][c] ? 255 : 0;
+        pData[idx] = val;
+        pData[idx + 1] = val;
+        pData[idx + 2] = val;
+        pData[idx + 3] = 255;
       }
     }
 
-    // Spawn a few classic gliders and pulsars in the upper half
-    this.spawnGlider(Math.floor(this.cols * 0.2), Math.floor(this.rows * 0.15), 1, 1);
-    this.spawnGlider(Math.floor(this.cols * 0.7), Math.floor(this.rows * 0.25), -1, 1);
-    this.spawnPulsar(Math.floor(this.cols * 0.5), Math.floor(this.rows * 0.3));
+    const currentTexture = this.currentFBO === 0 ? this.textureA : this.textureB;
+    gl.bindTexture(gl.TEXTURE_2D, currentTexture);
+
+    const safeX = Math.max(0, Math.min(this.cols - pWidth, startX));
+    const safeY = Math.max(0, Math.min(this.rows - pHeight, startY));
+
+    gl.texSubImage2D(
+      gl.TEXTURE_2D,
+      0,
+      safeX,
+      safeY,
+      pWidth,
+      pHeight,
+      gl.RGBA,
+      gl.UNSIGNED_BYTE,
+      pData
+    );
+    gl.bindTexture(gl.TEXTURE_2D, null);
   }
 
-  spawnGlider(cx, cy, dirX = 1, dirY = 1) {
+  stampGlider(cx, cy, dirX = 1, dirY = 1) {
     let pattern = [
       [0, 1, 0],
       [0, 0, 1],
       [1, 1, 1]
     ];
-
-    if (dirX < 0) {
-      pattern = pattern.map(row => row.slice().reverse());
-    }
-    if (dirY < 0) {
-      pattern = pattern.slice().reverse();
-    }
-
-    for (let r = 0; r < 3; r++) {
-      for (let c = 0; c < 3; c++) {
-        const x = (cx + c + this.cols) % this.cols;
-        const y = (cy + r + this.rows) % this.rows;
-        const idx = y * this.cols + x;
-        this.grid[idx] = pattern[r][c];
-        if (pattern[r][c]) {
-          this.ageGrid[idx] = 1.0;
-          this.birthGrid[idx] = 1;
-        }
-      }
-    }
+    if (dirX < 0) pattern = pattern.map(row => row.slice().reverse());
+    if (dirY < 0) pattern = pattern.slice().reverse();
+    this.stampPixels(cx, cy, pattern);
   }
 
-  spawnPulsar(cx, cy) {
+  stampPulsar(cx, cy) {
     const pattern = [
       [0,0,1,1,1,0,0,0,1,1,1,0,0],
       [0,0,0,0,0,0,0,0,0,0,0,0,0],
@@ -116,225 +382,150 @@ export class LifeEffect {
       [0,0,0,0,0,0,0,0,0,0,0,0,0],
       [0,0,1,1,1,0,0,0,1,1,1,0,0]
     ];
-
-    for (let r = 0; r < pattern.length; r++) {
-      for (let c = 0; c < pattern[r].length; c++) {
-        if (!pattern[r][c]) continue;
-        const x = (cx - 6 + c + this.cols) % this.cols;
-        const y = (cy - 6 + r + this.rows) % this.rows;
-        const idx = y * this.cols + x;
-        this.grid[idx] = 1;
-        this.ageGrid[idx] = 1.0;
-      }
-    }
+    this.stampPixels(cx - 6, cy - 6, pattern);
   }
 
-  spawnLWSS(cx, cy) {
+  stampLWSS(cx, cy) {
     const pattern = [
       [0, 1, 0, 0, 1],
       [1, 0, 0, 0, 0],
       [1, 0, 0, 0, 1],
       [1, 1, 1, 1, 0]
     ];
-    for (let r = 0; r < 4; r++) {
-      for (let c = 0; c < 5; c++) {
-        const x = (cx + c + this.cols) % this.cols;
-        const y = (cy + r + this.rows) % this.rows;
-        const idx = y * this.cols + x;
-        this.grid[idx] = pattern[r][c];
-        if (pattern[r][c]) {
-          this.ageGrid[idx] = 1.0;
-          this.birthGrid[idx] = 1;
-        }
-      }
-    }
-  }
-
-  stepSimulation() {
-    const cols = this.cols;
-    const rows = this.rows;
-    const grid = this.grid;
-    const nextGrid = this.nextGrid;
-    const birthGrid = this.birthGrid;
-    let liveCount = 0;
-
-    for (let y = 0; y < rows; y++) {
-      const yCols = y * cols;
-      const upYCols = ((y - 1 + rows) % rows) * cols;
-      const downYCols = ((y + 1) % rows) * cols;
-
-      for (let x = 0; x < cols; x++) {
-        const leftX = (x - 1 + cols) % cols;
-        const rightX = (x + 1) % cols;
-
-        const neighbors =
-          grid[upYCols + leftX] +
-          grid[upYCols + x] +
-          grid[upYCols + rightX] +
-          grid[yCols + leftX] +
-          grid[yCols + rightX] +
-          grid[downYCols + leftX] +
-          grid[downYCols + x] +
-          grid[downYCols + rightX];
-
-        const idx = yCols + x;
-        const isAlive = grid[idx];
-
-        if (isAlive) {
-          if (neighbors === 2 || neighbors === 3) {
-            nextGrid[idx] = 1;
-            birthGrid[idx] = 0;
-            liveCount++;
-          } else {
-            nextGrid[idx] = 0;
-            birthGrid[idx] = 0;
-          }
-        } else {
-          if (neighbors === 3) {
-            nextGrid[idx] = 1;
-            birthGrid[idx] = 1; // newborn
-            liveCount++;
-          } else {
-            nextGrid[idx] = 0;
-            birthGrid[idx] = 0;
-          }
-        }
-      }
-    }
-
-    // Swap buffers
-    const temp = this.grid;
-    this.grid = this.nextGrid;
-    this.nextGrid = temp;
-
-    // Update phosphor age decay
-    const ageGrid = this.ageGrid;
-    const total = cols * rows;
-    for (let i = 0; i < total; i++) {
-      if (this.grid[i]) {
-        ageGrid[i] = Math.min(1.0, ageGrid[i] + 0.35);
-      } else {
-        ageGrid[i] = Math.max(0, ageGrid[i] - 0.06);
-      }
-    }
-
-    // Auto-revive if population drops too low
-    if (liveCount < (total * 0.015)) {
-      this.spawnGlider(Math.floor(Math.random() * cols), Math.floor(Math.random() * (rows * 0.4)));
-    }
+    this.stampPixels(cx - 2, cy - 2, pattern);
   }
 
   updateAndDraw(now) {
-    if (!this.ctx || this.width === 0 || this.height === 0) return;
+    if (!this.gl || !this.fboA || !this.fboB) return;
+    const gl = this.gl;
 
+    // Check if mouse activity has expired
+    if (this.mouse.active && now - this.mouse.activeTimer > 160) {
+      this.mouse.active = false;
+    }
+
+    // Autonomous glider injection
+    if (now - this.lastGliderTime > 6000) {
+      this.lastGliderTime = now;
+      const startX = Math.floor(Math.random() * (this.cols - 10));
+      const startY = Math.floor(Math.random() * (this.rows * 0.3));
+      this.stampGlider(startX, startY, Math.random() < 0.5 ? 1 : -1, 1);
+    }
+
+    // Step simulation on interval
     if (now - this.lastStepTime > this.stepInterval) {
-      this.stepSimulation();
+      this.stepSimulation(now);
       this.lastStepTime = now;
     }
 
-    // Autonomous glider flights from edges
-    if (now - this.lastGliderTime > 6000) {
-      this.lastGliderTime = now;
-      const startX = Math.floor(Math.random() * this.cols * 0.8);
-      const startY = Math.floor(Math.random() * this.rows * 0.3);
-      this.spawnGlider(startX, startY, Math.random() < 0.5 ? 1 : -1, 1);
-    }
+    // Render final display to screen canvas
+    this.renderDisplay();
+  }
 
-    const ctx = this.ctx;
-    const cols = this.cols;
-    const rows = this.rows;
-    const size = this.cellSize;
-    const innerSize = size - this.cellGap;
-    const grid = this.grid;
-    const ageGrid = this.ageGrid;
-    const birthGrid = this.birthGrid;
+  stepSimulation(now) {
+    const gl = this.gl;
+    const srcTexture = this.currentFBO === 0 ? this.textureA : this.textureB;
+    const destFBO = this.currentFBO === 0 ? this.fboB : this.fboA;
 
-    // 1. Deep black clear
-    ctx.fillStyle = '#000000';
-    ctx.fillRect(0, 0, this.width, this.height);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, destFBO);
+    gl.viewport(0, 0, this.cols, this.rows);
 
-    // 2. Subtle grid matrix dots
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.035)';
-    for (let y = 0; y < rows; y += 2) {
-      for (let x = 0; x < cols; x += 2) {
-        ctx.fillRect(x * size, y * size, 1, 1);
-      }
-    }
+    gl.useProgram(this.simProgram);
 
-    // 3. Render cells with glow & phosphor trail
-    for (let y = 0; y < rows; y++) {
-      const yCols = y * cols;
-      const py = y * size;
+    // Uniforms
+    const uTexture = gl.getUniformLocation(this.simProgram, 'u_texture');
+    const uTexelSize = gl.getUniformLocation(this.simProgram, 'u_texelSize');
+    const uMouse = gl.getUniformLocation(this.simProgram, 'u_mouse');
+    const uMouseActive = gl.getUniformLocation(this.simProgram, 'u_mouseActive');
+    const uTime = gl.getUniformLocation(this.simProgram, 'u_time');
 
-      for (let x = 0; x < cols; x++) {
-        const idx = yCols + x;
-        const alpha = ageGrid[idx];
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, srcTexture);
+    gl.uniform1i(uTexture, 0);
 
-        if (alpha > 0.01) {
-          const px = x * size;
-          const isAlive = grid[idx];
+    gl.uniform2f(uTexelSize, 1.0 / this.cols, 1.0 / this.rows);
+    gl.uniform2f(uMouse, this.mouse.uvX, 1.0 - this.mouse.uvY);
+    gl.uniform1f(uMouseActive, this.mouse.active ? 1.0 : 0.0);
+    gl.uniform1f(uTime, now * 0.001);
 
-          if (isAlive) {
-            if (birthGrid[idx]) {
-              // Newborn flash (whitish lime)
-              ctx.fillStyle = '#ffffff';
-            } else {
-              // Mature cell: neon lime #cedb1a
-              ctx.fillStyle = `rgba(206, 219, 26, ${0.45 + alpha * 0.55})`;
-            }
-          } else {
-            // Phosphor fade trail
-            ctx.fillStyle = `rgba(130, 145, 15, ${alpha * 0.35})`;
-          }
+    // Draw quad
+    const aPos = gl.getAttribLocation(this.simProgram, 'a_position');
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.quadBuffer);
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
 
-          ctx.fillRect(px, py, innerSize, innerSize);
-        }
-      }
-    }
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+    // Swap FBO
+    this.currentFBO = 1 - this.currentFBO;
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+  }
+
+  renderDisplay() {
+    const gl = this.gl;
+    const currentTexture = this.currentFBO === 0 ? this.textureA : this.textureB;
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.viewport(0, 0, this.width, this.height);
+
+    gl.useProgram(this.displayProgram);
+
+    const uStateTexture = gl.getUniformLocation(this.displayProgram, 'u_stateTexture');
+    const uResolution = gl.getUniformLocation(this.displayProgram, 'u_resolution');
+    const uGridSize = gl.getUniformLocation(this.displayProgram, 'u_gridSize');
+    const uPixelSize = gl.getUniformLocation(this.displayProgram, 'u_pixelSize');
+    const uPixelGap = gl.getUniformLocation(this.displayProgram, 'u_pixelGap');
+    const uColorLime = gl.getUniformLocation(this.displayProgram, 'u_colorLime');
+    const uColorWhite = gl.getUniformLocation(this.displayProgram, 'u_colorWhite');
+    const uBgColor = gl.getUniformLocation(this.displayProgram, 'u_bgColor');
+
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, currentTexture);
+    gl.uniform1i(uStateTexture, 0);
+
+    gl.uniform2f(uResolution, this.width, this.height);
+    gl.uniform2f(uGridSize, this.cols, this.rows);
+    gl.uniform1f(uPixelSize, this.pixelSize);
+    gl.uniform1f(uPixelGap, this.pixelGap);
+    gl.uniform3f(uColorLime, 0.808, 0.859, 0.102); // #cedb1a
+    gl.uniform3f(uColorWhite, 1.0, 1.0, 1.0);       // #ffffff
+    gl.uniform3f(uBgColor, 0.0, 0.0, 0.0);          // #000000
+
+    const aPos = gl.getAttribLocation(this.displayProgram, 'a_position');
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.quadBuffer);
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
   }
 
   onPointerMove(clientX, clientY) {
-    if (!this.grid) return;
-    const cx = Math.floor(clientX / this.cellSize);
-    const cy = Math.floor(clientY / this.cellSize);
-
-    if (cx === this.mouse.lastSpawnX && cy === this.mouse.lastSpawnY) return;
-    this.mouse.lastSpawnX = cx;
-    this.mouse.lastSpawnY = cy;
-
-    // Seed living cells in a 3x3 brush around cursor
-    for (let dy = -1; dy <= 1; dy++) {
-      for (let dx = -1; dx <= 1; dx++) {
-        if (Math.random() < 0.65) {
-          const nx = (cx + dx + this.cols) % this.cols;
-          const ny = (cy + dy + this.rows) % this.rows;
-          if (nx >= 0 && nx < this.cols && ny >= 0 && ny < this.rows) {
-            const idx = ny * this.cols + nx;
-            this.grid[idx] = 1;
-            this.ageGrid[idx] = 1.0;
-            this.birthGrid[idx] = 1;
-          }
-        }
-      }
-    }
+    if (this.width === 0 || this.height === 0) return;
+    this.mouse.x = clientX;
+    this.mouse.y = clientY;
+    this.mouse.uvX = clientX / this.width;
+    this.mouse.uvY = clientY / this.height;
+    this.mouse.active = true;
+    this.mouse.activeTimer = performance.now();
   }
 
   onPointerDown(clientX, clientY) {
-    if (!this.grid) return;
-    const cx = Math.floor(clientX / this.cellSize);
-    const cy = Math.floor(clientY / this.cellSize);
+    if (this.cols === 0 || this.rows === 0) return;
+    const totalSize = this.pixelSize + this.pixelGap;
+    const cx = Math.floor(clientX / totalSize);
+    const cy = Math.floor((this.height - clientY) / totalSize);
 
-    // Cycle through fun patterns on clicks
     const patterns = ['glider', 'pulsar', 'lwss'];
-    const pattern = patterns[this.activePatternIndex % patterns.length];
+    const p = patterns[this.activePatternIndex % patterns.length];
     this.activePatternIndex++;
 
-    if (pattern === 'glider') {
-      this.spawnGlider(cx, cy, Math.random() < 0.5 ? 1 : -1, 1);
-    } else if (pattern === 'pulsar') {
-      this.spawnPulsar(cx, cy);
+    if (p === 'glider') {
+      this.stampGlider(cx, cy, Math.random() < 0.5 ? 1 : -1, 1);
+    } else if (p === 'pulsar') {
+      this.stampPulsar(cx, cy);
     } else {
-      this.spawnLWSS(cx, cy);
+      this.stampLWSS(cx, cy);
     }
   }
 }
