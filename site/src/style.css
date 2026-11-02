@@ -25,6 +25,42 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Martian Mono";
+  src: local("Martian Mono"), local("MartianMono-Regular"),
+       url("./assets/fonts/MartianMono-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Martian Mono";
+  src: local("Martian Mono SemiBold"), local("MartianMono-SemiBold"),
+       url("./assets/fonts/MartianMono-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Martian Mono";
+  src: local("Martian Mono Bold"), local("MartianMono-Bold"),
+       url("./assets/fonts/MartianMono-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Martian Mono";
+  src: local("Martian Mono ExtraBold"), local("MartianMono-ExtraBold"),
+       url("./assets/fonts/MartianMono-ExtraBold.ttf") format("truetype");
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
@@ -469,6 +505,294 @@ body.is-track-instant .presentation-track {
   text-align: center;
 }
 
+/* About Grid & Cards */
+.about-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 16px;
+  width: min(840px, 100%);
+  align-items: stretch;
+}
+
+.about-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  border: 2px solid #fff;
+  background: #000 !important;
+  backdrop-filter: blur(4px);
+  color: #fff;
+  box-sizing: border-box;
+  text-align: left;
+  transition: border-color 0.3s ease, transform 0.3s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .about-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-4px);
+  }
+}
+
+.about-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.about-card__badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: var(--accent);
+  color: #000;
+  font-family: "Fira Mono", monospace;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.about-card__badge--lastfm {
+  background: #b90000;
+  color: #fff;
+}
+
+.lastfm-badge-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lastfm-scrobbles {
+  font-family: "Fira Mono", monospace;
+  font-size: 11px;
+  color: #888;
+}
+
+.about-card__title {
+  margin: 0 0 10px 0;
+  font-family: "Martian Mono", monospace;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.about-card__desc {
+  margin: 0 0 16px 0;
+  font-family: "Fira Mono", monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #ccc;
+}
+
+.about-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.about-tag {
+  display: inline-block;
+  padding: 3px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.04);
+  font-family: "Fira Mono", monospace;
+  font-size: 11px;
+  color: #aaa;
+}
+
+/* Last.fm Live Status Widget */
+.lastfm-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lastfm-status__label {
+  font-family: "Fira Mono", monospace;
+  font-size: 11px;
+  color: var(--accent);
+  text-transform: lowercase;
+}
+
+.about-card--lastfm.is-unavailable .lastfm-status__label {
+  color: #ff5555;
+}
+
+.lastfm-eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+
+.lastfm-eq span {
+  display: block;
+  width: 2px;
+  height: 100%;
+  background: var(--accent);
+  animation: lastfm-bar 0.9s ease infinite alternate;
+}
+
+.lastfm-eq span:nth-child(1) { animation-delay: 0.1s; }
+.lastfm-eq span:nth-child(2) { animation-delay: 0.4s; }
+.lastfm-eq span:nth-child(3) { animation-delay: 0.25s; }
+
+.about-card--lastfm:not(.is-playing) .lastfm-eq span {
+  animation: none;
+  height: 3px;
+  background: #666;
+}
+
+.about-card--lastfm.is-unavailable .lastfm-eq {
+  display: none;
+}
+
+@keyframes lastfm-bar {
+  0% { height: 2px; }
+  100% { height: 12px; }
+}
+
+.about-card--lastfm {
+  display: flex;
+  flex-direction: column;
+}
+
+.about-card--lastfm .lastfm-body {
+  margin: auto 0;
+}
+
+.lastfm-body {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.about-card--lastfm:hover .lastfm-body {
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.lastfm-cover {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  background: #111;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  overflow: hidden;
+}
+
+.lastfm-cover__placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  color: #555;
+  user-select: none;
+}
+
+.lastfm-cover__img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
+
+.lastfm-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.lastfm-track {
+  font-family: "Martian Mono", monospace;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #fff;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  transition: color 0.2s ease;
+}
+
+.lastfm-track:hover {
+  color: var(--accent);
+}
+
+.lastfm-artist {
+  margin: 0;
+  font-family: "Fira Mono", monospace;
+  font-size: 12px;
+  color: #bbb;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lastfm-album {
+  margin: 0;
+  font-family: "Fira Mono", monospace;
+  font-size: 11px;
+  color: #777;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.about-card__footer {
+  margin-top: auto;
+}
+
+.lastfm-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  font-family: "Fira Mono", monospace;
+  font-size: 12px;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.lastfm-link:hover {
+  background: var(--accent);
+  color: #000;
+  border-color: var(--accent);
+}
+
+.lastfm-link .material-symbols-outlined {
+  font-size: 14px;
+}
+
 .service-grid {
   position: relative;
   z-index: 1;
@@ -543,9 +867,10 @@ body.is-track-instant .presentation-track {
 
 .portfolio-card__title {
   margin: 0 0 6px 0;
-  font-family: "Pixeloid Mono", monospace;
-  font-size: 17px;
-  font-weight: 400;
+  font-family: "Martian Mono", monospace;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: #fff;
 }
 
@@ -824,8 +1149,10 @@ body.is-track-instant .presentation-track {
 
 .service-card__details-title {
   margin: 0 0 20px;
-  font-family: "Pixeloid Mono", monospace;
-  font-size: clamp(20px, 3.6vw, 28px);
+  font-family: "Martian Mono", monospace;
+  font-size: clamp(19px, 3.4vw, 26px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
   color: #fff;
   text-align: left;
   border-bottom: 1px solid rgba(255, 255, 255, 0.15);
@@ -890,7 +1217,10 @@ body.is-track-instant .presentation-track {
 
 .service-card__item h3 {
   margin: 0 0 8px;
-  font-size: 18px;
+  font-family: "Martian Mono", monospace;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--accent);
 }
 
@@ -907,8 +1237,50 @@ body.is-track-instant .presentation-track {
   background: rgba(206, 219, 26, 0.15);
   border: 1px solid var(--accent);
   color: var(--accent);
-  font-family: "Pixeloid Mono", monospace;
-  font-size: 15px;
+  font-family: "Martian Mono", monospace;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Service Card Contract Block */
+.service-card__contract {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid rgba(206, 219, 26, 0.35);
+  background: rgba(206, 219, 26, 0.05);
+  text-align: left;
+}
+
+.service-card__contract .material-symbols-outlined {
+  color: var(--accent);
+  font-size: 22px;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+.service-card__contract-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.service-card__contract-title {
+  font-family: "Martian Mono", monospace;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+}
+
+.service-card__contract p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #ccc;
 }
 
 .service-card__footer {
@@ -1002,7 +1374,10 @@ body.is-track-instant .presentation-track {
 
 .service-modal__item h3 {
   margin: 0 0 8px;
-  font-size: 18px;
+  font-family: "Martian Mono", monospace;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
   color: var(--accent);
 }
 
@@ -1019,8 +1394,10 @@ body.is-track-instant .presentation-track {
   background: rgba(206, 219, 26, 0.15);
   border: 1px solid var(--accent);
   color: var(--accent);
-  font-family: "Pixeloid Mono", monospace;
-  font-size: 15px;
+  font-family: "Martian Mono", monospace;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .service-modal__footer {
@@ -1510,6 +1887,17 @@ body.is-loaded .loader__section--top {
 
   .presentation-slide__body {
     width: min(360px, 100%);
+  }
+
+  /* About Grid Mobile */
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    width: min(340px, calc(100vw - 32px));
+  }
+
+  .about-card {
+    padding: 14px;
   }
 
   .service-grid {

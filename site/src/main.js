@@ -595,23 +595,43 @@ function resizeSymbolsCanvas() {
   }
 }
 
+const initialDestination = pageByHash.get(window.location.hash);
+const startSectionIndex = initialDestination ? initialDestination.section - 1 : 0;
+const visibleSections = new Set([startSectionIndex]);
+
+function markSectionTransitionStart(prevIndex, nextIndex) {
+  if (prevIndex !== undefined) visibleSections.add(prevIndex);
+  if (nextIndex !== undefined) visibleSections.add(nextIndex);
+}
+
+function markSectionTransitionEnd(prevIndex, nextIndex) {
+  visibleSections.clear();
+  const current = nextIndex !== undefined ? nextIndex : getActiveSectionIndex();
+  visibleSections.add(current);
+}
+
+function isSectionVisible(index) {
+  if (visibleSections.size === 0) {
+    return getActiveSectionIndex() === index;
+  }
+  return visibleSections.has(index);
+}
+
 function draw(now) {
   if (document.hidden) {
     animationFrame = window.requestAnimationFrame(draw);
     return;
   }
 
-  const sectionIndex = getActiveSectionIndex();
-
-  if (sectionIndex === 0) {
+  if (isSectionVisible(0)) {
     bubblesEffect.updateAndDraw(now);
   }
 
-  if (sectionIndex === 1) {
+  if (isSectionVisible(1)) {
     drawSymbols(now);
   }
 
-  if (sectionIndex === 2 && lifeEffect) {
+  if (isSectionVisible(2) && lifeEffect) {
     lifeEffect.updateAndDraw(now);
   }
 
@@ -929,6 +949,7 @@ function finishNavigation() {
   isLinkJumpAnimating = false;
   pendingNavHash = null;
   unlockScrollStep();
+  markSectionTransitionEnd(undefined, getActiveSectionIndex());
 }
 
 function withProgrammaticSectionMove(action) {
@@ -951,6 +972,8 @@ function moveToSection(sectionNumber) {
   if (sectionSlider.activeIndex === destinationIndex) {
     return false;
   }
+
+  markSectionTransitionStart(sectionSlider.activeIndex, destinationIndex);
 
   withProgrammaticSectionMove(() => {
     sectionSlider.slideTo(destinationIndex);
@@ -1276,6 +1299,7 @@ function handleSectionBeforeSlide(prevIndex, nextIndex) {
     window.setTimeout(() => syncCurrentHash(), 16);
   }
 
+  markSectionTransitionStart(prevIndex, nextIndex);
   return undefined;
 }
 
@@ -1293,6 +1317,7 @@ function setupSmoothScroll() {
     loop: false,
     beforeSlide: (prevIndex, nextIndex) => handleSectionBeforeSlide(prevIndex, nextIndex),
     afterSlide: (prevIndex, nextIndex) => {
+      markSectionTransitionEnd(prevIndex, nextIndex);
       const direction = nextIndex > prevIndex ? 'down' : 'up';
 
       updateHeaderForSection(nextIndex);
@@ -1347,6 +1372,7 @@ function setupSmoothScroll() {
 
   updateHeaderForSection(startSection);
   setCurrentNavLink(resolveCurrentHash());
+  markSectionTransitionEnd(undefined, getActiveSectionIndex());
 }
 
 window.addEventListener('resize', () => {
@@ -1392,6 +1418,7 @@ window.addEventListener('pageshow', (event) => {
   setPresentationSlide(activeSlideIndex, false);
   updateHeaderForSection(getActiveSectionIndex());
   setCurrentNavLink(resolveCurrentHash());
+  markSectionTransitionEnd(undefined, getActiveSectionIndex());
 
   const destination = pageByHash.get(window.location.hash);
 
@@ -1927,7 +1954,11 @@ function setupPortfolioDemos() {
       function drawMiniCanvas(now) {
         if (!miniCanvas || !gl) return;
 
-        if (document.hidden || getActiveSectionIndex() !== 1 || activeSlideIndex !== 2) {
+        if (
+          document.hidden ||
+          !isSectionVisible(1) ||
+          activeSlideIndex !== 2
+        ) {
           requestAnimationFrame(drawMiniCanvas);
           return;
         }
@@ -2123,6 +2154,171 @@ function setupPortfolioDemos() {
 
 setupKeyboardNav();
 setupPortfolioDemos();
+setupLastFmWidget();
+
+function setupLastFmWidget() {
+  const card = document.getElementById('lastfm-card');
+  if (!card) return;
+
+  const statusLabel = document.getElementById('lastfm-status-label');
+  const trackEl = document.getElementById('lastfm-track');
+  const artistEl = document.getElementById('lastfm-artist');
+  const albumEl = document.getElementById('lastfm-album');
+  const coverImg = document.getElementById('lastfm-cover-img');
+  const coverPlaceholder = document.getElementById('lastfm-cover-placeholder');
+  const scrobblesEl = document.getElementById('lastfm-scrobbles');
+  const fallbackText = 'у тебя ласт.фм недоступен';
+
+  function formatTimeAgo(uts) {
+    if (!uts) return 'недавно';
+    const diffSec = Math.max(0, Math.floor(Date.now() / 1000 - Number(uts)));
+    if (diffSec < 60) return 'только что';
+    const diffMin = Math.floor(diffSec / 60);
+    if (diffMin < 60) return `${diffMin} мин назад`;
+    const diffHours = Math.floor(diffMin / 60);
+    if (diffHours < 24) return `${diffHours} ч назад`;
+    const diffDays = Math.floor(diffHours / 24);
+    if (diffDays === 1) return 'вчера';
+    if (diffDays < 7) return `${diffDays} дн назад`;
+    return 'недавно';
+  }
+
+  function showFallback() {
+    card.classList.add('is-unavailable');
+    card.classList.remove('is-playing');
+    if (statusLabel) statusLabel.textContent = 'офлайн';
+    if (trackEl) {
+      trackEl.textContent = fallbackText;
+      trackEl.href = 'https://www.last.fm/user/tecxz5';
+      trackEl.title = fallbackText;
+    }
+    if (artistEl) {
+      artistEl.textContent = 'не удалось получить данные';
+      artistEl.title = '';
+    }
+    if (albumEl) {
+      albumEl.textContent = '';
+      albumEl.style.display = 'none';
+    }
+    if (coverImg) {
+      coverImg.removeAttribute('src');
+      coverImg.style.display = 'none';
+    }
+    if (coverPlaceholder) {
+      coverPlaceholder.style.display = 'flex';
+    }
+    if (scrobblesEl) {
+      scrobblesEl.style.display = 'none';
+    }
+  }
+
+  async function fetchLastFm() {
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 4000);
+
+    try {
+      const apiKey = 'b25b959554ed76058ac220b7b2e0a026';
+      const username = 'tecxz5';
+      const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${encodeURIComponent(username)}&api_key=${apiKey}&format=json&limit=1`;
+
+      const response = await fetch(url, { signal: controller.signal });
+      window.clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        showFallback();
+        return;
+      }
+
+      const data = await response.json();
+      if (data?.error) {
+        showFallback();
+        return;
+      }
+
+      const rawTracks = data?.recenttracks?.track;
+      const track = Array.isArray(rawTracks) ? rawTracks[0] : rawTracks;
+
+      if (!track) {
+        showFallback();
+        return;
+      }
+
+      const isNowPlaying = track['@attr']?.nowplaying === 'true';
+      const trackName = (track.name || 'Без названия').trim();
+      const artistName = (track.artist?.['#text'] || track.artist?.name || 'Неизвестный исполнитель').trim();
+      const albumName = (track.album?.['#text'] || '').trim();
+      const trackUrl = track.url || `https://www.last.fm/user/${username}`;
+      const images = track.image || [];
+      const coverUrl = images.find((img) => img.size === 'extralarge')?.['#text']
+        || images.find((img) => img.size === 'large')?.['#text']
+        || images.find((img) => img.size === 'medium')?.['#text']
+        || images[0]?.['#text']
+        || '';
+      const totalScrobbles = data?.recenttracks?.['@attr']?.total;
+
+      card.classList.remove('is-unavailable');
+      card.classList.toggle('is-playing', isNowPlaying);
+
+      if (statusLabel) {
+        if (isNowPlaying) {
+          statusLabel.textContent = 'сейчас играет';
+        } else if (track.date?.uts) {
+          statusLabel.textContent = `был в сети: ${formatTimeAgo(track.date.uts)}`;
+        } else {
+          statusLabel.textContent = 'последний трек';
+        }
+      }
+
+      if (trackEl) {
+        trackEl.textContent = trackName;
+        trackEl.href = trackUrl;
+        trackEl.title = trackName;
+      }
+      if (artistEl) {
+        artistEl.textContent = artistName;
+        artistEl.title = artistName;
+      }
+      if (albumEl) {
+        if (albumName && albumName.toLowerCase() !== trackName.toLowerCase()) {
+          albumEl.textContent = albumName;
+          albumEl.title = albumName;
+          albumEl.style.display = 'block';
+        } else {
+          albumEl.textContent = '';
+          albumEl.style.display = 'none';
+        }
+      }
+      if (scrobblesEl && totalScrobbles) {
+        const formattedTotal = Number(totalScrobbles).toLocaleString('ru-RU');
+        scrobblesEl.textContent = `${formattedTotal} треков`;
+        scrobblesEl.style.display = 'inline-block';
+      }
+      if (coverImg) {
+        if (coverUrl && !coverUrl.includes('2a96cbd8b46e442fc41c2b86b821562f')) {
+          coverImg.onload = () => {
+            coverImg.style.display = 'block';
+            if (coverPlaceholder) coverPlaceholder.style.display = 'none';
+          };
+          coverImg.onerror = () => {
+            coverImg.style.display = 'none';
+            if (coverPlaceholder) coverPlaceholder.style.display = 'flex';
+          };
+          coverImg.src = coverUrl;
+        } else {
+          coverImg.removeAttribute('src');
+          coverImg.style.display = 'none';
+          if (coverPlaceholder) coverPlaceholder.style.display = 'flex';
+        }
+      }
+    } catch {
+      showFallback();
+    }
+  }
+
+  fetchLastFm();
+  window.addEventListener('focus', fetchLastFm);
+  window.setInterval(fetchLastFm, 30000);
+}
 
 const topSection = document.querySelector('#top');
 if (topSection) {

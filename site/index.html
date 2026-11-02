@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-      href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Fira+Mono:wght@500&family=Martian+Mono:wght@400;600;700;800&display=swap"
       rel="stylesheet"
     >
     <link
@@ -56,7 +56,60 @@
             <section class="presentation-slide" id="about">
               <h2>О себе</h2>
               <div class="presentation-slide__body">
-                <p>потом распишу</p>
+                <div class="about-grid">
+                  <!-- Карточка: Био -->
+                  <article class="about-card about-card--bio">
+                    <div class="about-card__header">
+                      <span class="about-card__badge">Разработчик</span>
+                    </div>
+                    <div class="about-card__content">
+                      <h3 class="about-card__title">Привет, я tecxz5</h3>
+                      <p class="about-card__desc">
+                        Пишу ботов, веб-приложения и шейдерную графику. Предпочитаю чистый код, высокую производительность и простые интерфейсы без лишних зависимостей.
+                      </p>
+                      <div class="about-card__tags">
+                        <span class="about-tag">Python</span>
+                        <span class="about-tag">JavaScript</span>
+                        <span class="about-tag">WebGL</span>
+                        <span class="about-tag">Node.js</span>
+                        <span class="about-tag">Linux</span>
+                      </div>
+                    </div>
+                  </article>
+
+                  <!-- Карточка: Last.fm -->
+                  <article class="about-card about-card--lastfm" id="lastfm-card">
+                    <div class="about-card__header">
+                      <div class="lastfm-badge-wrap">
+                        <span class="about-card__badge about-card__badge--lastfm">LAST.FM</span>
+                        <span class="lastfm-scrobbles" id="lastfm-scrobbles" style="display: none;"></span>
+                      </div>
+                      <div class="lastfm-status" id="lastfm-status">
+                        <span class="lastfm-eq" aria-hidden="true">
+                          <span></span><span></span><span></span>
+                        </span>
+                        <span class="lastfm-status__label" id="lastfm-status-label">загрузка...</span>
+                      </div>
+                    </div>
+                    <div class="lastfm-body">
+                      <div class="lastfm-cover" id="lastfm-cover">
+                        <span class="material-symbols-outlined lastfm-cover__placeholder" id="lastfm-cover-placeholder" aria-hidden="true">music_note</span>
+                        <img class="lastfm-cover__img" id="lastfm-cover-img" src="" alt="Обложка трека" style="display: none;">
+                      </div>
+                      <div class="lastfm-info">
+                        <a href="https://www.last.fm/user/tecxz5" target="_blank" rel="noopener" class="lastfm-track" id="lastfm-track">Ожидание данных...</a>
+                        <p class="lastfm-artist" id="lastfm-artist">—</p>
+                        <p class="lastfm-album" id="lastfm-album" style="display: none;"></p>
+                      </div>
+                    </div>
+                    <div class="about-card__footer">
+                      <a href="https://www.last.fm/user/tecxz5" target="_blank" rel="noopener" class="lastfm-link">
+                        <span>Профиль tecxz5</span>
+                        <span class="material-symbols-outlined">north_east</span>
+                      </a>
+                    </div>
+                  </article>
+                </div>
               </div>
             </section>
             <section class="presentation-slide" id="services">
@@ -70,21 +123,28 @@
                       <span class="service-card__badge">Скрипты</span>
                     </div>
                     <div class="service-card__summary">
-                      <p class="service-card__sub">боты/плагины</p>
+                      <p class="service-card__sub">боты / скрипты · договор</p>
                     </div>
                     <div class="service-card__details" aria-hidden="true">
                       <h2 class="service-card__details-title">Подробности об услугах</h2>
-                      <div class="service-card__notice"><span class="material-symbols-outlined">warning</span> Ратки, стилеры и подобное — мимо</div>
+                      <div class="service-card__notice"><span class="material-symbols-outlined">warning</span> Ратки, стилеры и вредоносный софт не пишу</div>
                       <div class="service-card__items">
                         <div class="service-card__item">
-                          <h3>Telegram & Discord Боты</h3>
-                          <p>Напишу бота любой сложности, если надо - подниму</p>
-                          <div class="service-card__price-tag">300 – 5000 р.</div>
+                          <h3>Telegram и Discord боты</h3>
+                          <p>Боты для автоматизации, интеграции с внешними API и приема платежей. Настройка сервера и деплой.</p>
+                          <div class="service-card__price-tag">от 1 000 ₽ · по договору</div>
                         </div>
                         <div class="service-card__item">
-                          <h3>Плагины для exteraGram</h3>
-                          <p>Напишу плагин для extera/ayu</p>
-                          <div class="service-card__price-tag">Бесплатно <small>(если срочно: 200 – 5000 р.)</small></div>
+                          <h3>Плагины для exteraGram и AyuGram</h3>
+                          <p>Кастомные патчи и модули для клиентов Telegram.</p>
+                          <div class="service-card__price-tag">Бесплатно <small>(срочные: от 500 ₽)</small></div>
+                        </div>
+                        <div class="service-card__item service-card__contract">
+                          <span class="material-symbols-outlined">description</span>
+                          <div class="service-card__contract-body">
+                            <span class="service-card__contract-title">Оформление и договор</span>
+                            <p>Работаю официально как самозанятый по договору оказания услуг с закрывающими чеками. Предоплата 50% или безопасная сделка. Гарантия на исправление багов после сдачи.</p>
+                          </div>
                         </div>
                       </div>
                       <div class="service-card__footer">
@@ -100,21 +160,28 @@
                       <span class="service-card__badge">Сайты</span>
                     </div>
                     <div class="service-card__summary">
-                      <p class="service-card__sub">визитки/сервисы</p>
+                      <p class="service-card__sub">визитки / сервисы · договор</p>
                     </div>
                     <div class="service-card__details" aria-hidden="true">
                       <h2 class="service-card__details-title">Подробности об услугах</h2>
-                      <div class="service-card__notice"><span class="material-symbols-outlined">warning</span> Приходите с дизайном сразу, без него - цена x2</div>
+                      <div class="service-card__notice"><span class="material-symbols-outlined">warning</span> Верстка по макету (Figma). Без дизайна проектирование интерфейса оплачивается отдельно</div>
                       <div class="service-card__items">
                         <div class="service-card__item">
-                          <h3>Визитки</h3>
-                          <p>Напишу визитку, также, если надо подниму</p>
-                          <div class="service-card__price-tag">500 – 5000 р.</div>
+                          <h3>Лендинги и визитки</h3>
+                          <p>Быстрая адаптивная верстка, микроанимации, деплой на сервер или GitHub Pages.</p>
+                          <div class="service-card__price-tag">от 3 000 ₽ · по договору</div>
                         </div>
                         <div class="service-card__item">
-                          <h3>Сервисы</h3>
-                          <p>Что-то выходящее за рамки простой визитки, относится сюда</p>
-                          <div class="service-card__price-tag">5000 р. и более</div>
+                          <h3>Сервисы и веб-приложения</h3>
+                          <p>Панели управления, интеграции по API, сложные клиентские интерфейсы.</p>
+                          <div class="service-card__price-tag">от 10 000 ₽ · по договору</div>
+                        </div>
+                        <div class="service-card__item service-card__contract">
+                          <span class="material-symbols-outlined">description</span>
+                          <div class="service-card__contract-body">
+                            <span class="service-card__contract-title">Оформление и договор</span>
+                            <p>Договор оказания услуг (самозанятость, чеки для физлиц и компаний). Фиксация требований и сроков. Оплата поэтапно 50/50.</p>
+                          </div>
                         </div>
                       </div>
                       <div class="service-card__footer">
@@ -137,8 +204,8 @@
                         <span class="portfolio-card__badge">WebGL</span>
                         <span class="portfolio-card__badge portfolio-card__badge--tag">Tool</span>
                       </div>
-                      <h3 class="portfolio-card__title">Генератор фона</h3>
-                      <p class="portfolio-card__desc">Генерация фонов из Material-иконок</p>
+                      <h3 class="portfolio-card__title">Генератор фонов</h3>
+                      <p class="portfolio-card__desc">Интерактивный холст: сетки из Material Icons, шейдерные сдвиги и экспорт настроек.</p>
                     </div>
                     <div class="portfolio-card__demo portfolio-demo--canvas">
                       <canvas id="portfolio-mini-canvas" width="280" height="110" aria-hidden="true"></canvas>
@@ -153,10 +220,10 @@
                     <div class="portfolio-card__header">
                       <div class="portfolio-card__badges">
                         <span class="portfolio-card__badge">Python</span>
-                        <span class="portfolio-card__badge portfolio-card__badge--tag">Tool</span>
+                        <span class="portfolio-card__badge portfolio-card__badge--tag">CLI</span>
                       </div>
                       <h3 class="portfolio-card__title">mus-downloader</h3>
-                      <p class="portfolio-card__desc">Multi-source FLAC/MP3 Downloader </p>
+                      <p class="portfolio-card__desc">Консольная утилита для скачивания музыки в FLAC и MP3 с обложками и метаданными.</p>
                     </div>
                     <div class="portfolio-card__demo portfolio-demo--cli" id="mus-cli-demo">
                       <div class="cli-body" id="mus-cli-body">
@@ -173,11 +240,11 @@
                   <article class="portfolio-card" id="portfolio-card-bots">
                     <div class="portfolio-card__header">
                       <div class="portfolio-card__badges">
-                        <span class="portfolio-card__badge">Telegram / Discord</span>
+                        <span class="portfolio-card__badge">Python</span>
                         <span class="portfolio-card__badge portfolio-card__badge--tag">Bot</span>
                       </div>
-                      <h3 class="portfolio-card__title">Боты</h3>
-                      <p class="portfolio-card__desc">Боты для скачки видео, или лудки </p>
+                      <h3 class="portfolio-card__title">Telegram-боты</h3>
+                      <p class="portfolio-card__desc">Боты для автоматизации каналов, парсинга медиа и интерактива со слотами.</p>
                     </div>
                     <div class="portfolio-card__demo portfolio-demo--chat">
                       <div class="chat-widget">
