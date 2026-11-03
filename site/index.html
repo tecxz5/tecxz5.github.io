@@ -24,11 +24,16 @@
         href="#top"
         aria-label="tecxz5"
       >tecxz5</a>
-      <nav class="site-header__nav" id="site-navigation" aria-label="Навигация">
-        <a href="#about">обо мне</a>
-        <a href="#services">услуги</a>
-        <a href="#portfolio">портфолио</a>
-        <a href="#links">ссылки</a>
+      <nav class="site-header__nav" id="site-navigation" aria-label="Навигация" data-i18n-aria="nav.switchAria">
+        <a href="#about" data-i18n="nav.about">обо мне</a>
+        <a href="#services" data-i18n="nav.services">услуги</a>
+        <a href="#portfolio" data-i18n="nav.portfolio">портфолио</a>
+        <a href="#links" data-i18n="nav.links">ссылки</a>
+        <button type="button" class="lang-switch-btn" id="lang-switch-btn" aria-label="Сменить язык">
+          <span class="lang-tag is-active" data-lang="ru">RU</span>
+          <span class="lang-divider">/</span>
+          <span class="lang-tag" data-lang="en">EN</span>
+        </button>
       </nav>
     </header>
     <div class="site-header-hover-zone" id="site-header-hover-zone" aria-hidden="true"></div>
@@ -36,7 +41,7 @@
       <section class="section empty-page" id="top">
         <canvas class="bubbles-bg" id="bubbles-bg" aria-hidden="true"></canvas>
         <p class="empty-page__lead"></p>
-        <p class="empty-page__hint">просто листай вверх/вниз</p>
+        <p class="empty-page__hint" data-i18n="top.hint">просто листай вверх/вниз</p>
       </section>
       <section class="section presentation-section" id="presentation">
         <div class="presentation-sticky">
@@ -54,17 +59,17 @@
               <span class="presentation-strips__item"></span>
             </div>
             <section class="presentation-slide" id="about">
-              <h2>О себе</h2>
+              <h2 data-i18n="slides.about">О себе</h2>
               <div class="presentation-slide__body">
                 <div class="about-grid">
                   <!-- Карточка: Био -->
                   <article class="about-card about-card--bio">
                     <div class="about-card__header">
-                      <span class="about-card__badge">Разработчик</span>
+                      <span class="about-card__badge" data-i18n="about.badge">Разработчик</span>
                     </div>
                     <div class="about-card__content">
-                      <h3 class="about-card__title">Привет, я tecxz5</h3>
-                      <p class="about-card__desc">
+                      <h3 class="about-card__title" data-i18n="about.title">Привет, я tecxz5</h3>
+                      <p class="about-card__desc" data-i18n="about.desc">
                         Пишу ботов, веб-приложения и шейдерную графику. Предпочитаю чистый код, высокую производительность и простые интерфейсы без лишних зависимостей.
                       </p>
                       <div class="about-card__tags">
@@ -81,14 +86,14 @@
                   <article class="about-card about-card--lastfm" id="lastfm-card">
                     <div class="about-card__header">
                       <div class="lastfm-badge-wrap">
-                        <span class="about-card__badge about-card__badge--lastfm">LAST.FM</span>
+                        <span class="about-card__badge about-card__badge--lastfm" data-i18n="about.lastfmBadge">LAST.FM</span>
                         <span class="lastfm-scrobbles" id="lastfm-scrobbles" style="display: none;"></span>
                       </div>
                       <div class="lastfm-status" id="lastfm-status">
                         <span class="lastfm-eq" aria-hidden="true">
                           <span></span><span></span><span></span>
                         </span>
-                        <span class="lastfm-status__label" id="lastfm-status-label">загрузка...</span>
+                        <span class="lastfm-status__label" id="lastfm-status-label" data-i18n="about.lastfmLoading">загрузка...</span>
                       </div>
                     </div>
                     <div class="lastfm-body">
@@ -97,14 +102,14 @@
                         <img class="lastfm-cover__img" id="lastfm-cover-img" src="" alt="Обложка трека" style="display: none;">
                       </div>
                       <div class="lastfm-info">
-                        <a href="https://www.last.fm/user/tecxz5" target="_blank" rel="noopener" class="lastfm-track" id="lastfm-track">Ожидание данных...</a>
+                        <a href="https://www.last.fm/user/tecxz5" target="_blank" rel="noopener" class="lastfm-track" id="lastfm-track" data-i18n="about.lastfmWaiting">Ожидание данных...</a>
                         <p class="lastfm-artist" id="lastfm-artist">—</p>
                         <p class="lastfm-album" id="lastfm-album" style="display: none;"></p>
                       </div>
                     </div>
                     <div class="about-card__footer">
                       <a href="https://www.last.fm/user/tecxz5" target="_blank" rel="noopener" class="lastfm-link">
-                        <span>Профиль tecxz5</span>
+                        <span data-i18n="about.lastfmProfile">Профиль tecxz5</span>
                         <span class="material-symbols-outlined">north_east</span>
                       </a>
                     </div>
@@ -113,42 +118,42 @@
               </div>
             </section>
             <section class="presentation-slide" id="services">
-              <h2>Услуги</h2>
+              <h2 data-i18n="slides.services">Услуги</h2>
               <div class="presentation-slide__body">
                 <div class="service-grid service-grid--two">
                   <!-- Карточка: Скрипты -->
                   <article class="service-card" id="card-scripts">
                     <button type="button" class="service-card__close" aria-label="Закрыть">&times;</button>
                     <div class="service-card__badge-wrap">
-                      <span class="service-card__badge">Скрипты</span>
+                      <span class="service-card__badge" data-i18n="services.cardScripts.badge">Скрипты</span>
                     </div>
                     <div class="service-card__summary">
-                      <p class="service-card__sub">боты / скрипты · договор</p>
+                      <p class="service-card__sub" data-i18n="services.cardScripts.sub">боты / скрипты · договор</p>
                     </div>
                     <div class="service-card__details" aria-hidden="true">
-                      <h2 class="service-card__details-title">Подробности об услугах</h2>
-                      <div class="service-card__notice"><span class="material-symbols-outlined">warning</span> Ратки, стилеры и вредоносный софт не пишу</div>
+                      <h2 class="service-card__details-title" data-i18n="services.cardScripts.detailsTitle">Подробности об услугах</h2>
+                      <div class="service-card__notice"><span class="material-symbols-outlined">warning</span> <span data-i18n="services.cardScripts.notice">Ратки, стилеры и вредоносный софт не пишу</span></div>
                       <div class="service-card__items">
                         <div class="service-card__item">
-                          <h3>Telegram и Discord боты</h3>
-                          <p>Боты для автоматизации, интеграции с внешними API и приема платежей. Настройка сервера и деплой.</p>
-                          <div class="service-card__price-tag">от 1 000 ₽ · по договору</div>
+                          <h3 data-i18n="services.cardScripts.item1Title">Telegram и Discord боты</h3>
+                          <p data-i18n="services.cardScripts.item1Desc">Боты для автоматизации, интеграции с внешними API и приема платежей. Настройка сервера и деплой.</p>
+                          <div class="service-card__price-tag" data-i18n="services.cardScripts.item1Price">от 1 000 ₽ · по договору</div>
                         </div>
                         <div class="service-card__item">
-                          <h3>Плагины для exteraGram и AyuGram</h3>
-                          <p>Кастомные патчи и модули для клиентов Telegram.</p>
-                          <div class="service-card__price-tag">Бесплатно <small>(срочные: от 500 ₽)</small></div>
+                          <h3 data-i18n="services.cardScripts.item2Title">Плагины для exteraGram и AyuGram</h3>
+                          <p data-i18n="services.cardScripts.item2Desc">Кастомные патчи и модули для клиентов Telegram.</p>
+                          <div class="service-card__price-tag" data-i18n-html="services.cardScripts.item2PriceHtml">Бесплатно <small>(срочные: от 500 ₽)</small></div>
                         </div>
                         <div class="service-card__item service-card__contract">
                           <span class="material-symbols-outlined">description</span>
                           <div class="service-card__contract-body">
-                            <span class="service-card__contract-title">Оформление и договор</span>
-                            <p>Работаю официально как самозанятый по договору оказания услуг с закрывающими чеками. Предоплата 50% или безопасная сделка. Гарантия на исправление багов после сдачи.</p>
+                            <span class="service-card__contract-title" data-i18n="services.contractTitle">Оформление и договор</span>
+                            <p data-i18n="services.cardScripts.contractDesc">Работаю официально как самозанятый по договору оказания услуг с закрывающими чеками. Предоплата 50% или безопасная сделка. Гарантия на исправление багов после сдачи.</p>
                           </div>
                         </div>
                       </div>
                       <div class="service-card__footer">
-                        <a href="https://t.me/tecxz5" target="_blank" rel="noopener" class="service-card__action-btn">Связаться в Telegram</a>
+                        <a href="https://t.me/tecxz5" target="_blank" rel="noopener" class="service-card__action-btn" data-i18n="services.contactBtn">Связаться в Telegram</a>
                       </div>
                     </div>
                   </article>
@@ -157,44 +162,44 @@
                   <article class="service-card" id="card-sites">
                     <button type="button" class="service-card__close" aria-label="Закрыть">&times;</button>
                     <div class="service-card__badge-wrap">
-                      <span class="service-card__badge">Сайты</span>
+                      <span class="service-card__badge" data-i18n="services.cardSites.badge">Сайты</span>
                     </div>
                     <div class="service-card__summary">
-                      <p class="service-card__sub">визитки / сервисы · договор</p>
+                      <p class="service-card__sub" data-i18n="services.cardSites.sub">визитки / сервисы · договор</p>
                     </div>
                     <div class="service-card__details" aria-hidden="true">
-                      <h2 class="service-card__details-title">Подробности об услугах</h2>
-                      <div class="service-card__notice"><span class="material-symbols-outlined">warning</span> Верстка по макету (Figma). Без дизайна проектирование интерфейса оплачивается отдельно</div>
+                      <h2 class="service-card__details-title" data-i18n="services.cardSites.detailsTitle">Подробности об услугах</h2>
+                      <div class="service-card__notice"><span class="material-symbols-outlined">warning</span> <span data-i18n="services.cardSites.notice">Верстка по макету (Figma). Без дизайна проектирование интерфейса оплачивается отдельно</span></div>
                       <div class="service-card__items">
                         <div class="service-card__item">
-                          <h3>Лендинги и визитки</h3>
-                          <p>Быстрая адаптивная верстка, микроанимации, деплой на сервер или GitHub Pages.</p>
-                          <div class="service-card__price-tag">от 3 000 ₽ · по договору</div>
+                          <h3 data-i18n="services.cardSites.item1Title">Лендинги и визитки</h3>
+                          <p data-i18n="services.cardSites.item1Desc">Быстрая адаптивная верстка, микроанимации, деплой на сервер или GitHub Pages.</p>
+                          <div class="service-card__price-tag" data-i18n="services.cardSites.item1Price">от 3 000 ₽ · по договору</div>
                         </div>
                         <div class="service-card__item">
-                          <h3>Сервисы и веб-приложения</h3>
-                          <p>Панели управления, интеграции по API, сложные клиентские интерфейсы.</p>
-                          <div class="service-card__price-tag">от 10 000 ₽ · по договору</div>
+                          <h3 data-i18n="services.cardSites.item2Title">Сервисы и веб-приложения</h3>
+                          <p data-i18n="services.cardSites.item2Desc">Панели управления, интеграции по API, сложные клиентские интерфейсы.</p>
+                          <div class="service-card__price-tag" data-i18n="services.cardSites.item2Price">от 10 000 ₽ · по договору</div>
                         </div>
                         <div class="service-card__item service-card__contract">
                           <span class="material-symbols-outlined">description</span>
                           <div class="service-card__contract-body">
-                            <span class="service-card__contract-title">Оформление и договор</span>
-                            <p>Договор оказания услуг (самозанятость, чеки для физлиц и компаний). Фиксация требований и сроков. Оплата поэтапно 50/50.</p>
+                            <span class="service-card__contract-title" data-i18n="services.contractTitle">Оформление и договор</span>
+                            <p data-i18n="services.cardSites.contractDesc">Договор оказания услуг (самозанятость, чеки для физлиц и компаний). Фиксация требований и сроков. Оплата поэтапно 50/50.</p>
                           </div>
                         </div>
                       </div>
                       <div class="service-card__footer">
-                        <a href="https://t.me/tecxz5" target="_blank" rel="noopener" class="service-card__action-btn">Связаться в Telegram</a>
+                        <a href="https://t.me/tecxz5" target="_blank" rel="noopener" class="service-card__action-btn" data-i18n="services.contactBtn">Связаться в Telegram</a>
                       </div>
                     </div>
                   </article>
                 </div>
               </div>
-              <p class="empty-page__hint">нажми на карточку для подробностей</p>
+              <p class="empty-page__hint" data-i18n="services.hint">нажми на карточку для подробностей</p>
             </section>
             <section class="presentation-slide" id="portfolio">
-              <h2>Портфолио</h2>
+              <h2 data-i18n="slides.portfolio">Портфолио</h2>
               <div class="presentation-slide__body">
                 <div class="portfolio-grid" id="portfolio-grid">
                   <!-- Карточка 1: Генератор фона -->
@@ -204,14 +209,14 @@
                         <span class="portfolio-card__badge">WebGL</span>
                         <span class="portfolio-card__badge portfolio-card__badge--tag">Tool</span>
                       </div>
-                      <h3 class="portfolio-card__title">Генератор фонов</h3>
-                      <p class="portfolio-card__desc">Интерактивный холст: сетки из Material Icons, шейдерные сдвиги и экспорт настроек.</p>
+                      <h3 class="portfolio-card__title" data-i18n="portfolio.card1.title">Генератор фонов</h3>
+                      <p class="portfolio-card__desc" data-i18n="portfolio.card1.desc">Интерактивный холст: сетки из Material Icons, шейдерные сдвиги и экспорт настроек.</p>
                     </div>
                     <div class="portfolio-card__demo portfolio-demo--canvas">
                       <canvas id="portfolio-mini-canvas" width="280" height="110" aria-hidden="true"></canvas>
                     </div>
                     <div class="portfolio-card__footer">
-                      <a href="./generator" class="portfolio-card__action-btn">Открыть генератор</a>
+                      <a href="./generator" class="portfolio-card__action-btn" data-i18n="portfolio.card1.action">Открыть генератор</a>
                     </div>
                   </article>
 
@@ -222,8 +227,8 @@
                         <span class="portfolio-card__badge">Python</span>
                         <span class="portfolio-card__badge portfolio-card__badge--tag">CLI</span>
                       </div>
-                      <h3 class="portfolio-card__title">mus-downloader</h3>
-                      <p class="portfolio-card__desc">Консольная утилита для скачивания музыки в FLAC и MP3 с обложками и метаданными.</p>
+                      <h3 class="portfolio-card__title" data-i18n="portfolio.card2.title">mus-downloader</h3>
+                      <p class="portfolio-card__desc" data-i18n="portfolio.card2.desc">Консольная утилита для скачивания музыки в FLAC и MP3 с обложками и метаданными.</p>
                     </div>
                     <div class="portfolio-card__demo portfolio-demo--cli" id="mus-cli-demo">
                       <div class="cli-body" id="mus-cli-body">
@@ -232,7 +237,7 @@
                       </div>
                     </div>
                     <div class="portfolio-card__footer">
-                      <a href="https://github.com/tecxz5/mus-downloader" target="_blank" rel="noopener" class="portfolio-card__action-btn">GitHub: mus-downloader</a>
+                      <a href="https://github.com/tecxz5/mus-downloader" target="_blank" rel="noopener" class="portfolio-card__action-btn" data-i18n="portfolio.card2.action">GitHub: mus-downloader</a>
                     </div>
                   </article>
 
@@ -243,18 +248,18 @@
                         <span class="portfolio-card__badge">Python</span>
                         <span class="portfolio-card__badge portfolio-card__badge--tag">Bot</span>
                       </div>
-                      <h3 class="portfolio-card__title">Telegram-боты</h3>
-                      <p class="portfolio-card__desc">Боты для автоматизации каналов, парсинга медиа и интерактива со слотами.</p>
+                      <h3 class="portfolio-card__title" data-i18n="portfolio.card3.title">Telegram-боты</h3>
+                      <p class="portfolio-card__desc" data-i18n="portfolio.card3.desc">Боты для автоматизации каналов, парсинга медиа и интерактива со слотами.</p>
                     </div>
                     <div class="portfolio-card__demo portfolio-demo--chat">
                       <div class="chat-widget">
                         <div class="chat-widget__messages" id="bot-chat-messages">
-                          <div class="chat-msg bot"><span class="chat-msg__author">CasinoBot</span><span class="chat-msg__text"><span class="slot-icon">casino</span> Испытай удачу! Жми /slots ниже:</span></div>
+                          <div class="chat-msg bot"><span class="chat-msg__author">CasinoBot</span><span class="chat-msg__text"><span class="slot-icon">casino</span> <span data-i18n="portfolio.card3.chatInitial">Испытай удачу! Жми /slots ниже:</span></span></div>
                         </div>
                       </div>
                     </div>
                     <div class="portfolio-card__footer">
-                      <button type="button" class="portfolio-card__action-btn chat-cmd-btn" data-cmd="/slots">/slots</button>
+                      <button type="button" class="portfolio-card__action-btn chat-cmd-btn" data-cmd="/slots" data-i18n="portfolio.card3.chatCmd">/slots</button>
                     </div>
                   </article>
                 </div>
@@ -278,7 +283,7 @@
               src="./src/assets/images/Group 1.svg"
               alt="Copyright"
             >
-            <div class="site-footer__links" aria-label="Ссылки">
+            <div class="site-footer__links" aria-label="Ссылки" data-i18n-aria="footer.ariaLinks">
               <a href="https://t.me/tecxz5" aria-label="Telegram" target="_blank" rel="noopener">
                 <img src="./src/assets/images/Group 4.svg" alt="">
               </a>

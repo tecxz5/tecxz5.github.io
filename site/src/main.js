@@ -3,6 +3,7 @@ import t5Svg from './assets/icons/t5.svg?url';
 import copyrightSvg from './assets/icons/c.svg?url';
 import { BubblesEffect } from './bubbles.js';
 import { LifeEffect } from './life.js';
+import { initI18n, t, getLanguage } from './i18n.js';
 
 (function () {
   const icons = [t5Svg, copyrightSvg];
@@ -2068,7 +2069,7 @@ function setupPortfolioDemos() {
 
         const spinMsgEl = document.createElement('div');
         spinMsgEl.className = 'chat-msg bot';
-        spinMsgEl.innerHTML = `<span class="chat-msg__author">CasinoBot</span><span class="chat-msg__text"><span class="slot-icon">casino</span> [ <span class="slot-icon">bakery_dining</span> | <span class="slot-icon">local_pizza</span> | <span class="slot-icon">nutrition</span> ] Крутим...</span>`;
+        spinMsgEl.innerHTML = `<span class="chat-msg__author">CasinoBot</span><span class="chat-msg__text"><span class="slot-icon">casino</span> [ <span class="slot-icon">bakery_dining</span> | <span class="slot-icon">local_pizza</span> | <span class="slot-icon">nutrition</span> ] ${t('portfolio.card3.chatSpinning')}</span>`;
         chatMessages.appendChild(spinMsgEl);
         chatMessages.scrollTop = chatMessages.scrollHeight;
 
@@ -2086,9 +2087,9 @@ function setupPortfolioDemos() {
 
           let outcomeText = '';
           if (isWin) {
-            outcomeText = `<span class="slot-icon">casino</span> [ <span class="slot-icon">${s1}</span> | <span class="slot-icon">${s2}</span> | <span class="slot-icon">${s3}</span> ] ДЖЕКПОТ!`;
+            outcomeText = `<span class="slot-icon">casino</span> [ <span class="slot-icon">${s1}</span> | <span class="slot-icon">${s2}</span> | <span class="slot-icon">${s3}</span> ] ${t('portfolio.card3.chatWin')}`;
           } else {
-            outcomeText = `<span class="slot-icon">casino</span> [ <span class="slot-icon">${s1}</span> | <span class="slot-icon">${s2}</span> | <span class="slot-icon">${s3}</span> ] Увы! Попробуй ещё`;
+            outcomeText = `<span class="slot-icon">casino</span> [ <span class="slot-icon">${s1}</span> | <span class="slot-icon">${s2}</span> | <span class="slot-icon">${s3}</span> ] ${t('portfolio.card3.chatLose')}`;
           }
 
           spinMsgEl.querySelector('.chat-msg__text').innerHTML = outcomeText;
@@ -2155,6 +2156,7 @@ function setupPortfolioDemos() {
 setupKeyboardNav();
 setupPortfolioDemos();
 setupLastFmWidget();
+initI18n();
 
 function setupLastFmWidget() {
   const card = document.getElementById('lastfm-card');
@@ -2167,49 +2169,120 @@ function setupLastFmWidget() {
   const coverImg = document.getElementById('lastfm-cover-img');
   const coverPlaceholder = document.getElementById('lastfm-cover-placeholder');
   const scrobblesEl = document.getElementById('lastfm-scrobbles');
-  const fallbackText = 'у тебя ласт.фм недоступен';
+
+  let currentTrackState = null;
+  let isFailed = false;
 
   function formatTimeAgo(uts) {
-    if (!uts) return 'недавно';
+    if (!uts) return t('about.recently');
     const diffSec = Math.max(0, Math.floor(Date.now() / 1000 - Number(uts)));
-    if (diffSec < 60) return 'только что';
+    if (diffSec < 60) return t('about.justNow');
     const diffMin = Math.floor(diffSec / 60);
-    if (diffMin < 60) return `${diffMin} мин назад`;
+    if (diffMin < 60) return t('about.minAgo', diffMin);
     const diffHours = Math.floor(diffMin / 60);
-    if (diffHours < 24) return `${diffHours} ч назад`;
+    if (diffHours < 24) return t('about.hourAgo', diffHours);
     const diffDays = Math.floor(diffHours / 24);
-    if (diffDays === 1) return 'вчера';
-    if (diffDays < 7) return `${diffDays} дн назад`;
-    return 'недавно';
+    if (diffDays === 1) return t('about.yesterday');
+    if (diffDays < 7) return t('about.daysAgo', diffDays);
+    return t('about.recently');
+  }
+
+  function renderWidget() {
+    if (isFailed) {
+      card.classList.add('is-unavailable');
+      card.classList.remove('is-playing');
+      if (statusLabel) statusLabel.textContent = t('about.offline');
+      if (trackEl) {
+        const fallbackText = t('about.fallbackText');
+        trackEl.textContent = fallbackText;
+        trackEl.href = 'https://www.last.fm/user/tecxz5';
+        trackEl.title = fallbackText;
+      }
+      if (artistEl) {
+        artistEl.textContent = t('about.fallbackError');
+        artistEl.title = '';
+      }
+      if (albumEl) {
+        albumEl.textContent = '';
+        albumEl.style.display = 'none';
+      }
+      if (coverImg) {
+        coverImg.removeAttribute('src');
+        coverImg.style.display = 'none';
+      }
+      if (coverPlaceholder) {
+        coverPlaceholder.style.display = 'flex';
+      }
+      if (scrobblesEl) {
+        scrobblesEl.style.display = 'none';
+      }
+      return;
+    }
+
+    if (!currentTrackState) return;
+
+    const { isNowPlaying, trackName, artistName, albumName, trackUrl, coverUrl, totalScrobbles, dateUts } = currentTrackState;
+
+    card.classList.remove('is-unavailable');
+    card.classList.toggle('is-playing', isNowPlaying);
+
+    if (statusLabel) {
+      if (isNowPlaying) {
+        statusLabel.textContent = t('about.nowPlaying');
+      } else if (dateUts) {
+        statusLabel.textContent = t('about.wasOnline', formatTimeAgo(dateUts));
+      } else {
+        statusLabel.textContent = t('about.lastPlayed');
+      }
+    }
+
+    if (trackEl) {
+      trackEl.textContent = trackName;
+      trackEl.href = trackUrl;
+      trackEl.title = trackName;
+    }
+    if (artistEl) {
+      artistEl.textContent = artistName;
+      artistEl.title = artistName;
+    }
+    if (albumEl) {
+      if (albumName && albumName.toLowerCase() !== trackName.toLowerCase()) {
+        albumEl.textContent = albumName;
+        albumEl.title = albumName;
+        albumEl.style.display = 'block';
+      } else {
+        albumEl.textContent = '';
+        albumEl.style.display = 'none';
+      }
+    }
+    if (scrobblesEl && totalScrobbles) {
+      const loc = getLanguage() === 'ru' ? 'ru-RU' : 'en-US';
+      const formattedTotal = Number(totalScrobbles).toLocaleString(loc);
+      scrobblesEl.textContent = t('about.scrobbles', formattedTotal);
+      scrobblesEl.style.display = 'inline-block';
+    }
+    if (coverImg) {
+      if (coverUrl && !coverUrl.includes('2a96cbd8b46e442fc41c2b86b821562f')) {
+        coverImg.onload = () => {
+          coverImg.style.display = 'block';
+          if (coverPlaceholder) coverPlaceholder.style.display = 'none';
+        };
+        coverImg.onerror = () => {
+          coverImg.style.display = 'none';
+          if (coverPlaceholder) coverPlaceholder.style.display = 'flex';
+        };
+        coverImg.src = coverUrl;
+      } else {
+        coverImg.removeAttribute('src');
+        coverImg.style.display = 'none';
+        if (coverPlaceholder) coverPlaceholder.style.display = 'flex';
+      }
+    }
   }
 
   function showFallback() {
-    card.classList.add('is-unavailable');
-    card.classList.remove('is-playing');
-    if (statusLabel) statusLabel.textContent = 'офлайн';
-    if (trackEl) {
-      trackEl.textContent = fallbackText;
-      trackEl.href = 'https://www.last.fm/user/tecxz5';
-      trackEl.title = fallbackText;
-    }
-    if (artistEl) {
-      artistEl.textContent = 'не удалось получить данные';
-      artistEl.title = '';
-    }
-    if (albumEl) {
-      albumEl.textContent = '';
-      albumEl.style.display = 'none';
-    }
-    if (coverImg) {
-      coverImg.removeAttribute('src');
-      coverImg.style.display = 'none';
-    }
-    if (coverPlaceholder) {
-      coverPlaceholder.style.display = 'flex';
-    }
-    if (scrobblesEl) {
-      scrobblesEl.style.display = 'none';
-    }
+    isFailed = true;
+    renderWidget();
   }
 
   async function fetchLastFm() {
@@ -2256,64 +2329,27 @@ function setupLastFmWidget() {
         || '';
       const totalScrobbles = data?.recenttracks?.['@attr']?.total;
 
-      card.classList.remove('is-unavailable');
-      card.classList.toggle('is-playing', isNowPlaying);
+      isFailed = false;
+      currentTrackState = {
+        isNowPlaying,
+        trackName,
+        artistName,
+        albumName,
+        trackUrl,
+        coverUrl,
+        totalScrobbles,
+        dateUts: track.date?.uts,
+      };
 
-      if (statusLabel) {
-        if (isNowPlaying) {
-          statusLabel.textContent = 'сейчас играет';
-        } else if (track.date?.uts) {
-          statusLabel.textContent = `был в сети: ${formatTimeAgo(track.date.uts)}`;
-        } else {
-          statusLabel.textContent = 'последний трек';
-        }
-      }
-
-      if (trackEl) {
-        trackEl.textContent = trackName;
-        trackEl.href = trackUrl;
-        trackEl.title = trackName;
-      }
-      if (artistEl) {
-        artistEl.textContent = artistName;
-        artistEl.title = artistName;
-      }
-      if (albumEl) {
-        if (albumName && albumName.toLowerCase() !== trackName.toLowerCase()) {
-          albumEl.textContent = albumName;
-          albumEl.title = albumName;
-          albumEl.style.display = 'block';
-        } else {
-          albumEl.textContent = '';
-          albumEl.style.display = 'none';
-        }
-      }
-      if (scrobblesEl && totalScrobbles) {
-        const formattedTotal = Number(totalScrobbles).toLocaleString('ru-RU');
-        scrobblesEl.textContent = `${formattedTotal} треков`;
-        scrobblesEl.style.display = 'inline-block';
-      }
-      if (coverImg) {
-        if (coverUrl && !coverUrl.includes('2a96cbd8b46e442fc41c2b86b821562f')) {
-          coverImg.onload = () => {
-            coverImg.style.display = 'block';
-            if (coverPlaceholder) coverPlaceholder.style.display = 'none';
-          };
-          coverImg.onerror = () => {
-            coverImg.style.display = 'none';
-            if (coverPlaceholder) coverPlaceholder.style.display = 'flex';
-          };
-          coverImg.src = coverUrl;
-        } else {
-          coverImg.removeAttribute('src');
-          coverImg.style.display = 'none';
-          if (coverPlaceholder) coverPlaceholder.style.display = 'flex';
-        }
-      }
+      renderWidget();
     } catch {
       showFallback();
     }
   }
+
+  window.addEventListener('site-language-change', () => {
+    renderWidget();
+  });
 
   fetchLastFm();
   window.addEventListener('focus', fetchLastFm);
