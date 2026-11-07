@@ -1426,6 +1426,10 @@ body.is-track-instant .presentation-track {
   text-align: left;
 }
 
+.service-contract__item--wide {
+  grid-column: 1 / -1;
+}
+
 .service-contract__num {
   font-family: "Martian Mono", monospace;
   font-size: 12px;

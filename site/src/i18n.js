@@ -75,6 +75,8 @@ export const translations = {
         item3Desc: 'Бесплатно на постоянной поддержке «за спасибо» не сижу, у меня есть личная жизнь. Нужен регулярный мейнтенанс или дежурство — договариваемся на фикс или абонентку.',
         item4Title: 'Нарушение условий и&nbsp;цены',
         item4Desc: 'Если нарушаются договоренности по оплате, ТЗ или адекватной коммуникации — имею право отказаться от проекта в одностороннем порядке либо поднять ценник от 1.5x.',
+        item5Title: 'Деплой и&nbsp;хостинг',
+        item5Desc: 'Помогу с деплоем всего — но с одним но: за хостинг платите вы.',
       },
     },
     portfolio: {
@@ -178,6 +180,8 @@ export const translations = {
         item3Desc: 'I do not provide free 24/7 support "for a thank you" — I have a personal life. If you need ongoing maintenance, we arrange a fixed retainer.',
         item4Title: 'Breach of Terms &amp;&nbsp;Pricing',
         item4Desc: 'If agreed terms, payment schedules, or sane communication are violated, I reserve the right to drop the project or raise the price from 1.5x.',
+        item5Title: 'Deployment &amp;&nbsp;Hosting',
+        item5Desc: 'I will help deploy everything — with one catch: hosting is on you.',
       },
     },
     portfolio: {
