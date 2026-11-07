@@ -1026,8 +1026,8 @@ body.is-track-instant .presentation-track {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  min-height: 180px;
-  padding: 20px 20px 90px;
+  min-height: 110px;
+  padding: 16px 16px 48px;
   border: 2px solid #fff;
   background: #000 !important;
   backdrop-filter: blur(4px);
@@ -1035,6 +1035,7 @@ body.is-track-instant .presentation-track {
   text-align: center;
   box-sizing: border-box;
   transition: border-color 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
 }
 
 .service-card.is-expanded {
@@ -1097,17 +1098,29 @@ body.is-track-instant .presentation-track {
 
 .service-card__summary {
   position: absolute;
-  bottom: 20px;
+  bottom: 12px;
   left: 0;
   right: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 2px;
   width: 100%;
-  padding: 0 20px;
+  padding: 0 16px;
   box-sizing: border-box;
   will-change: opacity, transform;
+}
+
+.service-card__hint {
+  font-family: "Fira Mono", monospace;
+  font-size: 11px;
+  color: #aaa;
+  letter-spacing: 0.02em;
+  transition: color 0.2s ease;
+}
+
+.service-card:hover .service-card__hint {
+  color: var(--accent);
 }
 
 .service-card.is-expanded .service-card__summary {
@@ -1329,9 +1342,119 @@ body.is-track-instant .presentation-track {
 }
 
 .service-card-placeholder {
-  min-height: 180px;
+  min-height: 110px;
   visibility: hidden;
   pointer-events: none;
+}
+
+/* Service Contract Section (under cards) */
+.service-contract {
+  position: relative;
+  z-index: 1;
+  width: min(720px, 100%);
+  margin-top: 18px;
+  padding: 16px 20px;
+  border: 2px solid #fff;
+  background: #000 !important;
+  backdrop-filter: blur(4px);
+  color: #fff;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.service-contract:hover {
+  border-color: var(--accent);
+}
+
+.service-contract__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.service-contract__badge {
+  display: inline-block;
+  padding: 3px 8px;
+  background: var(--accent);
+  color: #000;
+  font-family: "Martian Mono", monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+.service-contract__pdf-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: rgba(206, 219, 26, 0.1);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: "Martian Mono", monospace;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.service-contract__pdf-link .material-symbols-outlined {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.service-contract__pdf-link:hover {
+  background: var(--accent);
+  color: #000;
+  transform: translateY(-1px);
+}
+
+.service-contract__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px 18px;
+}
+
+.service-contract__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+}
+
+.service-contract__num {
+  font-family: "Martian Mono", monospace;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  padding-top: 2px;
+  flex-shrink: 0;
+}
+
+.service-contract__content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.service-contract__content h4 {
+  margin: 0;
+  font-family: "Martian Mono", monospace;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.service-contract__content p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #ccc;
 }
 
 .service-modal__item {
@@ -1881,6 +2004,17 @@ body.is-loaded .loader__section--top {
   .service-grid {
     grid-template-columns: 1fr;
     width: min(360px, 100%);
+  }
+
+  .service-contract {
+    width: min(360px, 100%);
+    padding: 14px;
+    margin-top: 14px;
+  }
+
+  .service-contract__grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   .portfolio-grid {

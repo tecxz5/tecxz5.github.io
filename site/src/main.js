@@ -1131,7 +1131,7 @@ function stepByWheelGesture(direction) {
 
 function setupWheelGestureLock() {
   const handleWheel = (event) => {
-    if (event.target && event.target.closest && event.target.closest('.portfolio-card, .portfolio-demo, .chat-widget__messages, .cli-body, .service-card')) {
+    if (event.target && event.target.closest && event.target.closest('.portfolio-card, .portfolio-demo, .chat-widget__messages, .cli-body, .service-card, .service-contract')) {
       return;
     }
 
@@ -1215,7 +1215,7 @@ function setupTouchGestureLock() {
   window.addEventListener(
     'touchmove',
     (event) => {
-      if (event.target && event.target.closest && event.target.closest('.portfolio-card, .portfolio-demo, .chat-widget__messages, .cli-body, .service-card')) {
+      if (event.target && event.target.closest && event.target.closest('.portfolio-card, .portfolio-demo, .chat-widget__messages, .cli-body, .service-card, .service-contract')) {
         return;
       }
       if (event.touches.length !== 1 || !loaderHidden || !sectionSlider) {

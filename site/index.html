@@ -129,19 +129,20 @@
                     </div>
                     <div class="service-card__summary">
                       <p class="service-card__sub" data-i18n="services.cardScripts.sub">боты / скрипты</p>
+                      <span class="service-card__hint" data-i18n="services.hint">нажми для подробностей</span>
                     </div>
                     <div class="service-card__details" aria-hidden="true">
                       <h2 class="service-card__details-title" data-i18n="services.cardScripts.detailsTitle">Подробности об услугах</h2>
-                      <div class="service-card__notice"><span class="material-symbols-outlined">warning</span> <span data-i18n="services.cardScripts.notice">Ратки, стилеры и вредоносный софт не пишу</span></div>
+                      <div class="service-card__notice"><span class="material-symbols-outlined">warning</span> <span data-i18n="services.cardScripts.notice">Ратки, стилеры и подобное не пишу.</span></div>
                       <div class="service-card__items">
                         <div class="service-card__item">
                           <h3 data-i18n="services.cardScripts.item1Title">Telegram и Discord боты</h3>
-                          <p data-i18n="services.cardScripts.item1Desc">Боты для автоматизации, интеграции с внешними API и приема платежей. Настройка сервера и деплой.</p>
+                          <p data-i18n="services.cardScripts.item1Desc">Боты для автоматизации, стараюсь делать способными для работы на картошке.</p>
                           <div class="service-card__price-tag" data-i18n="services.cardScripts.item1Price">от 1 000 ₽</div>
                         </div>
                         <div class="service-card__item">
-                          <h3 data-i18n="services.cardScripts.item2Title">Плагины для exteraGram и AyuGram</h3>
-                          <p data-i18n="services.cardScripts.item2Desc">Кастомные патчи и модули для клиентов Telegram.</p>
+                          <h3 data-i18n="services.cardScripts.item2Title">Плагины для exteraGram/AyuGram</h3>
+                          <p data-i18n="services.cardScripts.item2Desc">da.</p>
                           <div class="service-card__price-tag" data-i18n-html="services.cardScripts.item2PriceHtml">Бесплатно <small>(срочные: от 500 ₽)</small></div>
                         </div>
                       </div>
@@ -159,19 +160,20 @@
                     </div>
                     <div class="service-card__summary">
                       <p class="service-card__sub" data-i18n="services.cardSites.sub">визитки / сервисы</p>
+                      <span class="service-card__hint" data-i18n="services.hint">нажми для подробностей</span>
                     </div>
                     <div class="service-card__details" aria-hidden="true">
                       <h2 class="service-card__details-title" data-i18n="services.cardSites.detailsTitle">Подробности об услугах</h2>
-                      <div class="service-card__notice"><span class="material-symbols-outlined">warning</span> <span data-i18n="services.cardSites.notice">Верстка по макету (Figma). Без дизайна проектирование интерфейса оплачивается отдельно</span></div>
+                      <div class="service-card__notice"><span class="material-symbols-outlined">warning</span> <span data-i18n="services.cardSites.notice">Верстка по макету, и только. Если дизайна нет — помогу набросать интерфейс, но это обсуждается отдельно</span></div>
                       <div class="service-card__items">
                         <div class="service-card__item">
                           <h3 data-i18n="services.cardSites.item1Title">Лендинги и визитки</h3>
-                          <p data-i18n="services.cardSites.item1Desc">Быстрая адаптивная верстка, микроанимации, деплой на сервер или GitHub Pages.</p>
+                          <p data-i18n="services.cardSites.item1Desc">Одностраничник, или как этот.</p>
                           <div class="service-card__price-tag" data-i18n="services.cardSites.item1Price">от 3 000 ₽</div>
                         </div>
                         <div class="service-card__item">
                           <h3 data-i18n="services.cardSites.item2Title">Сервисы и веб-приложения</h3>
-                          <p data-i18n="services.cardSites.item2Desc">Панели управления, интеграции по API, сложные клиентские интерфейсы.</p>
+                          <p data-i18n="services.cardSites.item2Desc">Админки, личные кабинеты, подключение API и баз данных..</p>
                           <div class="service-card__price-tag" data-i18n="services.cardSites.item2Price">от 10 000 ₽</div>
                         </div>
                       </div>
@@ -181,8 +183,50 @@
                     </div>
                   </article>
                 </div>
+
+                <!-- Блок договора и условий -->
+                <div class="service-contract">
+                  <div class="service-contract__header">
+                    <div class="service-contract__badge-wrap">
+                      <span class="service-contract__badge" data-i18n="services.contract.badge">Условия работы</span>
+                    </div>
+                    <a href="./contract.pdf" target="_blank" rel="noopener" class="service-contract__pdf-link" data-i18n="services.contract.pdfLink">
+                      <span class="material-symbols-outlined">description</span>
+                      <span>contract.pdf</span>
+                    </a>
+                  </div>
+                  <div class="service-contract__grid">
+                    <div class="service-contract__item">
+                      <span class="service-contract__num">01</span>
+                      <div class="service-contract__content">
+                        <h4 data-i18n="services.contract.item1Title">Исходный код и права</h4>
+                        <p data-i18n="services.contract.item1Desc">Весь написанный код и архитектура остаются у меня при любых обстоятельствах, это не обсуждается. Вы получаете готовый проект, а полный выкуп прав оговаривается отдельно.</p>
+                      </div>
+                    </div>
+                    <div class="service-contract__item">
+                      <span class="service-contract__num">02</span>
+                      <div class="service-contract__content">
+                        <h4 data-i18n="services.contract.item2Title">Гарантия на баги</h4>
+                        <p data-i18n="services.contract.item2Desc">Если в работе всплывет мой косяк или баг, не замеченный при сдаче — поправлю быстро и бесплатно по гарантии.</p>
+                      </div>
+                    </div>
+                    <div class="service-contract__item">
+                      <span class="service-contract__num">03</span>
+                      <div class="service-contract__content">
+                        <h4 data-i18n="services.contract.item3Title">Поддержка проекта</h4>
+                        <p data-i18n="services.contract.item3Desc">Бесплатно на постоянной поддержке «за спасибо» не сижу, у меня есть личная жизнь. Нужен регулярный мейнтенанс или дежурство — договариваемся на фикс или абонентку.</p>
+                      </div>
+                    </div>
+                    <div class="service-contract__item">
+                      <span class="service-contract__num">04</span>
+                      <div class="service-contract__content">
+                        <h4 data-i18n-html="services.contract.item4Title">Нарушение условий и&nbsp;цены</h4>
+                        <p data-i18n="services.contract.item4Desc">Если нарушаются договоренности по оплате, ТЗ или адекватной коммуникации — имею право отказаться от проекта в одностороннем порядке либо поднять ценник от 1.5x.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <p class="empty-page__hint" data-i18n="services.hint">нажми на карточку для подробностей</p>
             </section>
             <section class="presentation-slide" id="portfolio">
               <h2 data-i18n="slides.portfolio">Портфолио</h2>
