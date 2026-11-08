@@ -65,7 +65,8 @@ body.is-loading {
 
 .bubbles-bg,
 .scribble-bg,
-.life-bg {
+.life-bg,
+.menger-bg {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -1575,7 +1576,8 @@ svg.lastfm-cover__placeholder {
   isolation: isolate;
 }
 
-.life-bg {
+.life-bg,
+.menger-bg {
   position: absolute;
   inset: 0;
   width: 100%;

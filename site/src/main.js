@@ -2,7 +2,7 @@ import SlideJS from './vendor/slidejs.js';
 import t5Svg from './assets/icons/t5.svg?url';
 import copyrightSvg from './assets/icons/c.svg?url';
 import { BubblesEffect } from './bubbles.js';
-import { LifeEffect } from './life.js';
+import { MengerEffect } from './menger.js';
 import { initI18n, t, getLanguage, translations } from './i18n.js';
 
 (function () {
@@ -17,7 +17,7 @@ import { initI18n, t, getLanguage, translations } from './i18n.js';
 
 const canvas = document.querySelector('#bubbles-bg') || document.querySelector('#scribble-bg');
 const symbolsCanvas = document.querySelector('#symbols-bg');
-const lifeCanvas = document.querySelector('#life-bg');
+const mengerCanvas = document.querySelector('#menger-bg') || document.querySelector('#life-bg');
 const loader = document.querySelector('#loader');
 const siteHeader = document.querySelector('#site-header');
 const siteHeaderHoverZone = document.querySelector('#site-header-hover-zone');
@@ -26,7 +26,7 @@ const siteNavigation = siteHeader.querySelector('.site-header__nav');
 const presentationTrack = document.querySelector('#presentation-track');
 const siteFooter = document.querySelector('.site-footer');
 const bubblesEffect = new BubblesEffect(canvas);
-const lifeEffect = lifeCanvas ? new LifeEffect(lifeCanvas) : null;
+const mengerEffect = mengerCanvas ? new MengerEffect(mengerCanvas) : null;
 const symbolsGl = symbolsCanvas.getContext('webgl', {
   alpha: true,
   antialias: true,
@@ -572,10 +572,14 @@ function resizeCanvas() {
   bubblesEffect.resize(rect.width, rect.height);
 }
 
-function resizeLifeCanvas() {
-  if (lifeEffect && lifeCanvas) {
-    const rect = lifeCanvas.parentElement.getBoundingClientRect();
-    lifeEffect.resize(rect.width, rect.height);
+function resizeMengerCanvas() {
+  if (mengerEffect && mengerCanvas) {
+    const parent = mengerCanvas.parentElement;
+    const width = mengerCanvas.clientWidth || parent?.clientWidth || window.innerWidth;
+    const height = mengerCanvas.clientHeight || parent?.clientHeight || window.innerHeight;
+    if (width > 0 && height > 0) {
+      mengerEffect.resize(width, height);
+    }
   }
 }
 
@@ -602,13 +606,17 @@ const visibleSections = new Set([startSectionIndex]);
 
 function markSectionTransitionStart(prevIndex, nextIndex) {
   if (prevIndex !== undefined) visibleSections.add(prevIndex);
-  if (nextIndex !== undefined) visibleSections.add(nextIndex);
+  if (nextIndex !== undefined) {
+    visibleSections.add(nextIndex);
+    if (nextIndex === 2) resizeMengerCanvas();
+  }
 }
 
 function markSectionTransitionEnd(prevIndex, nextIndex) {
   visibleSections.clear();
   const current = nextIndex !== undefined ? nextIndex : getActiveSectionIndex();
   visibleSections.add(current);
+  if (current === 2) resizeMengerCanvas();
 }
 
 function isSectionVisible(index) {
@@ -632,8 +640,8 @@ function draw(now) {
     drawSymbols(now);
   }
 
-  if (isSectionVisible(2) && lifeEffect) {
-    lifeEffect.updateAndDraw(now);
+  if (isSectionVisible(2) && mengerEffect) {
+    mengerEffect.updateAndDraw(now);
   }
 
   if (!backgroundReady) {
@@ -833,7 +841,7 @@ function startBackground() {
   window.cancelAnimationFrame(animationFrame);
   resizeCanvas();
   resizeSymbolsCanvas();
-  resizeLifeCanvas();
+  resizeMengerCanvas();
   resetSymbols();
   animationFrame = window.requestAnimationFrame(draw);
 }
@@ -2560,17 +2568,27 @@ if (topSection) {
 }
 
 const linksSection = document.querySelector('#links');
-if (linksSection && lifeEffect) {
+if (linksSection && mengerEffect) {
   linksSection.addEventListener('pointermove', (event) => {
     const rect = linksSection.getBoundingClientRect();
-    lifeEffect.onPointerMove(event.clientX - rect.left, event.clientY - rect.top);
+    mengerEffect.onPointerMove(event.clientX - rect.left, event.clientY - rect.top, event.pointerType);
   }, { passive: true });
 
   linksSection.addEventListener('pointerdown', (event) => {
     if (event.target.closest('.site-footer__links a')) return;
-    triggerHaptic(6);
+    if (event.pointerType !== 'touch') {
+      triggerHaptic(6);
+    }
     const rect = linksSection.getBoundingClientRect();
-    lifeEffect.onPointerDown(event.clientX - rect.left, event.clientY - rect.top);
+    mengerEffect.onPointerDown(event.clientX - rect.left, event.clientY - rect.top, event.pointerType);
+  }, { passive: true });
+
+  window.addEventListener('pointerup', () => {
+    mengerEffect.onPointerUp();
+  }, { passive: true });
+
+  window.addEventListener('pointercancel', () => {
+    mengerEffect.onPointerUp();
   }, { passive: true });
 }
 
