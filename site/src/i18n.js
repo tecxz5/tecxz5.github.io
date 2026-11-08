@@ -29,7 +29,8 @@ export const translations = {
     },
     about: {
       title: 'Привет, я <span class="about-card__title-accent">t5</span>',
-      desc: 'Вроде как что-то делаю, пусть этот сайт и доделал спустя полгода... ',
+      desc: 'Вроде как что-то делаю, пусть этот сайт и доделал спустя полгода...',
+      lastfmBadge: 'Last.fm',
       lastfmLoading: 'загрузка...',
       lastfmWaiting: 'Ожидание данных...',
       lastfmProfile: 'Профиль на last.fm',
@@ -134,10 +135,11 @@ export const translations = {
     },
     about: {
       title: 'Hey, I\'m <span class="about-card__title-accent">t5</span>',
-      desc: 'Bots, services and small tools. Stack: Python, Kotlin, Go, JS. No frameworks and no extra dependencies — it should run on a potato.',
+      desc: 'I kinda build stuff, even if it took me half a year to finally finish this site...',
+      lastfmBadge: 'Last.fm',
       lastfmLoading: 'loading...',
       lastfmWaiting: 'Waiting for data...',
-      lastfmProfile: 'tecxz5 profile',
+      lastfmProfile: 'Last.fm profile',
       nowPlaying: 'now playing',
       lastPlayed: 'last track',
       offline: 'offline',
