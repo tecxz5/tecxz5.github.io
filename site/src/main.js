@@ -2292,11 +2292,33 @@ function setupLastFmWidget() {
   if (!card) return;
 
   const statusLabel = document.getElementById('lastfm-status-label');
+  const spinnerEl = document.getElementById('lastfm-spinner');
   const trackEl = document.getElementById('lastfm-track');
   const artistEl = document.getElementById('lastfm-artist');
   const albumEl = document.getElementById('lastfm-album');
   const coverImg = document.getElementById('lastfm-cover-img');
   const coverPlaceholder = document.getElementById('lastfm-cover-placeholder');
+
+  const BRAILLE_FRAMES = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+  let spinnerIdx = 0;
+  let spinnerTimer = null;
+
+  function updateSpinnerState(isPlaying) {
+    if (isPlaying) {
+      if (!spinnerTimer) {
+        spinnerTimer = setInterval(() => {
+          spinnerIdx = (spinnerIdx + 1) % BRAILLE_FRAMES.length;
+          if (spinnerEl) spinnerEl.textContent = BRAILLE_FRAMES[spinnerIdx];
+        }, 80);
+      }
+    } else {
+      if (spinnerTimer) {
+        clearInterval(spinnerTimer);
+        spinnerTimer = null;
+      }
+      if (spinnerEl) spinnerEl.textContent = '·';
+    }
+  }
 
   const LASTFM_USER = 'tecxz5';
   const STATSFM_USER = 'big_fish_theory';
@@ -2326,6 +2348,7 @@ function setupLastFmWidget() {
     const track = pickNowPlaying(nowPlayingStats, isFailed ? null : currentTrackState);
 
     if (!track) {
+      updateSpinnerState(false);
       if (!isFailed) return;
       card.classList.add('is-unavailable');
       card.classList.remove('is-playing');
@@ -2358,6 +2381,7 @@ function setupLastFmWidget() {
 
     card.classList.remove('is-unavailable');
     card.classList.toggle('is-playing', isNowPlaying);
+    updateSpinnerState(isNowPlaying);
 
     if (statusLabel) {
       if (isNowPlaying) {
