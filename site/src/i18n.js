@@ -28,8 +28,8 @@ export const translations = {
       portfolio: 'Портфолио',
     },
     about: {
-      title: 'Привет, я t5',
-      desc: 'Вроде как что-то делаю, пусть сайт и доделал спустя полгода... ',
+      title: 'Привет, я <span class="about-card__title-accent">t5</span>',
+      desc: 'Вроде как что-то делаю, пусть этот сайт и доделал спустя полгода... ',
       lastfmLoading: 'загрузка...',
       lastfmWaiting: 'Ожидание данных...',
       lastfmProfile: 'Профиль на last.fm',
@@ -133,7 +133,7 @@ export const translations = {
       portfolio: 'Portfolio',
     },
     about: {
-      title: 'Hey, I\'m tecxz5',
+      title: 'Hey, I\'m <span class="about-card__title-accent">t5</span>',
       desc: 'Bots, services and small tools. Stack: Python, Kotlin, Go, JS. No frameworks and no extra dependencies — it should run on a potato.',
       lastfmLoading: 'loading...',
       lastfmWaiting: 'Waiting for data...',
