@@ -79,7 +79,6 @@ export const translations = {
       },
       contract: {
         badge: 'Условия работы',
-        pdfLink: 'contract.pdf',
         item1Title: 'Исходный код и права',
         item1Desc: 'Весь написанный код и архитектура остаются у меня при любых обстоятельствах, это не обсуждается. Вы получаете готовый проект, а полный выкуп прав оговаривается отдельно.',
         item2Title: 'Гарантия на баги',
@@ -185,7 +184,6 @@ export const translations = {
       },
       contract: {
         badge: 'Terms & Conditions',
-        pdfLink: 'contract.pdf',
         item1Title: 'Source Code & Rights',
         item1Desc: 'All code and architecture remain mine under any circumstances, non-negotiable. You get a working project; full IP buyout is discussed separately.',
         item2Title: 'Bug Warranty',
