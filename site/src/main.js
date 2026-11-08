@@ -2024,14 +2024,16 @@ function setupPortfolioDemos() {
 
       const dynamicLines = musCliBody.querySelectorAll('.cli-line.dynamic');
       dynamicLines.forEach(line => line.remove());
+      musCliBody.scrollTop = 0;
 
       const steps = [
-        { text: '[+] Fetching metadata...', delay: 300 },
-        { text: '[>] Downloading FLAC...', delay: 850 },
-        { text: '[✓] Saved to ./downloads/track.flac', delay: 1450 }
+        { text: '[+] song.link: resolving metadata & ISRC...', delay: 250 },
+        { text: '[>] Soulseek (aioslsk): downloading FLAC...', delay: 750 },
+        { text: '[✓] mutagen: tags & hi-res cover embedded', delay: 1300 },
+        { text: '[✓] Saved to ./downloads/track.flac (24-bit)', delay: 1750 }
       ];
 
-      steps.forEach(function(step) {
+      steps.forEach(function(step, index) {
         setTimeout(function() {
           const logLine = document.createElement('div');
           logLine.className = 'cli-line status dynamic';
@@ -2039,7 +2041,7 @@ function setupPortfolioDemos() {
           musCliBody.appendChild(logLine);
           musCliBody.scrollTop = musCliBody.scrollHeight;
 
-          if (step.text.includes('[✓]')) {
+          if (index === steps.length - 1) {
             isDownloading = false;
           }
         }, step.delay);

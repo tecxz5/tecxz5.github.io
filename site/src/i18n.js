@@ -94,17 +94,17 @@ export const translations = {
     portfolio: {
       card1: {
         title: 'Генератор фонов',
-        desc: 'Интерактивный холст: сетки из Material Icons, шейдерные сдвиги и экспорт настроек.',
+        desc: 'Генератор процедурных обоев на чистом WebGL. Раскладывает иконки в сетки, крутит шейдерные искажения и отдает конфиг.',
         action: 'Открыть генератор',
       },
       card2: {
         title: 'mus-downloader',
-        desc: 'Консольная утилита для скачивания музыки в FLAC и MP3 с обложками и метаданными.',
+        desc: 'Качает треки в FLAC и MP3 напрямую из Soulseek, Deezer и YouTube. Сам подтягивает теги с обложками, жмет в честный 320 kbps и отдает через CLI или TG-бота до 2 ГБ.',
         action: 'GitHub: mus-downloader',
       },
       card3: {
         title: 'Telegram-боты',
-        desc: 'Боты для автоматизации каналов, парсинга медиа и интерактива со слотами.',
+        desc: 'Боты на aiogram: автопостинг в каналы, парсинг контента, скачивание медиа и мини-игры со слотами.',
         chatInitial: 'Испытай удачу! Жми /slots ниже:',
         chatSpinning: 'Крутим...',
         chatWin: 'ДЖЕКПОТ! +1000 монет!',
@@ -199,17 +199,17 @@ export const translations = {
     portfolio: {
       card1: {
         title: 'Background Generator',
-        desc: 'Interactive canvas: Material Icons grids, shader distortion, and preset exports.',
+        desc: 'Procedural wallpaper generator on pure WebGL. Grids of icons, shader distortion passes, and live config export.',
         action: 'Open Generator',
       },
       card2: {
         title: 'mus-downloader',
-        desc: 'Console utility to download music in FLAC and MP3 with covers and metadata.',
+        desc: 'Downloads tracks in FLAC and MP3 from Soulseek, Deezer, and YouTube. Pulls metadata and covers, transcodes to 320 kbps, and delivers via CLI or a TG bot up to 2 GB.',
         action: 'GitHub: mus-downloader',
       },
       card3: {
         title: 'Telegram Bots',
-        desc: 'Bots for channel automation, media scraping, and interactive mini-games.',
+        desc: 'Bots on aiogram: channel automation, content scraping, media downloading, and mini-games with slots.',
         chatInitial: 'Test your luck! Tap /slots below:',
         chatSpinning: 'Spinning...',
         chatWin: 'JACKPOT! +1,000 coins!',

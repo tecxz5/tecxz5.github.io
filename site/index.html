@@ -241,12 +241,8 @@
                   <!-- Карточка 1: Генератор фона -->
                   <article class="portfolio-card" id="portfolio-card-generator">
                     <div class="portfolio-card__header">
-                      <div class="portfolio-card__badges">
-                        <span class="portfolio-card__badge">WebGL</span>
-                        <span class="portfolio-card__badge portfolio-card__badge--tag">Tool</span>
-                      </div>
                       <h3 class="portfolio-card__title" data-i18n="portfolio.card1.title">Генератор фонов</h3>
-                      <p class="portfolio-card__desc" data-i18n="portfolio.card1.desc">Интерактивный холст: сетки из Material Icons, шейдерные сдвиги и экспорт настроек.</p>
+                      <p class="portfolio-card__desc" data-i18n="portfolio.card1.desc">Генератор процедурных обоев на чистом WebGL. Раскладывает иконки в сетки, крутит шейдерные искажения и отдает конфиг.</p>
                     </div>
                     <div class="portfolio-card__demo portfolio-demo--canvas">
                       <canvas id="portfolio-mini-canvas" width="280" height="110" aria-hidden="true"></canvas>
@@ -259,17 +255,13 @@
                   <!-- Карточка 2: mus-downloader -->
                   <article class="portfolio-card" id="portfolio-card-mus">
                     <div class="portfolio-card__header">
-                      <div class="portfolio-card__badges">
-                        <span class="portfolio-card__badge">Python</span>
-                        <span class="portfolio-card__badge portfolio-card__badge--tag">CLI</span>
-                      </div>
                       <h3 class="portfolio-card__title" data-i18n="portfolio.card2.title">mus-downloader</h3>
-                      <p class="portfolio-card__desc" data-i18n="portfolio.card2.desc">Консольная утилита для скачивания музыки в FLAC и MP3 с обложками и метаданными.</p>
+                      <p class="portfolio-card__desc" data-i18n="portfolio.card2.desc">Качает треки в FLAC и MP3 напрямую из Soulseek, Deezer и YouTube. Сам подтягивает теги с обложками, жмет в честный 320 kbps и отдает через CLI или TG-бота до 2 ГБ.</p>
                     </div>
                     <div class="portfolio-card__demo portfolio-demo--cli" id="mus-cli-demo">
                       <div class="cli-body" id="mus-cli-body">
-                        <div class="cli-line prompt">$ python main.py &lt;url&gt; -q FLAC</div>
-                        <div class="cli-line info">=== Multi-source Music Downloader ===</div>
+                        <div class="cli-line prompt">$ uv run dl &lt;url&gt; --flac</div>
+                        <div class="cli-line info">=== mus-downloader (Soulseek + Deezer) ===</div>
                       </div>
                     </div>
                     <div class="portfolio-card__footer">
@@ -280,12 +272,8 @@
                   <!-- Карточка 3: Telegram & Discord Боты -->
                   <article class="portfolio-card" id="portfolio-card-bots">
                     <div class="portfolio-card__header">
-                      <div class="portfolio-card__badges">
-                        <span class="portfolio-card__badge">Python</span>
-                        <span class="portfolio-card__badge portfolio-card__badge--tag">Bot</span>
-                      </div>
                       <h3 class="portfolio-card__title" data-i18n="portfolio.card3.title">Telegram-боты</h3>
-                      <p class="portfolio-card__desc" data-i18n="portfolio.card3.desc">Боты для автоматизации каналов, парсинга медиа и интерактива со слотами.</p>
+                      <p class="portfolio-card__desc" data-i18n="portfolio.card3.desc">Боты на aiogram: автопостинг в каналы, парсинг контента, скачивание медиа и мини-игры со слотами.</p>
                     </div>
                     <div class="portfolio-card__demo portfolio-demo--chat">
                       <div class="chat-widget">
