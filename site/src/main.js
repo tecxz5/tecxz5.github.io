@@ -3,7 +3,7 @@ import t5Svg from './assets/icons/t5.svg?url';
 import copyrightSvg from './assets/icons/c.svg?url';
 import { BubblesEffect } from './bubbles.js';
 import { LifeEffect } from './life.js';
-import { initI18n, t, getLanguage } from './i18n.js';
+import { initI18n, t, getLanguage, translations } from './i18n.js';
 
 (function () {
   const icons = [t5Svg, copyrightSvg];
@@ -2170,8 +2170,18 @@ function setupLastFmWidget() {
   const coverPlaceholder = document.getElementById('lastfm-cover-placeholder');
   const scrobblesEl = document.getElementById('lastfm-scrobbles');
 
+  // Блок lifetime-прослушки stats.fm — независим от last.fm
+  const statsBlock = document.getElementById('lastfm-stats');
+  const statsTimeEl = document.getElementById('lastfm-stats-time');
+  const statsCountEl = document.getElementById('lastfm-stats-count');
+  const statsArtistsEl = document.getElementById('lastfm-stats-artists');
+
+  const LASTFM_USER = 'tecxz5';
+  const STATSFM_USER = 'big_fish_theory';
+
   let currentTrackState = null;
   let isFailed = false;
+  let lifetimeStats = null; // сырые числа: { hours, minutes, streams, artists }
 
   function formatTimeAgo(uts) {
     if (!uts) return t('about.recently');
@@ -2195,7 +2205,7 @@ function setupLastFmWidget() {
       if (trackEl) {
         const fallbackText = t('about.fallbackText');
         trackEl.textContent = fallbackText;
-        trackEl.href = 'https://www.last.fm/user/tecxz5';
+        trackEl.href = `https://www.last.fm/user/${LASTFM_USER}`;
         trackEl.title = fallbackText;
       }
       if (artistEl) {
@@ -2291,8 +2301,7 @@ function setupLastFmWidget() {
 
     try {
       const apiKey = 'b25b959554ed76058ac220b7b2e0a026';
-      const username = 'tecxz5';
-      const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${encodeURIComponent(username)}&api_key=${apiKey}&format=json&limit=1`;
+      const url = `https://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=${encodeURIComponent(LASTFM_USER)}&api_key=${apiKey}&format=json&limit=1`;
 
       const response = await fetch(url, { signal: controller.signal });
       window.clearTimeout(timeoutId);
@@ -2317,10 +2326,10 @@ function setupLastFmWidget() {
       }
 
       const isNowPlaying = track['@attr']?.nowplaying === 'true';
-      const trackName = (track.name || 'Без названия').trim();
-      const artistName = (track.artist?.['#text'] || track.artist?.name || 'Неизвестный исполнитель').trim();
+      const trackName = (track.name || t('about.noName')).trim();
+      const artistName = (track.artist?.['#text'] || track.artist?.name || t('about.noArtist')).trim();
       const albumName = (track.album?.['#text'] || '').trim();
-      const trackUrl = track.url || `https://www.last.fm/user/${username}`;
+      const trackUrl = track.url || `https://www.last.fm/user/${LASTFM_USER}`;
       const images = track.image || [];
       const coverUrl = images.find((img) => img.size === 'extralarge')?.['#text']
         || images.find((img) => img.size === 'large')?.['#text']
@@ -2347,13 +2356,68 @@ function setupLastFmWidget() {
     }
   }
 
+  // stats.fm: lifetime-прослушка. Независима от last.fm — при ошибке блок просто
+  // остаётся скрытым, showFallback() не трогаем.
+  async function fetchStatsFm() {
+    const controller = new AbortController();
+    const timeoutId = window.setTimeout(() => controller.abort(), 5000);
+
+    try {
+      const url = `https://api.stats.fm/api/v1/users/${encodeURIComponent(STATSFM_USER)}/streams/stats`;
+      const response = await fetch(url, {
+        signal: controller.signal,
+        headers: { Accept: 'application/json' },
+      });
+      if (!response.ok) return;
+
+      const data = await response.json();
+      const durationMs = Number(data?.items?.durationMs);
+      const streams = Number(data?.items?.count);
+      const artists = Number(data?.items?.cardinality?.artists);
+      if (!Number.isFinite(durationMs) || !Number.isFinite(streams) || !Number.isFinite(artists)) return;
+
+      lifetimeStats = {
+        hours: Math.floor(durationMs / 3600000),
+        minutes: Math.floor((durationMs % 3600000) / 60000),
+        streams,
+        artists,
+      };
+      renderStats();
+    } catch {
+      // тихо: нет данных — блок скрыт, на карточку last.fm не влияем
+    } finally {
+      window.clearTimeout(timeoutId);
+    }
+  }
+
+  function renderStats() {
+    if (!statsBlock) return;
+    if (!lifetimeStats) {
+      statsBlock.style.display = 'none';
+      return;
+    }
+    const lang = getLanguage();
+    const loc = lang === 'ru' ? 'ru-RU' : 'en-US';
+    const dict = translations[lang] || translations.ru;
+    // listenedTime принимает (h, m) — t() умеет лишь один параметр, зовём напрямую
+    if (statsTimeEl) statsTimeEl.textContent = dict.about.listenedTime(lifetimeStats.hours, lifetimeStats.minutes);
+    if (statsCountEl) statsCountEl.textContent = t('about.streamsCount', lifetimeStats.streams.toLocaleString(loc));
+    if (statsArtistsEl) statsArtistsEl.textContent = t('about.artistsCount', lifetimeStats.artists.toLocaleString(loc));
+    statsBlock.style.display = 'flex';
+  }
+
   window.addEventListener('site-language-change', () => {
     renderWidget();
+    renderStats();
   });
 
   fetchLastFm();
   window.addEventListener('focus', fetchLastFm);
   window.setInterval(fetchLastFm, 30000);
+
+  // данные lifetime меняются медленно: один запрос при старте + повтор при фокусе окна
+  fetchStatsFm();
+  window.addEventListener('focus', fetchStatsFm);
 }
 
 const topSection = document.querySelector('#top');

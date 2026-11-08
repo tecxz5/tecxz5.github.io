@@ -1,3 +1,15 @@
+// Русские плюрали: 1 трек, 2-4 трека, 5+ треков, 11-14 треков.
+// n может прийти готовой строкой ("3 941") — приводим к целому до форматирования.
+function pluralRu(n, one, few, many) {
+  const num = Math.trunc(Number(String(n).replace(/[^\d]/g, '')));
+  if (!Number.isFinite(num)) return many;
+  const t = num % 100, o = num % 10;
+  if (t >= 11 && t <= 14) return many;
+  if (o === 1) return one;
+  if (o >= 2 && o <= 4) return few;
+  return many;
+}
+
 export const translations = {
   ru: {
     nav: {
@@ -18,24 +30,34 @@ export const translations = {
     about: {
       badge: 'Разработчик',
       title: 'Привет, я tecxz5',
-      desc: 'Пишу ботов, веб-приложения и шейдерную графику. Предпочитаю чистый код, высокую производительность и простые интерфейсы без лишних зависимостей.',
-      lastfmBadge: 'LAST.FM',
+      desc: 'Пишу ботов, сервисы и мелкие инструменты. Стек — Python, Kotlin, Go, JS. Без фреймворков и лишних зависимостей: чтобы работало даже на картошке.',
+      lastfmBadge: 'Last.fm',
       lastfmLoading: 'загрузка...',
       lastfmWaiting: 'Ожидание данных...',
       lastfmProfile: 'Профиль tecxz5',
       nowPlaying: 'сейчас играет',
       lastPlayed: 'последний трек',
       offline: 'офлайн',
-      fallbackText: 'у тебя ласт.фм недоступен',
+      fallbackText: 'last.fm не отвечает',
       fallbackError: 'не удалось получить данные',
       justNow: 'только что',
       recently: 'недавно',
       yesterday: 'вчера',
       minAgo: (m) => `${m} мин назад`,
       hourAgo: (h) => `${h} ч назад`,
-      daysAgo: (d) => `${d} дн назад`,
-      scrobbles: (count) => `${count} треков`,
+      daysAgo: (d) => `${d} ${pluralRu(d, 'день', 'дня', 'дней')} назад`,
+      scrobbles: (count) => `${count} ${pluralRu(count, 'трек', 'трека', 'треков')}`,
       wasOnline: (time) => `был в сети: ${time}`,
+      noName: 'Без названия',
+      noArtist: 'Неизвестный исполнитель',
+      coverAlt: 'Обложка трека',
+      statsfmSource: 'stats.fm',
+      listenedTime: (h, m) => {
+        if (h === 0) return `${m} мин`;
+        return m > 0 ? `${h} ч ${m} мин` : `${h} ч`;
+      },
+      streamsCount: (n) => `${n} ${pluralRu(n, 'стрим', 'стрима', 'стримов')}`,
+      artistsCount: (n) => `${n} ${pluralRu(n, 'артист', 'артиста', 'артистов')}`,
     },
     services: {
       hint: 'нажми для подробностей',
@@ -123,8 +145,8 @@ export const translations = {
     about: {
       badge: 'Developer',
       title: 'Hey, I\'m tecxz5',
-      desc: 'Building bots, web applications, and shader graphics. Focused on clean code, strong performance, and lightweight interfaces with no bloat.',
-      lastfmBadge: 'LAST.FM',
+      desc: 'Bots, services and small tools. Stack: Python, Kotlin, Go, JS. No frameworks and no extra dependencies — it should run on a potato.',
+      lastfmBadge: 'Last.fm',
       lastfmLoading: 'loading...',
       lastfmWaiting: 'Waiting for data...',
       lastfmProfile: 'tecxz5 profile',
@@ -141,6 +163,16 @@ export const translations = {
       daysAgo: (d) => `${d}d ago`,
       scrobbles: (count) => `${count} scrobbles`,
       wasOnline: (time) => `last active: ${time}`,
+      noName: 'Untitled',
+      noArtist: 'Unknown artist',
+      coverAlt: 'Album cover',
+      statsfmSource: 'stats.fm',
+      listenedTime: (h, m) => {
+        if (h === 0) return `${m}m`;
+        return m > 0 ? `${h}h ${m}m` : `${h}h`;
+      },
+      streamsCount: (n) => `${n} streams`,
+      artistsCount: (n) => `${n} artists`,
     },
     services: {
       hint: 'click for details',
@@ -273,6 +305,14 @@ export function applyLanguage(lang) {
     const val = getNested(currentDict, key);
     if (typeof val === 'string') {
       el.setAttribute('aria-label', val);
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-alt]').forEach((el) => {
+    const key = el.getAttribute('data-i18n-alt');
+    const val = getNested(currentDict, key);
+    if (typeof val === 'string') {
+      el.setAttribute('alt', val);
     }
   });
 

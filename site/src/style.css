@@ -562,8 +562,25 @@ body.is-track-instant .presentation-track {
 }
 
 .about-card__badge--lastfm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  line-height: 0;
   background: #b90000;
   color: #fff;
+}
+
+/* Brand SVG icon (inline <use> sprite) */
+.brand-mark {
+  display: block;
+  width: 16px;
+  height: 16px;
+  fill: #fff;
+}
+
+.brand-mark--lastfm {
+  flex-shrink: 0;
 }
 
 .lastfm-badge-wrap {
@@ -711,6 +728,13 @@ body.is-track-instant .presentation-track {
   user-select: none;
 }
 
+/* Placeholder is now an inline SVG <use> icon: shrink viewport to ~30px, tint */
+svg.lastfm-cover__placeholder {
+  box-sizing: border-box;
+  padding: 15px;
+  fill: #555;
+}
+
 .lastfm-cover__img {
   position: absolute;
   top: 0;
@@ -765,6 +789,35 @@ body.is-track-instant .presentation-track {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* stats.fm listening stats */
+.lastfm-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.12);
+  font-family: "Fira Mono", monospace;
+}
+
+.lastfm-stats__src {
+  font-size: 10px;
+  color: #777;
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+}
+
+.lastfm-stats__value {
+  font-size: 11px;
+  color: #aaa;
+}
+
+.lastfm-stats__dot {
+  font-size: 11px;
+  color: #555;
 }
 
 .about-card__footer {
@@ -1990,6 +2043,21 @@ body.is-loaded .loader__section--top {
 
   .about-card {
     padding: 14px;
+  }
+
+  .about-card__header {
+    margin-bottom: 10px;
+  }
+
+  .about-card--lastfm .lastfm-body {
+    padding: 10px;
+    gap: 12px;
+  }
+
+  .lastfm-stats {
+    gap: 5px;
+    margin-top: 8px;
+    padding-top: 6px;
   }
 
   .service-grid {
