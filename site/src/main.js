@@ -1186,14 +1186,17 @@ function resolveTouchStep(touchX, touchY) {
     return null;
   }
 
-  const useHorizontal = absDeltaX > absDeltaY;
-  const primaryDelta = useHorizontal ? deltaX : deltaY;
+  const isHorizontal = absDeltaX > absDeltaY;
+  const delta = isHorizontal ? deltaX : deltaY;
 
-  if (Math.abs(primaryDelta) < touchGestureThreshold) {
+  if (Math.abs(delta) < touchGestureThreshold) {
     return null;
   }
 
-  return primaryDelta > 0 ? 1 : -1;
+  return {
+    isHorizontal,
+    direction: delta > 0 ? 1 : -1
+  };
 }
 
 function setupTouchGestureLock() {
@@ -1215,29 +1218,86 @@ function setupTouchGestureLock() {
   window.addEventListener(
     'touchmove',
     (event) => {
-      if (event.target && event.target.closest && event.target.closest('.portfolio-card, .portfolio-demo, .chat-widget__messages, .cli-body, .service-card, .service-contract')) {
+      if (event.target && event.target.closest && event.target.closest('.portfolio-card, .portfolio-demo, .chat-widget__messages, .cli-body, .service-card.is-expanded')) {
         return;
       }
       if (event.touches.length !== 1 || !loaderHidden || !sectionSlider) {
         return;
       }
 
-      const direction = resolveTouchStep(event.touches[0].clientX, event.touches[0].clientY);
+      const step = resolveTouchStep(event.touches[0].clientX, event.touches[0].clientY);
 
-      if (!direction) {
+      if (!step) {
         return;
       }
 
-      if (event.cancelable) {
-        event.preventDefault();
+      const sectionIndex = getActiveSectionIndex();
+
+      if (sectionIndex === 1) {
+        if (step.isHorizontal) {
+          if (event.cancelable) {
+            event.preventDefault();
+          }
+
+          if (touchGestureHandled || isScrollLocked || isLinkJumpAnimating) {
+            touchGestureHandled = true;
+            return;
+          }
+
+          if (step.direction > 0 && activeSlideIndex < presentationSlideCount - 1) {
+            touchGestureHandled = true;
+            animatePresentationSlide(activeSlideIndex + 1);
+          } else if (step.direction < 0 && activeSlideIndex > 0) {
+            touchGestureHandled = true;
+            animatePresentationSlide(activeSlideIndex - 1);
+          }
+          return;
+        }
+
+        const slideNames = ['about', 'services', 'portfolio'];
+        const currentSlide = document.getElementById(slideNames[activeSlideIndex]);
+        if (currentSlide) {
+          const atTop = currentSlide.scrollTop <= 4;
+          const atBottom = currentSlide.scrollTop + currentSlide.clientHeight >= currentSlide.scrollHeight - 6;
+
+          if (step.direction < 0 && activeSlideIndex === 0 && atTop) {
+            if (event.cancelable) {
+              event.preventDefault();
+            }
+            if (!touchGestureHandled && !isScrollLocked && !isLinkJumpAnimating) {
+              touchGestureHandled = true;
+              sectionSlider.slidePrev();
+            }
+            return;
+          }
+
+          if (step.direction > 0 && activeSlideIndex === presentationSlideCount - 1 && atBottom) {
+            if (event.cancelable) {
+              event.preventDefault();
+            }
+            if (!touchGestureHandled && !isScrollLocked && !isLinkJumpAnimating) {
+              touchGestureHandled = true;
+              sectionSlider.slideNext();
+            }
+            return;
+          }
+
+          return;
+        }
       }
 
-      if (touchGestureHandled || isScrollLocked || isLinkJumpAnimating) {
-        touchGestureHandled = true;
-        return;
-      }
+      if (!step.isHorizontal) {
+        if (event.cancelable) {
+          event.preventDefault();
+        }
 
-      touchGestureHandled = stepByWheelGesture(direction);
+        if (touchGestureHandled || isScrollLocked || isLinkJumpAnimating) {
+          touchGestureHandled = true;
+          return;
+        }
+
+        touchGestureHandled = stepByWheelGesture(step.direction);
+      }
     },
     { passive: false, capture: true }
   );
@@ -2116,20 +2176,30 @@ function setupPortfolioDemos() {
       dot.addEventListener('click', function() {
         triggerHaptic(10);
         const index = parseInt(dot.getAttribute('data-index') || '0', 10);
-        const cardWidth = portfolioGrid.clientWidth;
-        portfolioGrid.scrollTo({
-          left: index * cardWidth,
-          behavior: 'smooth'
-        });
+        const card = portfolioGrid.children[index];
+        if (card) {
+          portfolioGrid.scrollTo({
+            left: card.offsetLeft - portfolioGrid.offsetLeft,
+            behavior: 'smooth'
+          });
+        }
       });
     });
 
     portfolioGrid.addEventListener('scroll', function() {
-      const cardWidth = portfolioGrid.clientWidth;
-      if (cardWidth <= 0) return;
-      const activeIdx = Math.round(portfolioGrid.scrollLeft / cardWidth);
+      const scrollLeft = portfolioGrid.scrollLeft;
+      let closestIdx = 0;
+      let minDiff = Infinity;
+      Array.from(portfolioGrid.children).forEach(function(card, idx) {
+        const cardLeft = card.offsetLeft - portfolioGrid.offsetLeft;
+        const diff = Math.abs(scrollLeft - cardLeft);
+        if (diff < minDiff) {
+          minDiff = diff;
+          closestIdx = idx;
+        }
+      });
       portfolioDots.forEach(function(dot, idx) {
-        dot.classList.toggle('is-active', idx === activeIdx);
+        dot.classList.toggle('is-active', idx === closestIdx);
       });
     }, { passive: true });
 
