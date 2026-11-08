@@ -1965,7 +1965,7 @@ body.is-loaded .loader__section--top {
   }
 
   .presentation-slide {
-    padding: 72px 16px 24px;
+    padding: 0 16px 20px;
     height: 100vh;
     height: var(--app-height, 100vh);
     max-height: 100vh;
@@ -1985,10 +1985,22 @@ body.is-loaded .loader__section--top {
   }
 
   .presentation-slide h2 {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    width: 100%;
+    margin: 0;
+    text-align: center;
     font-size: clamp(28px, 7.5vw, 36px);
-    margin: 0 0 16px 0;
+    padding-top: calc(56px + var(--safe-top, 0px));
+    padding-bottom: 12px;
     flex-shrink: 0;
     align-self: center;
+    color: #fff;
+    pointer-events: none;
+    background: transparent;
+    text-shadow: 0 4px 18px rgba(0, 0, 0, 0.95), 0 2px 4px #000;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.9));
   }
 
   .presentation-strips__item {
@@ -2032,32 +2044,36 @@ body.is-loaded .loader__section--top {
   }
 
   #about {
-    --slide-title-shift: -12px;
+    --slide-title-shift: 0px;
   }
 
   #services {
-    --slide-title-shift: 10px;
+    --slide-title-shift: 0px;
   }
 
   #portfolio {
-    --slide-title-shift: -8px;
+    --slide-title-shift: 0px;
   }
 
   .presentation-slide__body {
+    flex: 1;
     width: min(340px, calc(100vw - 32px));
     margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     flex-shrink: 0;
+    box-sizing: border-box;
     padding-bottom: 24px;
   }
 
-  /* About Grid Mobile */
+  /* Safe-zone centering: when content fits, center it in the remaining space */
   .about-grid {
     grid-template-columns: minmax(0, 1fr);
     gap: 12px;
     width: min(340px, calc(100vw - 32px));
+    margin-top: auto;
+    margin-bottom: auto;
   }
 
   .about-card {
@@ -2075,31 +2091,33 @@ body.is-loaded .loader__section--top {
 
   .service-grid,
   .service-grid--two {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
     width: 100%;
+    margin-top: 14px;
   }
 
   .service-card {
-    min-height: 92px;
-    padding: 12px 10px;
+    min-height: 110px;
+    padding: 20px 18px 46px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .service-card__badge {
-    font-size: 11px;
-    padding: 2px 6px;
+    font-size: 16px;
+    padding: 3px 10px;
   }
 
   .service-card__sub {
-    font-size: 11px;
-    margin: 4px 0 0 0;
+    font-size: 16px;
+    margin: 0;
   }
 
   .service-card__hint {
-    font-size: 9px;
-    margin-top: 4px;
-    opacity: 0.7;
+    font-size: 11px;
+    letter-spacing: 0.02em;
   }
 
   .service-contract {
@@ -2147,6 +2165,7 @@ body.is-loaded .loader__section--top {
     padding-bottom: 4px;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    margin-top: auto;
   }
 
   .portfolio-grid::-webkit-scrollbar {
@@ -2171,7 +2190,8 @@ body.is-loaded .loader__section--top {
     justify-content: center;
     align-items: center;
     gap: 10px;
-    margin-top: 12px;
+    margin-top: 14px;
+    margin-bottom: auto;
   }
 
   .portfolio-dot {
