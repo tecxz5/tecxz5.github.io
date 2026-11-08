@@ -2158,6 +2158,55 @@ setupPortfolioDemos();
 setupLastFmWidget();
 initI18n();
 
+// Чистый приоритет «сейчас играет»: stats.fm важнее last.fm.
+// statsCurrent — подготовленный stats.fm-объект (null, если не играет/упал),
+// lastfmState — стейт last.fm (null при ошибке). Возвращает трек для рендера либо null.
+function pickNowPlaying(statsCurrent, lastfmState) {
+  const statsTrack = statsCurrent && statsCurrent.isNowPlaying ? statsCurrent : null;
+  if (statsTrack) return statsTrack;
+  return lastfmState || null;
+}
+
+// Усечение длинных названий по количеству символов (не байтов), по границе слова.
+// Короткие строки возвращаем как есть; '…' добавляем ровно один — только при резке.
+function clampName(value, max) {
+  if (typeof value !== 'string' || value === '') return '';
+  const chars = Array.from(value);
+  if (chars.length <= max) return value;
+  let head = chars.slice(0, max).join('');
+  const spaceIdx = head.lastIndexOf(' ');
+  if (spaceIdx > 0) head = head.slice(0, spaceIdx); // режем по последнему пробелу
+  else head = chars.slice(0, max - 1).join(''); // слово длиннее лимита — жёсткая резка
+  head = head.replace(/\s+/g, ' ').trim();
+  return head + '…';
+}
+
+// Форматирование списка исполнителей. Если их несколько — объединяем через запятую.
+// Если передан primaryHint (основной артист из Last.fm) — ставим его первым.
+function formatArtists(artists, primaryHint) {
+  if (!artists) return '';
+  if (typeof artists === 'string') return artists.trim();
+  if (!Array.isArray(artists)) return '';
+  const names = artists
+    .map((a) => (typeof a === 'string' ? a : a?.name))
+    .filter((name) => typeof name === 'string' && name.trim() !== '')
+    .map((name) => name.trim());
+
+  if (names.length === 0) return '';
+  if (names.length === 1) return names[0];
+
+  if (primaryHint) {
+    const hintLower = primaryHint.toLowerCase().trim();
+    const primaryIdx = names.findIndex((n) => n.toLowerCase() === hintLower);
+    if (primaryIdx > 0) {
+      const [primary] = names.splice(primaryIdx, 1);
+      names.unshift(primary);
+    }
+  }
+
+  return names.join(', ');
+}
+
 function setupLastFmWidget() {
   const card = document.getElementById('lastfm-card');
   if (!card) return;
@@ -2168,20 +2217,15 @@ function setupLastFmWidget() {
   const albumEl = document.getElementById('lastfm-album');
   const coverImg = document.getElementById('lastfm-cover-img');
   const coverPlaceholder = document.getElementById('lastfm-cover-placeholder');
-  const scrobblesEl = document.getElementById('lastfm-scrobbles');
-
-  // Блок lifetime-прослушки stats.fm — независим от last.fm
-  const statsBlock = document.getElementById('lastfm-stats');
-  const statsTimeEl = document.getElementById('lastfm-stats-time');
-  const statsCountEl = document.getElementById('lastfm-stats-count');
-  const statsArtistsEl = document.getElementById('lastfm-stats-artists');
 
   const LASTFM_USER = 'tecxz5';
   const STATSFM_USER = 'big_fish_theory';
 
   let currentTrackState = null;
   let isFailed = false;
-  let lifetimeStats = null; // сырые числа: { hours, minutes, streams, artists }
+  // stats.fm «сейчас играет»: подготовленный трек или null; key — для дедупа перерисовок
+  let nowPlayingStats = null;
+  let nowPlayingKey = '';
 
   function formatTimeAgo(uts) {
     if (!uts) return t('about.recently');
@@ -2198,7 +2242,11 @@ function setupLastFmWidget() {
   }
 
   function renderWidget() {
-    if (isFailed) {
+    // stats.fm проверяется до isFailed: играющий stats-трек важнее ошибки last.fm
+    const track = pickNowPlaying(nowPlayingStats, isFailed ? null : currentTrackState);
+
+    if (!track) {
+      if (!isFailed) return;
       card.classList.add('is-unavailable');
       card.classList.remove('is-playing');
       if (statusLabel) statusLabel.textContent = t('about.offline');
@@ -2223,15 +2271,10 @@ function setupLastFmWidget() {
       if (coverPlaceholder) {
         coverPlaceholder.style.display = 'flex';
       }
-      if (scrobblesEl) {
-        scrobblesEl.style.display = 'none';
-      }
       return;
     }
 
-    if (!currentTrackState) return;
-
-    const { isNowPlaying, trackName, artistName, albumName, trackUrl, coverUrl, totalScrobbles, dateUts } = currentTrackState;
+    const { isNowPlaying, trackName, artistName, rawArtists, albumName, trackUrl, coverUrl, dateUts } = track;
 
     card.classList.remove('is-unavailable');
     card.classList.toggle('is-playing', isNowPlaying);
@@ -2247,29 +2290,35 @@ function setupLastFmWidget() {
     }
 
     if (trackEl) {
-      trackEl.textContent = trackName;
-      trackEl.href = trackUrl;
+      trackEl.textContent = clampName(trackName, 48);
+      if (trackUrl) {
+        trackEl.href = trackUrl;
+      } else {
+        // у stats.fm-трека может не быть id — ссылка просто неактивна
+        trackEl.removeAttribute('href');
+      }
       trackEl.title = trackName;
     }
     if (artistEl) {
-      artistEl.textContent = artistName;
-      artistEl.title = artistName;
+      const displayArtist = formatArtists(rawArtists || artistName, currentTrackState?.artistName) || artistName || t('about.noArtist');
+      artistEl.textContent = clampName(displayArtist, 36);
+      artistEl.title = displayArtist;
     }
     if (albumEl) {
-      if (albumName && albumName.toLowerCase() !== trackName.toLowerCase()) {
-        albumEl.textContent = albumName;
+      // Схлопываем дубли: сравнение по ПОЛНЫМ названиям (иначе длинные пары трек/альбом
+      // перестанут схлопываться) и по показываемым — обрезанный альбом, который является
+      // началом обрезанного трека, это та же строка за вычетом хвоста.
+      const trackShown = clampName(trackName, 48);
+      const albumShown = clampName(albumName, 34);
+      const albumIsPrefixOfTrack = albumShown.endsWith('…') && trackShown.startsWith(albumShown.slice(0, -1).trim());
+      if (albumName && albumName.toLowerCase() !== trackName.toLowerCase() && !albumIsPrefixOfTrack) {
+        albumEl.textContent = albumShown;
         albumEl.title = albumName;
         albumEl.style.display = 'block';
       } else {
         albumEl.textContent = '';
         albumEl.style.display = 'none';
       }
-    }
-    if (scrobblesEl && totalScrobbles) {
-      const loc = getLanguage() === 'ru' ? 'ru-RU' : 'en-US';
-      const formattedTotal = Number(totalScrobbles).toLocaleString(loc);
-      scrobblesEl.textContent = t('about.scrobbles', formattedTotal);
-      scrobblesEl.style.display = 'inline-block';
     }
     if (coverImg) {
       if (coverUrl && !coverUrl.includes('2a96cbd8b46e442fc41c2b86b821562f')) {
@@ -2336,7 +2385,6 @@ function setupLastFmWidget() {
         || images.find((img) => img.size === 'medium')?.['#text']
         || images[0]?.['#text']
         || '';
-      const totalScrobbles = data?.recenttracks?.['@attr']?.total;
 
       isFailed = false;
       currentTrackState = {
@@ -2346,7 +2394,6 @@ function setupLastFmWidget() {
         albumName,
         trackUrl,
         coverUrl,
-        totalScrobbles,
         dateUts: track.date?.uts,
       };
 
@@ -2356,68 +2403,76 @@ function setupLastFmWidget() {
     }
   }
 
-  // stats.fm: lifetime-прослушка. Независима от last.fm — при ошибке блок просто
-  // остаётся скрытым, showFallback() не трогаем.
-  async function fetchStatsFm() {
+  // stats.fm current — первый источник «сейчас играет». При ошибке showFallback()
+  // не зовём: nowPlayingStats=null, и карточка остаётся на last.fm-логике.
+  function setNowPlaying(track, key) {
+    if (key === nowPlayingKey) return; // трек не изменился — DOM не трогаем
+    nowPlayingKey = key;
+    nowPlayingStats = track;
+    renderWidget();
+  }
+
+  async function fetchNowPlaying() {
     const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), 5000);
+    const timeoutId = window.setTimeout(() => controller.abort(), 4000);
 
     try {
-      const url = `https://api.stats.fm/api/v1/users/${encodeURIComponent(STATSFM_USER)}/streams/stats`;
+      const url = `https://api.stats.fm/api/v1/users/${encodeURIComponent(STATSFM_USER)}/streams/current`;
       const response = await fetch(url, {
         signal: controller.signal,
         headers: { Accept: 'application/json' },
       });
-      if (!response.ok) return;
+      if (!response.ok) {
+        setNowPlaying(null, '');
+        return;
+      }
 
       const data = await response.json();
-      const durationMs = Number(data?.items?.durationMs);
-      const streams = Number(data?.items?.count);
-      const artists = Number(data?.items?.cardinality?.artists);
-      if (!Number.isFinite(durationMs) || !Number.isFinite(streams) || !Number.isFinite(artists)) return;
+      const item = data?.item;
+      if (item?.isPlaying !== true || !item.track) {
+        setNowPlaying(null, '');
+        return;
+      }
 
-      lifetimeStats = {
-        hours: Math.floor(durationMs / 3600000),
-        minutes: Math.floor((durationMs % 3600000) / 60000),
-        streams,
-        artists,
+      const id = item.track.id;
+      const spotifyId = item.track.externalIds?.spotify?.[0];
+      const appleMusicId = item.track.externalIds?.appleMusic?.[0];
+      const trackUrl = spotifyId
+        ? `https://song.link/s/${spotifyId}`
+        : (appleMusicId ? `https://song.link/i/${appleMusicId}` : '');
+      const trackName = (item.track.name || t('about.noName')).trim();
+      const rawArtists = item.track.artists;
+      const initialArtist = formatArtists(rawArtists, currentTrackState?.artistName) || t('about.noArtist');
+      const track = {
+        isNowPlaying: true,
+        trackName,
+        artistName: initialArtist,
+        rawArtists,
+        albumName: (item.track.albums?.[0]?.name || '').trim(),
+        coverUrl: (item.track.albums?.[0]?.image || '').trim(),
+        trackUrl,
+        dateUts: null,
       };
-      renderStats();
+      setNowPlaying(track, `${spotifyId ?? id ?? ''}|${trackName}|${initialArtist}`);
     } catch {
-      // тихо: нет данных — блок скрыт, на карточку last.fm не влияем
+      setNowPlaying(null, '');
     } finally {
       window.clearTimeout(timeoutId);
     }
   }
 
-  function renderStats() {
-    if (!statsBlock) return;
-    if (!lifetimeStats) {
-      statsBlock.style.display = 'none';
-      return;
-    }
-    const lang = getLanguage();
-    const loc = lang === 'ru' ? 'ru-RU' : 'en-US';
-    const dict = translations[lang] || translations.ru;
-    // listenedTime принимает (h, m) — t() умеет лишь один параметр, зовём напрямую
-    if (statsTimeEl) statsTimeEl.textContent = dict.about.listenedTime(lifetimeStats.hours, lifetimeStats.minutes);
-    if (statsCountEl) statsCountEl.textContent = t('about.streamsCount', lifetimeStats.streams.toLocaleString(loc));
-    if (statsArtistsEl) statsArtistsEl.textContent = t('about.artistsCount', lifetimeStats.artists.toLocaleString(loc));
-    statsBlock.style.display = 'flex';
-  }
-
   window.addEventListener('site-language-change', () => {
     renderWidget();
-    renderStats();
   });
 
   fetchLastFm();
   window.addEventListener('focus', fetchLastFm);
   window.setInterval(fetchLastFm, 30000);
 
-  // данные lifetime меняются медленно: один запрос при старте + повтор при фокусе окна
-  fetchStatsFm();
-  window.addEventListener('focus', fetchStatsFm);
+  // «сейчас играет»: stats.fm поллим отдельно и чаще (last.fm-поллинг не ускоряем)
+  fetchNowPlaying();
+  window.addEventListener('focus', fetchNowPlaying);
+  window.setInterval(fetchNowPlaying, 10000);
 }
 
 const topSection = document.querySelector('#top');

@@ -28,13 +28,11 @@ export const translations = {
       portfolio: 'Портфолио',
     },
     about: {
-      badge: 'Разработчик',
-      title: 'Привет, я tecxz5',
-      desc: 'Пишу ботов, сервисы и мелкие инструменты. Стек — Python, Kotlin, Go, JS. Без фреймворков и лишних зависимостей: чтобы работало даже на картошке.',
-      lastfmBadge: 'Last.fm',
+      title: 'Привет, я t5',
+      desc: 'Вроде как что-то делаю, пусть сайт и доделал спустя полгода... ',
       lastfmLoading: 'загрузка...',
       lastfmWaiting: 'Ожидание данных...',
-      lastfmProfile: 'Профиль tecxz5',
+      lastfmProfile: 'Профиль на last.fm',
       nowPlaying: 'сейчас играет',
       lastPlayed: 'последний трек',
       offline: 'офлайн',
@@ -46,18 +44,10 @@ export const translations = {
       minAgo: (m) => `${m} мин назад`,
       hourAgo: (h) => `${h} ч назад`,
       daysAgo: (d) => `${d} ${pluralRu(d, 'день', 'дня', 'дней')} назад`,
-      scrobbles: (count) => `${count} ${pluralRu(count, 'трек', 'трека', 'треков')}`,
       wasOnline: (time) => `был в сети: ${time}`,
       noName: 'Без названия',
       noArtist: 'Неизвестный исполнитель',
       coverAlt: 'Обложка трека',
-      statsfmSource: 'stats.fm',
-      listenedTime: (h, m) => {
-        if (h === 0) return `${m} мин`;
-        return m > 0 ? `${h} ч ${m} мин` : `${h} ч`;
-      },
-      streamsCount: (n) => `${n} ${pluralRu(n, 'стрим', 'стрима', 'стримов')}`,
-      artistsCount: (n) => `${n} ${pluralRu(n, 'артист', 'артиста', 'артистов')}`,
     },
     services: {
       hint: 'нажми для подробностей',
@@ -143,10 +133,8 @@ export const translations = {
       portfolio: 'Portfolio',
     },
     about: {
-      badge: 'Developer',
       title: 'Hey, I\'m tecxz5',
       desc: 'Bots, services and small tools. Stack: Python, Kotlin, Go, JS. No frameworks and no extra dependencies — it should run on a potato.',
-      lastfmBadge: 'Last.fm',
       lastfmLoading: 'loading...',
       lastfmWaiting: 'Waiting for data...',
       lastfmProfile: 'tecxz5 profile',
@@ -161,18 +149,10 @@ export const translations = {
       minAgo: (m) => `${m}m ago`,
       hourAgo: (h) => `${h}h ago`,
       daysAgo: (d) => `${d}d ago`,
-      scrobbles: (count) => `${count} scrobbles`,
       wasOnline: (time) => `last active: ${time}`,
       noName: 'Untitled',
       noArtist: 'Unknown artist',
       coverAlt: 'Album cover',
-      statsfmSource: 'stats.fm',
-      listenedTime: (h, m) => {
-        if (h === 0) return `${m}m`;
-        return m > 0 ? `${h}h ${m}m` : `${h}h`;
-      },
-      streamsCount: (n) => `${n} streams`,
-      artistsCount: (n) => `${n} artists`,
     },
     services: {
       hint: 'click for details',
