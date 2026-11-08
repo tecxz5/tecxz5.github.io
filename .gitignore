@@ -9,3 +9,5 @@ node_modules
 .opencode
 scratch/
 IDEA.md
+scripts/
+*.pdf
