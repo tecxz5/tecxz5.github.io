@@ -287,47 +287,18 @@ export class MengerEffect {
     }
   }
 
-  onPointerMove(clientX, clientY, pointerType = 'mouse') {
+  onPointerMove(clientX, clientY) {
     if (!this.isDragging) return;
 
-    const pType = pointerType || this.pointerType;
     const dx = clientX - this.lastPointerX;
     const dy = clientY - this.lastPointerY;
-    const totalDx = Math.abs(clientX - this.startX);
-    const totalDy = Math.abs(clientY - this.startY);
-
-    // On touch devices: if motion is vertical (scrolling page up/down), immediately yield!
-    if (pType === 'touch') {
-      if (totalDy > 8 && totalDy > totalDx) {
-        this.isVerticalScroll = true;
-        this.isDragging = false;
-        return;
-      }
-      if (this.isVerticalScroll) return;
-
-      const now = performance.now();
-      const dt = Math.max(now - this.lastPointerTime, 8);
-
-      // On touch: ONLY rotate Y (spin around vertical axis), never tilt X!
-      this.rotY += dx * 0.0055;
-      const instantVelY = (dx / dt) * 0.16;
-      this.velY = this.velY * 0.35 + instantVelY * 0.65;
-
-      this.dragDistance += Math.abs(dx);
-      this.lastPointerX = clientX;
-      this.lastPointerY = clientY;
-      this.lastPointerTime = now;
-      return;
-    }
-
-    // Mouse / desktop:
     const now = performance.now();
     const dt = Math.max(now - this.lastPointerTime, 8);
 
     this.rotY += dx * 0.0055;
     this.rotX += dy * 0.0055;
 
-    // Track throw velocity (flick impulse)
+    // Track throw velocity (flick impulse in both X and Y)
     const instantVelY = (dx / dt) * 0.16;
     const instantVelX = (dy / dt) * 0.16;
     this.velY = this.velY * 0.35 + instantVelY * 0.65;
@@ -339,39 +310,19 @@ export class MengerEffect {
     this.lastPointerTime = now;
   }
 
-  onPointerDown(clientX, clientY, pointerType = 'mouse') {
-    this.pointerType = pointerType;
+  onPointerDown(clientX, clientY) {
     this.isDragging = true;
-    this.startX = clientX;
-    this.startY = clientY;
     this.lastPointerX = clientX;
     this.lastPointerY = clientY;
     this.lastPointerTime = performance.now();
     this.dragDistance = 0;
-    this.isVerticalScroll = false;
   }
 
   onPointerUp() {
     if (!this.isDragging) return;
     this.isDragging = false;
 
-    if (this.isVerticalScroll) {
-      return;
-    }
-
-    if (this.pointerType === 'touch') {
-      if (this.dragDistance < 6) {
-        const dir = Math.random() > 0.5 ? 1 : -1;
-        this.velY = dir * (0.045 + Math.random() * 0.035);
-      } else {
-        const maxVel = 0.085;
-        this.velY = Math.max(-maxVel, Math.min(maxVel, this.velY));
-      }
-      this.velX = this.baseSpinX;
-      return;
-    }
-
-    // Mouse / desktop:
+    // If it was a quick click/tap without drag, give it a push impulse
     if (this.dragDistance < 6) {
       const dir = Math.random() > 0.5 ? 1 : -1;
       this.velY = dir * (0.045 + Math.random() * 0.035);

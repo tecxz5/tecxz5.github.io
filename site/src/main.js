@@ -1226,7 +1226,7 @@ function setupTouchGestureLock() {
   window.addEventListener(
     'touchmove',
     (event) => {
-      if (event.target && event.target.closest && event.target.closest('.portfolio-card, .portfolio-demo, .chat-widget__messages, .cli-body, .service-card.is-expanded')) {
+      if (event.target && event.target.closest && event.target.closest('.portfolio-grid, .portfolio-card, .portfolio-demo, .chat-widget__messages, .cli-body, .service-card.is-expanded, #menger-touch-zone')) {
         return;
       }
       if (event.touches.length !== 1 || !loaderHidden || !sectionSlider) {
@@ -1241,8 +1241,38 @@ function setupTouchGestureLock() {
 
       const sectionIndex = getActiveSectionIndex();
 
+      // SECTION 0: #top (Main screen)
+      if (sectionIndex === 0) {
+        if (step.direction > 0) {
+          if (event.cancelable) event.preventDefault();
+          if (!touchGestureHandled && !isScrollLocked && !isLinkJumpAnimating) {
+            touchGestureHandled = true;
+            sectionSlider.slideNext();
+          }
+        }
+        return;
+      }
+
+      // SECTION 2: #links (Footer screen, outside sponge safe-zone)
+      if (sectionIndex === 2) {
+        if (step.direction < 0) {
+          if (event.cancelable) event.preventDefault();
+          if (!touchGestureHandled && !isScrollLocked && !isLinkJumpAnimating) {
+            touchGestureHandled = true;
+            sectionSlider.slidePrev();
+          }
+        }
+        return;
+      }
+
+      // SECTION 1: #presentation (Slides: about, services, portfolio)
       if (sectionIndex === 1) {
         if (step.isHorizontal) {
+          // Horizontal swipes inside portfolio cards scroll the portfolio pagination!
+          if (event.target && event.target.closest && event.target.closest('.portfolio-grid, .portfolio-card')) {
+            return;
+          }
+
           if (event.cancelable) {
             event.preventDefault();
           }
@@ -1252,12 +1282,22 @@ function setupTouchGestureLock() {
             return;
           }
 
-          if (step.direction > 0 && activeSlideIndex < presentationSlideCount - 1) {
-            touchGestureHandled = true;
-            animatePresentationSlide(activeSlideIndex + 1);
-          } else if (step.direction < 0 && activeSlideIndex > 0) {
-            touchGestureHandled = true;
-            animatePresentationSlide(activeSlideIndex - 1);
+          if (step.direction > 0) {
+            if (activeSlideIndex < presentationSlideCount - 1) {
+              touchGestureHandled = true;
+              animatePresentationSlide(activeSlideIndex + 1);
+            } else {
+              touchGestureHandled = true;
+              sectionSlider.slideNext();
+            }
+          } else if (step.direction < 0) {
+            if (activeSlideIndex > 0) {
+              touchGestureHandled = true;
+              animatePresentationSlide(activeSlideIndex - 1);
+            } else {
+              touchGestureHandled = true;
+              sectionSlider.slidePrev();
+            }
           }
           return;
         }
@@ -1265,10 +1305,11 @@ function setupTouchGestureLock() {
         const slideNames = ['about', 'services', 'portfolio'];
         const currentSlide = document.getElementById(slideNames[activeSlideIndex]);
         if (currentSlide) {
-          const atTop = currentSlide.scrollTop <= 4;
-          const atBottom = currentSlide.scrollTop + currentSlide.clientHeight >= currentSlide.scrollHeight - 6;
+          const atTop = currentSlide.scrollTop <= 6;
+          const atBottom = currentSlide.scrollTop + currentSlide.clientHeight >= currentSlide.scrollHeight - 8;
 
-          if (step.direction < 0 && activeSlideIndex === 0 && atTop) {
+          // If at the top of the slide and swiping down, go to #top
+          if (step.direction < 0 && atTop) {
             if (event.cancelable) {
               event.preventDefault();
             }
@@ -1279,7 +1320,8 @@ function setupTouchGestureLock() {
             return;
           }
 
-          if (step.direction > 0 && activeSlideIndex === presentationSlideCount - 1 && atBottom) {
+          // If at the bottom of the slide and swiping up, go to #links
+          if (step.direction > 0 && atBottom) {
             if (event.cancelable) {
               event.preventDefault();
             }
@@ -1290,6 +1332,7 @@ function setupTouchGestureLock() {
             return;
           }
 
+          // In-between: allow native vertical scroll inside the slide (e.g. services)
           return;
         }
       }
@@ -2299,16 +2342,35 @@ function setupLastFmWidget() {
   const coverImg = document.getElementById('lastfm-cover-img');
   const coverPlaceholder = document.getElementById('lastfm-cover-placeholder');
 
-  const BRAILLE_FRAMES = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+  const BRAILLE_DOTS = [
+    [1, 2, 4],
+    [1, 4, 5],
+    [1, 4, 5, 6],
+    [4, 5, 6],
+    [3, 4, 5, 6],
+    [3, 5, 6],
+    [2, 3, 5, 6],
+    [1, 2, 3, 5, 6],
+    [1, 2, 3],
+    [1, 2, 3, 4],
+  ];
   let spinnerIdx = 0;
   let spinnerTimer = null;
+  const spinnerDots = spinnerEl ? spinnerEl.querySelectorAll('circle') : [];
+
+  function setBrailleMask(mask) {
+    if (!spinnerDots.length) return;
+    for (let i = 0; i < spinnerDots.length; i++) {
+      spinnerDots[i].classList.toggle('is-on', mask.includes(i + 1));
+    }
+  }
 
   function updateSpinnerState(isPlaying) {
     if (isPlaying) {
       if (!spinnerTimer) {
         spinnerTimer = setInterval(() => {
-          spinnerIdx = (spinnerIdx + 1) % BRAILLE_FRAMES.length;
-          if (spinnerEl) spinnerEl.textContent = BRAILLE_FRAMES[spinnerIdx];
+          spinnerIdx = (spinnerIdx + 1) % BRAILLE_DOTS.length;
+          setBrailleMask(BRAILLE_DOTS[spinnerIdx]);
         }, 80);
       }
     } else {
@@ -2316,7 +2378,7 @@ function setupLastFmWidget() {
         clearInterval(spinnerTimer);
         spinnerTimer = null;
       }
-      if (spinnerEl) spinnerEl.textContent = '·';
+      setBrailleMask([2]);
     }
   }
 
@@ -2591,19 +2653,19 @@ if (topSection) {
   }, { passive: true });
 }
 
-const linksSection = document.querySelector('#links');
-if (linksSection && mengerEffect) {
-  linksSection.addEventListener('pointermove', (event) => {
-    const rect = linksSection.getBoundingClientRect();
+const mengerTouchZone = document.querySelector('#menger-touch-zone') || document.querySelector('#links');
+if (mengerTouchZone && mengerEffect) {
+  mengerTouchZone.addEventListener('pointermove', (event) => {
+    const rect = mengerTouchZone.getBoundingClientRect();
     mengerEffect.onPointerMove(event.clientX - rect.left, event.clientY - rect.top, event.pointerType);
   }, { passive: true });
 
-  linksSection.addEventListener('pointerdown', (event) => {
+  mengerTouchZone.addEventListener('pointerdown', (event) => {
     if (event.target.closest('.site-footer__links a')) return;
     if (event.pointerType !== 'touch') {
       triggerHaptic(6);
     }
-    const rect = linksSection.getBoundingClientRect();
+    const rect = mengerTouchZone.getBoundingClientRect();
     mengerEffect.onPointerDown(event.clientX - rect.left, event.clientY - rect.top, event.pointerType);
   }, { passive: true });
 

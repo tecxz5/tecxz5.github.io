@@ -637,9 +637,10 @@ body.is-track-instant .presentation-track {
 
 /* Last.fm Live Status Widget */
 .lastfm-status {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 6px;
+  flex-shrink: 0;
 }
 
 .lastfm-status__label {
@@ -654,19 +655,39 @@ body.is-track-instant .presentation-track {
 }
 
 .lastfm-spinner {
-  display: inline-block;
-  font-family: "Martian Mono", monospace;
-  font-size: 13px;
-  line-height: 1;
-  color: var(--accent);
-  width: 1.2ch;
-  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 10px;
+  height: 14px;
   flex-shrink: 0;
+  color: var(--accent);
   user-select: none;
+}
+
+.lastfm-spinner__matrix {
+  display: block;
+}
+
+.lastfm-spinner__matrix circle {
+  opacity: 0.16;
+  transition: opacity 0.05s linear;
+}
+
+.lastfm-spinner__matrix circle.is-on {
+  opacity: 1;
 }
 
 .about-card--lastfm:not(.is-playing) .lastfm-spinner {
   color: #666;
+}
+
+.about-card--lastfm:not(.is-playing) .lastfm-spinner__matrix circle {
+  opacity: 0;
+}
+
+.about-card--lastfm:not(.is-playing) .lastfm-spinner__matrix circle.dot-2 {
+  opacity: 0.7;
 }
 
 .about-card--lastfm.is-unavailable .lastfm-spinner {
@@ -1570,6 +1591,22 @@ svg.lastfm-cover__placeholder {
   height: 100%;
   pointer-events: none;
   z-index: 0;
+}
+
+.menger-touch-zone {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: clamp(60px, 12vh, 110px);
+  width: min(290px, 75vw);
+  height: min(270px, 42vh);
+  z-index: 1;
+  cursor: grab;
+  touch-action: none;
+}
+
+.menger-touch-zone:active {
+  cursor: grabbing;
 }
 
 .site-footer::before {
