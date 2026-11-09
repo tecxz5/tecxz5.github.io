@@ -2335,52 +2335,11 @@ function setupLastFmWidget() {
   if (!card) return;
 
   const statusLabel = document.getElementById('lastfm-status-label');
-  const spinnerEl = document.getElementById('lastfm-spinner');
   const trackEl = document.getElementById('lastfm-track');
   const artistEl = document.getElementById('lastfm-artist');
   const albumEl = document.getElementById('lastfm-album');
   const coverImg = document.getElementById('lastfm-cover-img');
   const coverPlaceholder = document.getElementById('lastfm-cover-placeholder');
-
-  const BRAILLE_DOTS = [
-    [1, 2, 4],
-    [1, 4, 5],
-    [1, 4, 5, 6],
-    [4, 5, 6],
-    [3, 4, 5, 6],
-    [3, 5, 6],
-    [2, 3, 5, 6],
-    [1, 2, 3, 5, 6],
-    [1, 2, 3],
-    [1, 2, 3, 4],
-  ];
-  let spinnerIdx = 0;
-  let spinnerTimer = null;
-  const spinnerDots = spinnerEl ? spinnerEl.querySelectorAll('circle') : [];
-
-  function setBrailleMask(mask) {
-    if (!spinnerDots.length) return;
-    for (let i = 0; i < spinnerDots.length; i++) {
-      spinnerDots[i].classList.toggle('is-on', mask.includes(i + 1));
-    }
-  }
-
-  function updateSpinnerState(isPlaying) {
-    if (isPlaying) {
-      if (!spinnerTimer) {
-        spinnerTimer = setInterval(() => {
-          spinnerIdx = (spinnerIdx + 1) % BRAILLE_DOTS.length;
-          setBrailleMask(BRAILLE_DOTS[spinnerIdx]);
-        }, 80);
-      }
-    } else {
-      if (spinnerTimer) {
-        clearInterval(spinnerTimer);
-        spinnerTimer = null;
-      }
-      setBrailleMask([2]);
-    }
-  }
 
   const LASTFM_USER = 'tecxz5';
   const STATSFM_USER = 'big_fish_theory';
@@ -2410,7 +2369,6 @@ function setupLastFmWidget() {
     const track = pickNowPlaying(nowPlayingStats, isFailed ? null : currentTrackState);
 
     if (!track) {
-      updateSpinnerState(false);
       if (!isFailed) return;
       card.classList.add('is-unavailable');
       card.classList.remove('is-playing');
@@ -2443,7 +2401,6 @@ function setupLastFmWidget() {
 
     card.classList.remove('is-unavailable');
     card.classList.toggle('is-playing', isNowPlaying);
-    updateSpinnerState(isNowPlaying);
 
     if (statusLabel) {
       if (isNowPlaying) {

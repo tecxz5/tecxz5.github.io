@@ -665,29 +665,31 @@ body.is-track-instant .presentation-track {
   user-select: none;
 }
 
-.lastfm-spinner__matrix {
+.lastfm-spinner__slash {
   display: block;
+  transform-origin: center;
 }
 
-.lastfm-spinner__matrix circle {
-  opacity: 0.16;
-  transition: opacity 0.05s linear;
+.about-card--lastfm.is-playing .lastfm-spinner__slash {
+  animation: lastfm-slash-spin 0.4s steps(4) infinite;
 }
 
-.lastfm-spinner__matrix circle.is-on {
-  opacity: 1;
+@keyframes lastfm-slash-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(180deg);
+  }
 }
 
 .about-card--lastfm:not(.is-playing) .lastfm-spinner {
   color: #666;
 }
 
-.about-card--lastfm:not(.is-playing) .lastfm-spinner__matrix circle {
-  opacity: 0;
-}
-
-.about-card--lastfm:not(.is-playing) .lastfm-spinner__matrix circle.dot-2 {
-  opacity: 0.7;
+.about-card--lastfm:not(.is-playing) .lastfm-spinner__slash {
+  animation: none;
+  transform: rotate(90deg);
 }
 
 .about-card--lastfm.is-unavailable .lastfm-spinner {
@@ -1597,9 +1599,11 @@ svg.lastfm-cover__placeholder {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  bottom: clamp(60px, 12vh, 110px);
-  width: min(290px, 75vw);
-  height: min(270px, 42vh);
+  bottom: clamp(20px, 4vh, 50px);
+  width: min(62vh, 80vw);
+  height: 60vh;
+  max-width: 720px;
+  max-height: 700px;
   z-index: 1;
   cursor: grab;
   touch-action: none;
@@ -2235,5 +2239,13 @@ body.is-loaded .loader__section--top {
   .site-footer__links a:active img {
     transform: scale(0.96);
     filter: brightness(1.25);
+  }
+
+  .menger-touch-zone {
+    bottom: clamp(60px, 12vh, 110px);
+    width: min(290px, 75vw);
+    height: min(270px, 42vh);
+    max-width: none;
+    max-height: none;
   }
 }

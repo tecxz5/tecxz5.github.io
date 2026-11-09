@@ -20,7 +20,7 @@ export const translations = {
       switchAria: 'Сменить язык сайта',
     },
     top: {
-      hint: 'просто листай вверх/вниз',
+      hint: 'листай как хочешь',
     },
     slides: {
       about: 'О себе',
@@ -125,7 +125,7 @@ export const translations = {
       switchAria: 'Switch website language',
     },
     top: {
-      hint: 'scroll up/down to navigate',
+      hint: 'scroll however you want',
     },
     slides: {
       about: 'About',

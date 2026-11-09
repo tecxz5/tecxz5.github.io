@@ -42,7 +42,7 @@
       <section class="section empty-page" id="top">
         <canvas class="bubbles-bg" id="bubbles-bg" aria-hidden="true"></canvas>
         <p class="empty-page__lead"></p>
-        <p class="empty-page__hint" data-i18n="top.hint">просто листай вверх/вниз</p>
+        <p class="empty-page__hint" data-i18n="top.hint">листай как хочешь</p>
         <button type="button" class="lang-switch-btn" id="lang-switch-btn" aria-label="Сменить язык">
           <span class="lang-tag is-active" data-lang="ru">RU</span>
           <span class="lang-divider">/</span>
@@ -90,13 +90,8 @@
                       <span class="about-card__badge about-card__badge--lastfm" role="img" aria-label="Last.fm" data-i18n-aria="about.lastfmBadge"><svg class="brand-mark brand-mark--lastfm" aria-hidden="true" focusable="false"><use href="#icon-lastfm"></use></svg></span>
                       <div class="lastfm-status" id="lastfm-status">
                         <span class="lastfm-spinner" id="lastfm-spinner" aria-hidden="true">
-                          <svg class="lastfm-spinner__matrix" viewBox="0 0 10 14" width="10" height="14" fill="none">
-                            <circle cx="2.5" cy="2.5" r="1.2" class="dot-1" fill="currentColor"/>
-                            <circle cx="2.5" cy="7" r="1.2" class="dot-2" fill="currentColor"/>
-                            <circle cx="2.5" cy="11.5" r="1.2" class="dot-3" fill="currentColor"/>
-                            <circle cx="7.5" cy="2.5" r="1.2" class="dot-4" fill="currentColor"/>
-                            <circle cx="7.5" cy="7" r="1.2" class="dot-5" fill="currentColor"/>
-                            <circle cx="7.5" cy="11.5" r="1.2" class="dot-6" fill="currentColor"/>
+                          <svg class="lastfm-spinner__slash" viewBox="0 0 10 10" width="10" height="10" fill="none">
+                            <line x1="5" y1="1" x2="5" y2="9" stroke="currentColor" stroke-width="1.6" stroke-linecap="butt"/>
                           </svg>
                         </span>
                         <span class="lastfm-status__label" id="lastfm-status-label" data-i18n="about.lastfmLoading">загрузка...</span>
