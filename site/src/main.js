@@ -1139,7 +1139,7 @@ function stepByWheelGesture(direction) {
 
 function setupWheelGestureLock() {
   const handleWheel = (event) => {
-    if (event.target && event.target.closest && event.target.closest('.portfolio-card, .portfolio-demo, .chat-widget__messages, .cli-body, .service-card, .service-contract')) {
+    if (event.target && event.target.closest && event.target.closest('.portfolio-card, .portfolio-demo, .chat-widget__messages, .cli-body, .service-card')) {
       return;
     }
 

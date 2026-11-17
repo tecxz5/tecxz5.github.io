@@ -1400,94 +1400,6 @@ svg.lastfm-cover__placeholder {
   pointer-events: none;
 }
 
-/* Service Contract Section (under cards) */
-.service-contract {
-  position: relative;
-  z-index: 1;
-  width: min(720px, 100%);
-  margin-top: 18px;
-  padding: 16px 20px;
-  border: 2px solid #fff;
-  background: #000 !important;
-  backdrop-filter: blur(4px);
-  color: #fff;
-  box-sizing: border-box;
-  transition: border-color 0.3s ease;
-}
-
-.service-contract:hover {
-  border-color: var(--accent);
-}
-
-.service-contract__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 14px;
-}
-
-.service-contract__badge {
-  display: inline-block;
-  padding: 3px 8px;
-  background: var(--accent);
-  color: #000;
-  font-family: "Martian Mono", monospace;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-}
-
-.service-contract__grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px 18px;
-}
-
-.service-contract__item {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  text-align: left;
-}
-
-.service-contract__item--wide {
-  grid-column: 1 / -1;
-}
-
-.service-contract__num {
-  font-family: "Martian Mono", monospace;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--accent);
-  padding-top: 2px;
-  flex-shrink: 0;
-}
-
-.service-contract__content {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.service-contract__content h4 {
-  margin: 0;
-  font-family: "Martian Mono", monospace;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: #fff;
-}
-
-.service-contract__content p {
-  margin: 0;
-  font-size: 12.5px;
-  line-height: 1.45;
-  color: #ccc;
-}
-
 .service-modal__item {
   padding: 16px;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -2122,40 +2034,6 @@ body.is-loaded .loader__section--top {
   .service-card__hint {
     font-size: 11px;
     letter-spacing: 0.02em;
-  }
-
-  .service-contract {
-    width: 100%;
-    padding: 14px 16px;
-    margin-top: 14px;
-  }
-
-  .service-contract__header {
-    margin-bottom: 12px;
-  }
-
-  .service-contract__badge {
-    font-size: 11px;
-    padding: 2px 6px;
-  }
-
-  .service-contract__pdf-link {
-    font-size: 11px;
-    padding: 4px 8px;
-  }
-
-  .service-contract__grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
-  .service-contract__content h4 {
-    font-size: 12.5px;
-  }
-
-  .service-contract__content p {
-    font-size: 11.5px;
-    line-height: 1.45;
   }
 
   .portfolio-grid {
