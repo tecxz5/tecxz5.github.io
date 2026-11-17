@@ -20,26 +20,27 @@ const MENGER_FRAGMENT_SHADER = `
 
   uniform vec2 u_resolution;
   uniform float u_time;
-  uniform vec2 u_rotation;
+  uniform mat3 u_rot;
   uniform float u_pixelSize;
   uniform float u_pixelGap;
   uniform vec3 u_colorLime;
   uniform vec3 u_colorWhite;
   uniform vec3 u_bgColor;
 
-  mat3 rotateY(float a) {
-    float c = cos(a), s = sin(a);
-    return mat3(c, 0.0, s, 0.0, 1.0, 0.0, -s, 0.0, c);
+  mat3 transpose3(mat3 m) {
+    return mat3(m[0][0], m[1][0], m[2][0],
+                m[0][1], m[1][1], m[2][1],
+                m[0][2], m[1][2], m[2][2]);
   }
 
-  mat3 rotateX(float a) {
-    float c = cos(a), s = sin(a);
-    return mat3(1.0, 0.0, 0.0, 0.0, c, -s, 0.0, s, c);
+  // Ordered-dither building blocks (no bit ops in GLSL ES 1.00, so the 2x2
+  // matrix is evaluated arithmetically and 4x4 is built recursively)
+  float bayer2k(vec2 p) {
+    return mod(2.0 * p.x + 3.0 * p.y, 4.0);
   }
 
-  mat3 rotateZ(float a) {
-    float c = cos(a), s = sin(a);
-    return mat3(c, -s, 0.0, s, c, 0.0, 0.0, 0.0, 1.0);
+  float bayer4(vec2 p) {
+    return (4.0 * bayer2k(floor(p * 0.5)) + bayer2k(mod(p, 2.0))) / 16.0;
   }
 
   float sdBox(vec3 p, vec3 b) {
@@ -105,14 +106,16 @@ const MENGER_FRAGMENT_SHADER = `
     }
     uv.y += yShift;
 
-    // Camera setup - enlarged back up
-    vec3 ro = vec3(0.0, 0.0, 3.65);
-    vec3 rd = normalize(vec3(uv, -1.8));
+    // Camera setup - enlarged back up, fixed in VIEW space
+    vec3 roView = vec3(0.0, 0.0, 3.65);
+    vec3 rdView = normalize(vec3(uv, -1.8));
 
-    // Combine idle rotation with interactive pointer rotation
-    mat3 rot = rotateX(u_rotation.x) * rotateY(u_rotation.y);
-    ro = rot * ro;
-    rd = rot * rd;
+    // u_rot is the sponge's orientation in view space (local -> camera).
+    // Raymarch in local space, so push the camera through the inverse rotation
+    // (a rotation matrix transposes to its inverse).
+    mat3 rotInv = transpose3(u_rot);
+    vec3 ro = rotInv * roView;
+    vec3 rd = rotInv * rdView;
 
     // Raymarch
     float t = 0.0;
@@ -138,45 +141,80 @@ const MENGER_FRAGMENT_SHADER = `
     }
 
     vec3 hitPos = ro + rd * t;
-    vec3 n = calcNormal(hitPos);
+    // Normal back into view space: the key light is bolted to the screen,
+    // so it stays in one place while the sponge turns underneath it.
+    vec3 n = u_rot * calcNormal(hitPos);
 
-    // Directional lighting from top-left-front
-    vec3 lightDir = normalize(vec3(0.55, 0.95, 0.7));
-    float diff = max(dot(n, lightDir), 0.0);
-    
-    // Ambient occlusion based on ray steps inside fractal cavities
-    float ao = clamp(1.0 - float(hitSteps) / 48.0, 0.0, 1.0);
-    ao = pow(ao, 1.6);
+    // Fixed key light on screen: upper-left, slightly toward the viewer
+    vec3 lightDir = normalize(vec3(-0.45, 0.82, 0.6));
 
-    // Rim lighting along sharp fractal boundaries
-    float rim = pow(clamp(1.0 - max(dot(-rd, n), 0.0), 0.0, 1.0), 3.0);
+    // Wrapped diffuse + hemisphere fill: no facet is ever left unlit
+    float ndl = dot(n, lightDir);
+    float wrap = clamp(ndl * 0.5 + 0.5, 0.0, 1.0);
+    float hemi = clamp(0.5 + 0.5 * n.y, 0.0, 1.0);
 
-    // Specular highlight on top facets
-    vec3 h = normalize(lightDir - rd);
-    float spec = pow(max(dot(n, h), 0.0), 16.0);
+    // Crevice shading: deep in the tunnels the surface darkens (never to black)
+    float ao = clamp(1.0 - float(hitSteps) / 64.0, 0.0, 1.0);
+    ao = 0.30 + 0.70 * pow(ao, 1.3);
 
-    // Shading composition:
-    // Bright direct light: pure white (#ffffff)
-    // Diffuse / body: neon lime (#cedb1a)
-    // Deep crevices / tunnels: deep black (#000000)
-    vec3 col = u_colorLime * (diff * 0.75 + 0.15) * ao;
-    col += u_colorWhite * (spec * 0.75 + rim * 0.45);
+    // Rim along sharp fractal boundaries — keeps the silhouette crisp
+    float rim = pow(clamp(1.0 - max(dot(-rdView, n), 0.0), 0.0, 1.0), 3.0);
 
-    // Quantize into crisp brutalist bands
-    float brightness = (col.r + col.g + col.b) / 3.0;
-    if (brightness > 0.72) {
+    // Diffuse only: flat mosaic facets have one constant normal each, so a
+    // specular term would flip whole faces to white when they pass the mirror
+    // angle. Face brightness follows the light bolted to the screen instead.
+    float lum = (0.14 + 0.86 * wrap) * (0.78 + 0.22 * hemi) * ao + rim * 0.18;
+
+    // Ordered 4x4 dither on the block grid: breaks the big flat facets into a
+    // two-tone dot pattern instead of one dead solid band.
+    lum += (bayer4(blockId) - 0.5) * 0.09;
+
+    // Quantize into crisp brutalist bands.
+    // Facets get 4 posterized lime steps (form still reads) and never drop to
+    // pure black: only the empty pixel gaps and the tunnels drilled straight
+    // through the sponge stay #000000.
+    vec3 col;
+    if (lum > 0.84) {
       col = u_colorWhite;
-    } else if (brightness > 0.32) {
+    } else if (lum > 0.64) {
       col = u_colorLime;
-    } else if (brightness > 0.10) {
-      col = u_colorLime * 0.42;
+    } else if (lum > 0.46) {
+      col = u_colorLime * 0.72;
+    } else if (lum > 0.30) {
+      col = u_colorLime * 0.48;
     } else {
-      col = u_bgColor;
+      col = u_colorLime * 0.26;
     }
 
     gl_FragColor = vec4(col, 1.0);
   }
 `;
+
+// 3x3 rotation matrices, column-major (same layout GLSL/webgl expects)
+function mat3Mul(a, b) {
+  const out = new Float32Array(9);
+  for (let c = 0; c < 3; c++) {
+    const b0 = b[c * 3];
+    const b1 = b[c * 3 + 1];
+    const b2 = b[c * 3 + 2];
+    out[c * 3] = a[0] * b0 + a[3] * b1 + a[6] * b2;
+    out[c * 3 + 1] = a[1] * b0 + a[4] * b1 + a[7] * b2;
+    out[c * 3 + 2] = a[2] * b0 + a[5] * b1 + a[8] * b2;
+  }
+  return out;
+}
+
+function mat3RotX(angle) {
+  const c = Math.cos(angle);
+  const s = Math.sin(angle);
+  return new Float32Array([1, 0, 0, 0, c, s, 0, -s, c]);
+}
+
+function mat3RotY(angle) {
+  const c = Math.cos(angle);
+  const s = Math.sin(angle);
+  return new Float32Array([c, 0, -s, 0, 1, 0, s, 0, c]);
+}
 
 export class MengerEffect {
   constructor(canvas) {
@@ -199,11 +237,12 @@ export class MengerEffect {
     this.pixelSize = 6.0;
     this.pixelGap = 1.0;
 
-    // Rotation and momentum physics — default continuous auto-rotation
-    this.rotX = 0.52;
-    this.rotY = 0.65;
-    this.velX = 0.0025;
-    this.velY = 0.007;
+    // Orientation as a full local->view matrix. Every increment (idle spin or
+    // drag) is applied on the LEFT, i.e. in screen space, so the sponge always
+    // turns relative to the camera and never around its own tilted axes.
+    this.rot = mat3Mul(mat3RotY(0.65), mat3RotX(0.52));
+    this.velX = 0.0025;   // rad/frame about the screen's horizontal axis (pitch)
+    this.velY = 0.007;    // rad/frame about the screen's vertical axis (yaw)
     this.baseSpinX = 0.0025;
     this.baseSpinY = 0.007;
 
@@ -247,7 +286,7 @@ export class MengerEffect {
 
     this.uResolution = gl.getUniformLocation(this.program, 'u_resolution');
     this.uTime = gl.getUniformLocation(this.program, 'u_time');
-    this.uRotation = gl.getUniformLocation(this.program, 'u_rotation');
+    this.uRot = gl.getUniformLocation(this.program, 'u_rot');
     this.uPixelSize = gl.getUniformLocation(this.program, 'u_pixelSize');
     this.uPixelGap = gl.getUniformLocation(this.program, 'u_pixelGap');
     this.uColorLime = gl.getUniformLocation(this.program, 'u_colorLime');
@@ -295,8 +334,13 @@ export class MengerEffect {
     const now = performance.now();
     const dt = Math.max(now - this.lastPointerTime, 8);
 
-    this.rotY += dx * 0.0055;
-    this.rotX += dy * 0.0055;
+    // Screen-space rotation: dx yaws about the camera's vertical axis,
+    // dy pitches about the camera's horizontal axis — the sponge follows the
+    // finger and tips up/down as seen from the camera.
+    this.rot = mat3Mul(
+      mat3RotX(dy * 0.0055),
+      mat3Mul(mat3RotY(dx * 0.0055), this.rot)
+    );
 
     // Track throw velocity (flick impulse in both X and Y)
     const instantVelY = (dx / dt) * 0.16;
@@ -350,10 +394,12 @@ export class MengerEffect {
     const gl = this.gl;
     const tSeconds = (time || performance.now()) * 0.001;
 
-    // Auto-rotation and inertia physics
+    // Auto-rotation and inertia physics (screen-relative, same as dragging)
     if (!this.isDragging) {
-      this.rotY += this.velY;
-      this.rotX += this.velX;
+      this.rot = mat3Mul(
+        mat3RotX(this.velX),
+        mat3Mul(mat3RotY(this.velY), this.rot)
+      );
 
       // Friction: smoothly ease throw momentum back to base idle spin
       this.velY += (this.baseSpinY - this.velY) * 0.022;
@@ -368,7 +414,7 @@ export class MengerEffect {
 
     gl.uniform2f(this.uResolution, this.canvas.width, this.canvas.height);
     gl.uniform1f(this.uTime, tSeconds);
-    gl.uniform2f(this.uRotation, this.rotX, this.rotY);
+    gl.uniformMatrix3fv(this.uRot, false, this.rot);
 
     const scale = (this.canvas.width / (this.width || 1)) || 1.0;
     gl.uniform1f(this.uPixelSize, this.pixelSize * scale);
